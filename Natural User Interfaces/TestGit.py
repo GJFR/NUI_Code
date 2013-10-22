@@ -38,7 +38,7 @@ print(eog1)
 eog1_filt = np.zeros(len(eog1))
 eog2_filt = np.zeros(len(eog2))
 
-b, a = butter(2, 0.5, 'high')
+b, a = butter(2, 0.5, 'low')
 
 eog1_filt = filtfilt(b, a, eog1)
 eog2_filt = filtfilt(b, a, eog2)
@@ -47,8 +47,8 @@ def plot_data():
     fig = plt.figure()
     ax1 = fig.add_subplot(211)
     ax2 = fig.add_subplot(212)
-    line1, = ax1.plot(eog1)
-    line2, = ax2.plot(eog2)
-    fig.show()
+    line1, = ax1.plot(eog1_filt)
+    line2, = ax2.plot(eog1)
+    plt.show()
     
 plot_data()
