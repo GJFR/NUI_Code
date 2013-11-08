@@ -14,22 +14,24 @@ global counter
 def processData(eog):
     global occurringType
     global counter
-    occurringType = 'none'
+    matrix = eog.getMatrix()
+    occurringType = 'n'
     counter = 1
-    for x in range(0, len(eog)-1):
-        receiveDatapoints(eog[x],eog[x+1])
-        if (counter == 5):
+    for x in range(0, len(matrix)-3):
+        receiveDatapoints(matrix[x],matrix[x+3])
+        if (counter == 3):
             print(occurringType + str(x))
+            eog.addAnnotation([occurringType,(x,matrix[x])])
 
 def receiveDatapoints(x,y):
     global occurringType
     global counter
-    if (x - y > 0.025):
-        currentType = 'descent'
-    elif (x - y < -0.025):
-        currentType = 'ascent'
+    if (x - y > 0.1):
+        currentType = 'd'
+    elif (x - y < -0.1):
+        currentType = 'a'
     else:
-        currentType = 'none'
+        currentType = 'n'
         
     if (currentType == occurringType):
         counter += 1
@@ -46,16 +48,16 @@ def breakThreshold(x):
         return 'right'
     return None
 
-def setThresholdDifference(type,value):
+def setThresholdDifference(direction,value):
     global thresholdLeft
     global thresholdRight
     global thresholdDown
     global thresholdUp
-    if (type == 'left'):
+    if (direction == 'left'):
         thresholdLeft = value
-    if (type == 'right'):
+    if (direction == 'right'):
         thresholdRight = value
-    if (type == 'down'):
+    if (direction == 'down'):
         thresholdDown = value
-    if (type == 'up'):
+    if (direction == 'up'):
         thresholdUp = value
