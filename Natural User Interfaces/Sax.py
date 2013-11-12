@@ -70,6 +70,7 @@ class TimeSequence(object):
             else:
                 buckets[array[i]] = [i]
         return buckets
+    
                         
         
     def checkBuckets(self, buckets):
