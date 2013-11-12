@@ -24,12 +24,12 @@ global eog1_filt
 global eog2_filt
 
 
-with open('C:\\Users\\Gertjan\\git\\NUI_Code\\Data\\test10_A.csv') as csvfile:
+with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test10_A.csv') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
         data1 = [float(i) for i in row]
         
-with open('C:\\Users\\Gertjan\\git\\NUI_Code\\Data\\test10_B.csv') as csvfile:
+with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test10_B.csv') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
         data2 = [float(i) for i in row]
