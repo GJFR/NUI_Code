@@ -51,7 +51,26 @@ class TimeSequence(object):
             checkBuckets(buckets, cMatrix)
         
         
+    def mask(self, saxArray, masker):
+        maskArray = []
+        for word in saxArray:
+            maskWord = ""
+            for i in range(self.alfabetGrootte + 1):
+                if not(i in masker):
+                    maskWord += word[i]
+            maskArray.append(maskWord)
+        return maskArray
+    
     def fHash(self, saxArray, masker):
+        array = self.mask(saxArray, masker)
+        buckets = {}
+        for i in range(len(saxArray)):
+            if (array[i] in buckets):
+                buckets[array[i]].append(i)
+            else:
+                buckets[array[i]] = [i]
+        return buckets
+                        
         
     def checkBuckets(self, buckets):
         
