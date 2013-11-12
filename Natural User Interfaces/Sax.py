@@ -50,7 +50,7 @@ class TimeSequence(object):
             buckets = self.fHash(saxArray,mask)
             self.checkBuckets(buckets, cMatrix)
             
-        
+
     def mask(self, saxArray, masker):
         maskArray = []
         for word in saxArray:
@@ -71,6 +71,7 @@ class TimeSequence(object):
                 buckets[array[i]] = [i]
         return buckets
         
+    
         
     def checkBuckets(self, buckets, cMatrix):
         for key in buckets:
