@@ -47,9 +47,8 @@ class TimeSequence(object):
         maskers = []
         cMatrix = [ [0 for y in range(self.sequentieLengte)] for x in range(self.sequentieLengte) ]
         for mask in maskers:
-            buckets = fHash(saxArray,mask)
-            checkBuckets(buckets, cMatrix)
-        
+            buckets = self.fHash(saxArray,mask)
+            self.checkBuckets(buckets, cMatrix)
         
     def mask(self, saxArray, masker):
         maskArray = []
@@ -73,5 +72,9 @@ class TimeSequence(object):
     
                         
         
-    def checkBuckets(self, buckets):
-        
+    def checkBuckets(self, buckets, cMatrix):
+        for key in buckets:
+            buckets[key].sort()
+            for i in range(len(buckets[key])):
+                for j in range(i+1,len(buckets[key])):
+                    cMatrix[buckets[key][i]][buckets[key][j]] += 1
