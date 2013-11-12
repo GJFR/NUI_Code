@@ -35,6 +35,7 @@ class TimeSequence(object):
             word += self.getLetter(self.waarde, self.alfabetGrootte)
         return word
             
+            
     def getLetter(self, waarde):
         letterWaarde = self.x.cdf(waarde) * self.alfabetGrootte
         for i in range(1,self.alfabetGrootte):
@@ -48,6 +49,7 @@ class TimeSequence(object):
         for mask in maskers:
             buckets = self.fHash(saxArray,mask)
             self.checkBuckets(buckets, cMatrix)
+            
 
     def mask(self, saxArray, masker):
         maskArray = []
@@ -68,7 +70,9 @@ class TimeSequence(object):
             else:
                 buckets[array[i]] = [i]
         return buckets
+        
     
+        
     def checkBuckets(self, buckets, cMatrix):
         for key in buckets:
             buckets[key].sort()
