@@ -14,6 +14,7 @@ import scipy as sp
 import matplotlib.pyplot as plt
 import Threshold
 import Eog
+import Sax
 from scipy.signal import filtfilt, butter
 from time import sleep
 from struct import *
@@ -24,12 +25,12 @@ global eog1_filt
 global eog2_filt
 
 
-with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test10_A.csv') as csvfile:
+with open('C:\\Users\\Gertjan\\git\\NUI_Code\\Data\\test2_A.csv') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
         data1 = [float(i) for i in row]
         
-with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test10_B.csv') as csvfile:
+with open('C:\\Users\\Gertjan\\git\\NUI_Code\\Data\\test2_B.csv') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
         data2 = [float(i) for i in row]
@@ -39,6 +40,9 @@ eog2 = Eog.Eog(data2)
 
 eog1.normalize()
 eog2.normalize()
+
+ts2 = Sax.TimeSequence(eog2.getMatrix(), 100, 6, 10)
+ts2.getCollisionMatrix()
 
 def plot_data():
     fig = plt.figure()
@@ -54,7 +58,7 @@ def plot_data():
         print(annotation[0])
     plt.show()
 
-
+'''
 Threshold.setThresholdDifference('left', -0.6)
 Threshold.setThresholdDifference('right', 0.6)
 Threshold.setThresholdDifference('down', 15000)
@@ -64,3 +68,4 @@ Threshold.setThresholdDifference('up', -7000)
 Threshold.processData(eog1)
 Threshold.processData(eog2)
 plot_data()
+'''

@@ -23,39 +23,41 @@ class TimeSequence(object):
         saxArray = []
         for i in range(len(self.data) - self.sequentieLengte):
             saxArray.append(self.getPAA(self.data[i:i+self.sequentieLengte]))
+        print(saxArray)
         return saxArray
      
     def getPAA(self, sequentie):
         word = ""
-        for i in range(3):
+        for i in range(self.woordLengte):
             total = 0
-            for j in range((self.sequentieLengte/self.woordLengte) * (i - 1) + 1,(self.sequentieLengte/self.woordLengte) * i + 1):
+            for j in range(int((self.sequentieLengte/self.woordLengte) * (i - 1) + 1),int((self.sequentieLengte/self.woordLengte) * i) + 1):
                 total += sequentie[j]
             waarde = (self.woordLengte/self.sequentieLengte) * total
-            word += self.getLetter(self.waarde, self.alfabetGrootte)
+            word += self.getLetter(waarde)
         return word
             
             
     def getLetter(self, waarde):
         letterWaarde = self.x.cdf(waarde) * self.alfabetGrootte
-        for i in range(1,self.alfabetGrootte):
+        for i in range(1,self.alfabetGrootte + 1):
             if letterWaarde < i :
                 return self.lst[i]
+        return ""
         
     def getCollisionMatrix(self):
         saxArray = self.getSaxArray()
-        maskers = []
-        cMatrix = [ [0 for y in range(self.sequentieLengte)] for x in range(self.sequentieLengte) ]
+        maskers = [[1,2],[2,3],[3,4],[1,3],[2,4],[1,4]]
+        cMatrix = [ [0 for y in range(len(saxArray))] for x in range(len(saxArray)) ]
         for mask in maskers:
             buckets = self.fHash(saxArray,mask)
             self.checkBuckets(buckets, cMatrix)
-            
-
+        return cMatrix
+    
     def mask(self, saxArray, masker):
         maskArray = []
         for word in saxArray:
             maskWord = ""
-            for i in range(self.alfabetGrootte + 1):
+            for i in range(self.woordLengte):
                 if not(i in masker):
                     maskWord += word[i]
             maskArray.append(maskWord)
@@ -75,7 +77,8 @@ class TimeSequence(object):
         
     def checkBuckets(self, buckets, cMatrix):
         for key in buckets:
-            buckets[key].sort()
-            for i in range(len(buckets[key])):
-                for j in range(i+1,len(buckets[key])):
-                    cMatrix[buckets[key][i]][buckets[key][j]] += 1
+            bucket = buckets[key]
+            bucket.sort()
+            for i in range(len(bucket)):
+                for j in range(i+1,len(bucket)):
+                    cMatrix[bucket[i]][bucket[j]] += 1
