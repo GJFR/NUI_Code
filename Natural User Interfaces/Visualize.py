@@ -25,12 +25,12 @@ global eog1_filt
 global eog2_filt
 
 
-with open('C:\\Users\\Gertjan\\git\\NUI_Code\\Data\\test2_A.csv') as csvfile:
+with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test2_A.csv') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
         data1 = [float(i) for i in row]
         
-with open('C:\\Users\\Gertjan\\git\\NUI_Code\\Data\\test2_B.csv') as csvfile:
+with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test2_B.csv') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
         data2 = [float(i) for i in row]
@@ -41,8 +41,8 @@ eog2 = Eog.Eog(data2)
 eog1.normalize()
 eog2.normalize()
 
-ts2 = Sax.TimeSequence(eog2.getMatrix(), 100, 6, 10)
-ts2.getCollisionMatrix()
+ts2 = Sax.TimeSequence(eog2.getMatrix(), 100, 6, 10, 3, .5)
+print (ts2.calculateGoodMatches(ts2.getCollisionMatrix()))
 
 def plot_data():
     fig = plt.figure()
