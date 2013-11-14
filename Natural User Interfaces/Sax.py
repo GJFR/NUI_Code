@@ -24,7 +24,8 @@ class TimeSequence(object):
         self.sequenceList = []
         a = len(data) - self.sequentieLengte
         for index in range(a):
-            self.sequenceList.append(Sequence.Sequence(data, index, self.sequentieLengte))
+            normSeq = Sequence.Sequence(data, index, self.sequentieLengte).getNormalized()
+            self.sequenceList.append(normSeq)
     
     
     def getSaxArray(self):
@@ -110,7 +111,10 @@ class TimeSequence(object):
         
         self.removeCloseMatches(diction)
         print (str(order[0]) + ", " , diction[order[0]])
-        return order
+        '''returndiction = {}
+        for motif in order:
+            returndiction[motif] = diction[motif]'''
+        return diction[order[0]]
         
     def removeCloseMatches(self, diction):
         for key in diction:

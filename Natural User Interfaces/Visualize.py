@@ -47,7 +47,9 @@ eog1.normalize()
 eog2.normalize()
 
 ts2 = Sax.TimeSequence(eog2.getMatrix(), 100, 6, 10, 3, .5)
-print (ts2.calculateGoodMatches(ts2.getCollisionMatrix()))
+diction = ts2.calculateGoodMatches(ts2.getCollisionMatrix())
+print (diction)
+
 
 def plot_data():
     fig = plt.figure()
@@ -76,9 +78,11 @@ def plot_data2(sequenceList):
         ax2.annotate(annotation[0], xy = annotation[1], xycoords = 'data', xytext = annotation[1], textcoords = 'data')
         print(annotation[0])
     for sequence in sequenceList:
-        ax2.plot(sequence.getAllPoints(), range(sequence.start, sequence.start + sequence.length), color = 'c')
+        ax2.plot(range(sequence.start, sequence.start + sequence.length), sequence.getAllPoints(), color = 'r')
     plt.show()
 
+
+plot_data2(diction)
 '''
 Threshold.setThresholdDifference('left', -0.6)
 Threshold.setThresholdDifference('right', 0.6)
@@ -88,4 +92,4 @@ Threshold.setThresholdDifference('up', -7000)
 '''
 '''Threshold.processData(eog1)
 Threshold.processData(eog2)'''
-plot_data()
+'''plot_data()'''

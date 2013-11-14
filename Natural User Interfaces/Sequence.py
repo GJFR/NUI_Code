@@ -26,14 +26,14 @@ class Sequence(object):
         return self.timeSeq[self.start + i]
         
     def getAllPoints(self):
-        return self.timeSeq[self.start, self.start + self.length]
+        return self.timeSeq[self.start: self.start + self.length]
         
     def getNormalized(self):
         nMatrix = self.getAllPoints()
         mean = sum(nMatrix)/self.length
         nMatrix = [(x-mean) for x in nMatrix]
         nMatrix = [(x/np.absolute(nMatrix).max()) for x in nMatrix]
-        return nMatrix
+        return NormSequence(self.timeSeq, self.start, self.length, nMatrix, self)
     
     def compareEuclDist(self, other):
         som = 0
@@ -66,3 +66,22 @@ class Sequence(object):
     
     def __repr__(self):
         return str(self.start)
+    
+class NormSequence(Sequence):
+    
+    def __init__(self,  timeSeq, start, length, normData, originalSeq):
+        '''
+        Constructor
+        '''
+        super().__init__(timeSeq, start, length)
+        self.normData = normData
+        self.originalSeq = originalSeq
+        
+    def getPoints(self, i):
+        return self.normData[i]
+    
+    def getAllPoints(self):
+        return self.normData
+    
+    def getOriginal(self):
+        return self.originalSeq
