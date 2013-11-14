@@ -25,24 +25,29 @@ global eog1_filt
 global eog2_filt
 
 
-with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test2_A.csv') as csvfile:
+with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test10_A.csv') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
         data1 = [float(i) for i in row]
         
-with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test2_B.csv') as csvfile:
+with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test10_B.csv') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
         data2 = [float(i) for i in row]
 
+b, a = butter(2, 0.05, 'low')
+for i in range(1):
+    data1 = filtfilt(b, a, data1)
+    data2 = filtfilt(b, a, data2)
+    print(i)
+
 eog1 = Eog.Eog(data1)
 eog2 = Eog.Eog(data2)
 
+
+
 eog1.normalize()
 eog2.normalize()
-
-ts2 = Sax.TimeSequence(eog2.getMatrix(), 100, 6, 10, 3, .5)
-print (ts2.calculateGoodMatches(ts2.getCollisionMatrix()))
 
 def plot_data():
     fig = plt.figure()
@@ -50,22 +55,6 @@ def plot_data():
     ax2 = fig.add_subplot(212)
     line1, = ax1.plot(eog1.getMatrix())
     line2, = ax2.plot(eog2.getMatrix())
-    for annotation in eog1.getAnnotations():
-        ax1.annotate(annotation[0], xy = annotation[1], xycoords = 'data', xytext = annotation[1], textcoords = 'data')
-        print(annotation[0])
-    for annotation in eog2.getAnnotations():
-        ax2.annotate(annotation[0], xy = annotation[1], xycoords = 'data', xytext = annotation[1], textcoords = 'data')
-        print(annotation[0])
     plt.show()
 
-'''
-Threshold.setThresholdDifference('left', -0.6)
-Threshold.setThresholdDifference('right', 0.6)
-Threshold.setThresholdDifference('down', 15000)
-Threshold.setThresholdDifference('up', -7000)
-
-
-Threshold.processData(eog1)
-Threshold.processData(eog2)
 plot_data()
-'''
