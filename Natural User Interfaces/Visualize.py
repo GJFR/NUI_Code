@@ -41,9 +41,9 @@ eog2 = Eog.Eog(data2)
 eog1.normalize()
 eog2.normalize()
 
-'''ts2 = Sax.TimeSequence(eog2.getMatrix(), 100, 6, 10, 3, .5)
+ts2 = Sax.TimeSequence(eog2.getMatrix(), 100, 6, 10, 3, .5)
 print (ts2.calculateGoodMatches(ts2.getCollisionMatrix()))
-'''
+
 def plot_data():
     fig = plt.figure()
     ax1 = fig.add_subplot(211)
