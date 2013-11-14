@@ -47,13 +47,13 @@ class MyClass(object):
         for i in range(woordLengte):
             total = 0
             for j in range(int((self.length/woordLengte) * (i - 1) + 1),int((self.length/woordLengte) * i) + 1):
-                total += self.getPoint(i)
-            waarde = (woordLengte/self.length) * total
-            word += self.getLetter(waarde)
+                total += self.getPoint(j)
+            value = (woordLengte/self.length) * total
+            word += self.getLetter(value, alfabetGrootte)
         return word
     
-    def getLetter(self,alfabetGrootte):
-        letterWaarde = self.x.cdf(waarde) * alfabetGrootte
+    def getLetter(self, value, alfabetGrootte):
+        letterWaarde = self.x.cdf(value) * alfabetGrootte
         for i in range(1,self.alfabetGrootte + 1):
             if letterWaarde < i :
                 return self.lst[i]
