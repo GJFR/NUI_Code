@@ -35,6 +35,11 @@ with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test2_B.csv') as csvfile:
     for row in spamreader:
         data2 = [float(i) for i in row]
 
+
+b, a = butter(2, 0.05, 'low')
+data1 = filtfilt(b, a, data1)
+data2 = filtfilt(b, a, data2)
+
 eog1 = Eog.Eog(data1)
 eog2 = Eog.Eog(data2)
 
