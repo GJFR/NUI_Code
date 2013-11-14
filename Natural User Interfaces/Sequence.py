@@ -1,16 +1,18 @@
 '''
 Created on 14-nov.-2013
 
-@author: Gertjan
+@author: Gertjan & Kevin
 '''
 import math
 import numpy as np
+import scipy.stats
 
-class MyClass(object):
+class Sequence(object):
     '''
     classdocs
     '''
-
+    x = scipy.stats.norm(0,1)
+    lst = " abcdefghijklmnopqrstuvwxyz"
 
     def __init__(self,  timeSeq, start, length):
         '''
@@ -54,7 +56,13 @@ class MyClass(object):
     
     def getLetter(self, value, alfabetGrootte):
         letterWaarde = self.x.cdf(value) * alfabetGrootte
-        for i in range(1,self.alfabetGrootte + 1):
+        for i in range(1,alfabetGrootte + 1):
             if letterWaarde < i :
                 return self.lst[i]
         return ""
+    
+    def __str__(self):
+        return str(self.start)
+    
+    def __repr__(self):
+        return str(self.start)

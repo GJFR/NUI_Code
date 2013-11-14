@@ -6,52 +6,36 @@ Created on 12 nov. 2013
 import scipy.stats
 import scipy.sparse
 import itertools
-import math
+import Sequence
 
 class TimeSequence(object):
     '''
     classdocs
     '''
-    x = scipy.stats.norm(0,1)
-    lst = " abcdefghijklmnopqrstuvwxyz"
-    def __init__(self, data, sequentieLengte, woordLengte, alfabetGrootte, collisionThreshold, range):
+   
+    def __init__(self, data, sequentieLengte, woordLengte, alfabetGrootte, collisionThreshold, r):
         '''        Constructor        '''
         self.data = data
         self.sequentieLengte = sequentieLengte
         self.woordLengte = woordLengte
         self.alfabetGrootte = alfabetGrootte
         self.collisionThreshold = collisionThreshold
-        self.range = range
+        self.r = r
+        self.sequenceList = []
+        a = len(data) - self.sequentieLengte
+        for index in range(a):
+            self.sequenceList.append(Sequence.Sequence(data, index, self.sequentieLengte))
     
     
     def getSaxArray(self):
         saxArray = []
-        for i in range(len(self.data) - self.sequentieLengte):
-            saxArray.append(self.getPAA(self.data[i:i+self.sequentieLengte]))
+        for seq in self.sequenceList:
+            saxArray.append(seq.getWord(self.woordLengte, self.alfabetGrootte))
         return saxArray
-     
-    def getPAA(self, sequentie):
-        word = ""
-        for i in range(self.woordLengte):
-            total = 0
-            for j in range(int((self.sequentieLengte/self.woordLengte) * (i - 1) + 1),int((self.sequentieLengte/self.woordLengte) * i) + 1):
-                total += sequentie[j]
-            waarde = (self.woordLengte/self.sequentieLengte) * total
-            word += self.getLetter(waarde)
-        return word
-            
-            
-    def getLetter(self, waarde):
-        letterWaarde = self.x.cdf(waarde) * self.alfabetGrootte
-        for i in range(1,self.alfabetGrootte + 1):
-            if letterWaarde < i :
-                return self.lst[i]
-        return ""
         
     def getCollisionMatrix(self):
         saxArray = self.getSaxArray()
         maskers = [[1,2,3],[2,3,4],[3,4,5],[1,3,5],[0,2,4],[0,1,2]]
-        '''cMatrix = [ [0 for y in range(len(saxArray))] for x in range(len(saxArray)) ]'''
         cMatrix = scipy.sparse.lil_matrix((len(saxArray),len(saxArray)))
         for mask in maskers:
             buckets = self.fHash(saxArray,mask)
@@ -71,11 +55,12 @@ class TimeSequence(object):
     def fHash(self, saxArray, masker):
         array = self.mask(saxArray, masker)
         buckets = {}
-        for i in range(len(saxArray)):
+        for seq in self.sequenceList:
+            i = seq.start
             if (array[i] in buckets):
-                buckets[array[i]].append(i)
+                buckets[array[i]].append(seq)
             else:
-                buckets[array[i]] = [i]
+                buckets[array[i]] = [seq]
         return buckets
         
     
@@ -83,44 +68,39 @@ class TimeSequence(object):
     def checkBuckets(self, buckets, cMatrix):
         for key in buckets:
             bucket = buckets[key]
-            bucket.sort()
+            bucket.sort(key= lambda x : x.start)
             for i in range(len(bucket)):
                 for j in range(i+1,len(bucket)):
-                    cMatrix[bucket[i],bucket[j]] += 1
+                    cMatrix[bucket[i].start,bucket[j].start] += 1
                     
     def iterateMatrix(self, cMatrix):
         cooMatrix = cMatrix.tocoo()
         thresholdList = []
         for i,j,v in itertools.zip_longest(cooMatrix.row, cooMatrix.col, cooMatrix.data):
             if v >= self.collisionThreshold:
-                thresholdList.append((i,j))
+                thresholdList.append((self.sequenceList[i],self.sequenceList[j]))
         return thresholdList
     
-    def calculateEuclDistance(self, sequence1, sequence2):
-        som = 0
-        for i in range(len(sequence1)):
-            som += (sequence1[i] - sequence2[i])**2
-        return math.sqrt(som)
     
     def calculateGoodMatches(self, cMatrix):
         pairs = self.iterateMatrix(cMatrix)
-        dict = {}
+        diction = {}
         for (i,j) in pairs:
-            eDist = self.calculateEuclDistance(self.data[i:i+self.sequentieLengte], self.data[j:j+self.sequentieLengte])
-            if eDist <= self.range:
-                if i in dict:
-                    dict[i].append(j)
+            eDist = i.compareEuclDist(j)
+            if eDist <= self.r:
+                if i in diction:
+                    diction[i].append(j)
                 else:
-                    dict[i] = [j]
-                if j in dict:
-                    dict[j].append(i)
+                    diction[i] = [j]
+                if j in diction:
+                    diction[j].append(i)
                 else:
-                    dict[j] = [i]
+                    diction[j] = [i]
         
         order = []
-        for i in dict:
+        for i in diction:
             for j in range(len(order)-1,-1,-1):
-                if len(dict[i]) < len(dict[order[j]]):
+                if len(diction[i]) < len(diction[order[j]]):
                     order.insert(j+1, i)
                     break
             else:
@@ -128,28 +108,29 @@ class TimeSequence(object):
             if len(order) > 5:
                 order.pop(5)
         
-        print ("a")
-        self.removeCloseMatches(dict)
-        print (str(order[0]) + ", " , dict[order[0]])
+        self.removeCloseMatches(diction)
+        print (str(order[0]) + ", " , diction[order[0]])
         return order
         
-    def removeCloseMatches(self, dict):
-        for key in dict:
+    def removeCloseMatches(self, diction):
+        for key in diction:
             newList = []
-            besteReeks = dict[key][0]
-            besteDist = self.calculateEuclDistance(self.data[dict[key][0]:dict[key][0]+self.sequentieLengte], self.data[key:key+self.sequentieLengte])   
-            for i in range(1,len(dict[key])):
-                if dict[key][i] == dict[key][i-1] + 1:
-                    newDist = self.calculateEuclDistance(self.data[dict[key][i]:dict[key][i]+self.sequentieLengte], self.data[key:key+self.sequentieLengte])
+            keyList = diction[key]
+            besteReeks = keyList[0]
+            besteDist = key.compareEuclDist(besteReeks) 
+            for i in range(1,len(keyList)):
+                keyListItem = keyList[i]
+                if keyListItem.start == keyList[i-1].start + 1:
+                    newDist = key.compareEuclDist(keyListItem)
                     if(newDist < besteDist):
-                        besteReeks = dict[key][i]
+                        besteReeks = keyListItem
                         besteDist = newDist
                 else:
                     newList.append(besteReeks)
-                    besteReeks = dict[key][i]
-                    besteDist = self.calculateEuclDistance(self.data[i:i+self.sequentieLengte], self.data[key:key+self.sequentieLengte])    
+                    besteReeks = keyListItem
+                    besteDist = key.compareEuclDist(keyListItem)    
             else:
                 newList.append(besteReeks)
 
-            dict[key] = newList
+            diction[key] = newList
             
