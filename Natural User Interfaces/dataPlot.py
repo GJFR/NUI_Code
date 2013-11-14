@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import Threshold
 import Eog
 import Sax
+import os
 from scipy.signal import filtfilt, butter
 from time import sleep
 from struct import *
@@ -24,13 +25,14 @@ global eog2
 global eog1_filt
 global eog2_filt
 
+path = (os.getcwd()[:len(os.getcwd()) - 23])
 
-with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test10_A.csv') as csvfile:
+with open(path + 'Data\\test2_A.csv') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
         data1 = [float(i) for i in row]
         
-with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test10_B.csv') as csvfile:
+with open(path + 'Data\\test2_B.csv') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
         data2 = [float(i) for i in row]
