@@ -25,12 +25,12 @@ global eog1_filt
 global eog2_filt
 
 
-with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test2_A.csv') as csvfile:
+with open('C:\\Users\\Gertjan\\git\\NUI_Code\\Data\\test2_A.csv') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
         data1 = [float(i) for i in row]
         
-with open('C:\\Users\\Kevin\\git\\NUI_Code\\Data\\test2_B.csv') as csvfile:
+with open('C:\\Users\\Gertjan\\git\\NUI_Code\\Data\\test2_B.csv') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
         data2 = [float(i) for i in row]
@@ -46,10 +46,24 @@ eog2 = Eog.Eog(data2)
 eog1.normalize()
 eog2.normalize()
 
-ts2 = Sax.TimeSequence(eog2.getMatrix(), 100, 6, 10, 3, .5)
+'''ts2 = Sax.TimeSequence(eog2.getMatrix(), 100, 6, 10, 3, .5)
 print (ts2.calculateGoodMatches(ts2.getCollisionMatrix()))
-
+'''
 def plot_data():
+    fig = plt.figure()
+    ax1 = fig.add_subplot(211)
+    ax2 = fig.add_subplot(212)
+    ax1.plot(eog1.getMatrix())
+    ax2.plot(eog2.getMatrix())
+    for annotation in eog1.getAnnotations():
+        ax1.annotate(annotation[0], xy = annotation[1], xycoords = 'data', xytext = annotation[1], textcoords = 'data')
+        print(annotation[0])
+    for annotation in eog2.getAnnotations():
+        ax2.annotate(annotation[0], xy = annotation[1], xycoords = 'data', xytext = annotation[1], textcoords = 'data')
+        print(annotation[0])
+    plt.show()
+
+def plot_data2(sequenceList):
     fig = plt.figure()
     ax1 = fig.add_subplot(211)
     ax2 = fig.add_subplot(212)
@@ -61,6 +75,8 @@ def plot_data():
     for annotation in eog2.getAnnotations():
         ax2.annotate(annotation[0], xy = annotation[1], xycoords = 'data', xytext = annotation[1], textcoords = 'data')
         print(annotation[0])
+    for sequence in sequenceList:
+        ax2.plot(sequence.getAllPoints(), range(sequence.start, sequence.start + sequence.length), color = 'c')
     plt.show()
 
 '''
@@ -69,8 +85,7 @@ Threshold.setThresholdDifference('right', 0.6)
 Threshold.setThresholdDifference('down', 15000)
 Threshold.setThresholdDifference('up', -7000)
 
-
-Threshold.processData(eog1)
-Threshold.processData(eog2)
-plot_data()
 '''
+'''Threshold.processData(eog1)
+Threshold.processData(eog2)'''
+plot_data()
