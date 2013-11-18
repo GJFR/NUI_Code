@@ -102,5 +102,5 @@ class ScaledSequence(NormSequence):
     def scaleToLength(self):
         scaledData = []
         for i in range(0, self.length):
-            scaledData = self.getPoint(math.ceil(i * (self.originalSeq.length / self.length)))
+            scaledData.append(self.getPoint(math.ceil(i * (self.originalSeq.length / self.length))))
         return scaledData
