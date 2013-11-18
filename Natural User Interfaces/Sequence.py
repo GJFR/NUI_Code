@@ -77,7 +77,7 @@ class NormSequence(Sequence):
         self.normData = normData
         self.originalSeq = originalSeq
         
-    def getPoints(self, i):
+    def getPoint(self, i):
         return self.normData[i]
     
     def getAllPoints(self):
@@ -85,3 +85,22 @@ class NormSequence(Sequence):
     
     def getOriginal(self):
         return self.originalSeq
+    
+class ScaledSequence(NormSequence):
+    
+    def __init__(self, originalSeq, length):
+        self.originalSeq = originalSeq
+        self.length = length
+        self.data = self.scaleToLength()
+        
+    def getPoint(self, i):
+        return self.data[i]
+    
+    def getAllPoints(self):
+        return self.data
+        
+    def scaleToLength(self):
+        scaledData = []
+        for i in range(0, self.length):
+            scaledData = self.getPoint(math.ceil(i * (self.originalSeq.length / self.length)))
+        return scaledData
