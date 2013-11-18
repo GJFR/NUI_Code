@@ -12,8 +12,7 @@ def checkpoint(message, previousTime):
     tijd = time.time()
     print (message + str(tijd - previousTime))
     return tijd
-
-
+    
 tijd = time.time()
     
 eog1 = Eog.Eog('Data\\test2_A.csv')

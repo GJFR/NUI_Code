@@ -91,17 +91,17 @@ class TimeSequence(object):
         
         
         diction = {}
-        for (i,j) in pairs:
-            eDist = i.compareEuclDist(j)
+        for (motif,index) in pairs:
+            eDist = motif.compareEuclDist(index)
             if eDist <= self.r:
-                if i in diction:
-                    diction[i].append(j)
+                if motif in diction:
+                    diction[motif].append(index)
                 else:
-                    diction[i] = [j]
-                if j in diction:
-                    diction[j].append(i)
+                    diction[motif] = [index]
+                if index in diction:
+                    diction[index].append(motif)
                 else:
-                    diction[j] = [i]
+                    diction[index] = [motif]
         
         tijd = time.time()
         self.removeCloseMatches(diction)
@@ -111,19 +111,20 @@ class TimeSequence(object):
         
         
         order = []
-        for i in diction:
-            '''for motif in order:
-                if(abs(motif.start - i.start) < 25):
-                    if len(diction[i]) > len(diction[motif]):
-                        order.remove(motif)
-                        order.append(i)
-                    break'''
-            for j in range(len(order)-1,-1,-1):
-                if len(diction[i]) < len(diction[order[j]]):
-                    order.insert(j+1, i)
-                    break
+        for motif in diction:
+            for index in range(len(order)-1,-1,-1):
+                if abs(motif.start - order[index].start) <= 50 :
+                    if len(diction[motif]) > len(diction[order[index]]):
+                        order.pop(index)
+                    else:
+                        break
             else:
-                order.insert(0,i)
+                for index in range(len(order)-1,-1,-1):
+                    if len(diction[motif]) < len(diction[order[index]]):
+                        order.insert(index+1, motif)
+                        break
+                else:
+                    order.insert(0,motif)
             if len(order) > 5:
                 order.pop(5)
         
