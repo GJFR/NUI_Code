@@ -113,7 +113,7 @@ class TimeSequence(object):
         order = []
         for motif in diction:
             for index in range(len(order)-1,-1,-1):
-                if abs(motif.start - order[index].start) <= 50 :
+                if abs(motif.start - order[index].start) <= 100 :
                     if len(diction[motif]) > len(diction[order[index]]):
                         order.pop(index)
                     else:

@@ -15,8 +15,8 @@ def checkpoint(message, previousTime):
     
 tijd = time.time()
     
-eog1 = Eog.Eog('Data\\test2_A.csv')
-eog2 = Eog.Eog('Data\\test2_B.csv')
+eog1 = Eog.Eog('Data\\test9_A.csv')
+eog2 = Eog.Eog('Data\\test9_B.csv')
 
 eog1.filter()
 eog2.filter()
