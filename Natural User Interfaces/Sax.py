@@ -14,19 +14,21 @@ class TimeSequence(object):
     classdocs
     '''
    
-    def __init__(self, data, sequentieLengte, woordLengte, alfabetGrootte, collisionThreshold, r):
+    def __init__(self, data, minSeqLengte, maxSeqLengte, woordLengte, alfabetGrootte, collisionThreshold, r):
         '''        Constructor        '''
         self.data = data
-        self.sequentieLengte = sequentieLengte
+        self.minSeqLengte = minSeqLengte
+        self.maxSeqLengte = maxSeqLengte
         self.woordLengte = woordLengte
         self.alfabetGrootte = alfabetGrootte
         self.collisionThreshold = collisionThreshold
         self.r = r
         self.sequenceList = []
-        a = len(data) - self.sequentieLengte
-        for index in range(a):
-            normSeq = Sequence.Sequence(data, index, self.sequentieLengte).getNormalized()
-            self.sequenceList.append(normSeq)
+        for seqLengte in range(minSeqLengte,maxSeqLengte+1,10):
+            a = len(data) - seqLengte
+            for index in range(a):
+                normSeq = Sequence.Sequence(data, index, self.sequentieLengte).getNormalized()
+                self.sequenceList.append(normSeq)
     
     
     def getSaxArray(self):
@@ -92,7 +94,7 @@ class TimeSequence(object):
         
         diction = {}
         for (motif,index) in pairs:
-            eDist = motif.compareEuclDist(index)
+            eDist = motif.compare(index)
             if eDist <= self.r:
                 if motif in diction:
                     diction[motif].append(index)
@@ -143,18 +145,18 @@ class TimeSequence(object):
             newList = []
             motifList = diction[motif]
             besteReeks = motifList[0]
-            besteDist = motif.compareEuclDist(besteReeks) 
+            besteDist = motif.compare(besteReeks) 
             for i in range(1,len(motifList)):
                 keyListItem = motifList[i]
                 if keyListItem.getStart() == motifList[i-1].getStart() + 1:
-                    newDist = motif.compareEuclDist(keyListItem)
+                    newDist = motif.compare(keyListItem)
                     if(newDist < besteDist):
                         besteReeks = keyListItem
                         besteDist = newDist
                 else:
                     newList.append(besteReeks)
                     besteReeks = keyListItem
-                    besteDist = motif.compareEuclDist(keyListItem)    
+                    besteDist = motif.compare(keyListItem)    
             else:
                 newList.append(besteReeks)
             i = len(newList) - 1
