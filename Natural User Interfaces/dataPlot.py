@@ -25,28 +25,11 @@ global eog2
 global eog1_filt
 global eog2_filt
 
-path = (os.getcwd()[:len(os.getcwd()) - 23])
+eog1 = Eog.Eog('Data\\test1_A.csv')
+eog2 = Eog.Eog('Data\\test1_B.csv')
 
-with open(path + 'Data\\test2_A.csv') as csvfile:
-    spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-    for row in spamreader:
-        data1 = [float(i) for i in row]
-        
-with open(path + 'Data\\test2_B.csv') as csvfile:
-    spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-    for row in spamreader:
-        data2 = [float(i) for i in row]
-
-b, a = butter(2, 0.05, 'low')
-for i in range(1):
-    data1 = filtfilt(b, a, data1)
-    data2 = filtfilt(b, a, data2)
-    print(i)
-
-eog1 = Eog.Eog(data1)
-eog2 = Eog.Eog(data2)
-
-
+eog1.filter()
+eog2.filter()
 
 eog1.normalize()
 eog2.normalize()
