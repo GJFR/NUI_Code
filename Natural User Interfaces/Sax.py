@@ -157,12 +157,11 @@ class TimeSequence(object):
                     besteDist = motif.compareEuclDist(keyListItem)    
             else:
                 newList.append(besteReeks)
-            i = 0
-            while i < len(newList):
-                if (newList[i].start == motif.start - 1) or (newList[i].start == motif.start + 1):
+            i = len(newList) - 1
+            while i >= 0:
+                if abs(newList[i].start - motif.start) <= 100 :
                     newList.pop(i)
-                else:
-                    i += 1
+                i -= 1
             diction[motif] = newList
             
     def checkpoint(self, message, previousTime):
