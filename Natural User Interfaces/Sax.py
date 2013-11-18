@@ -98,6 +98,7 @@ class TimeSequence(object):
                 else:
                     diction[j] = [i]
         
+        self.removeCloseMatches(diction)
         order = []
         for i in diction:
             for j in range(len(order)-1,-1,-1):
@@ -109,32 +110,41 @@ class TimeSequence(object):
             if len(order) > 5:
                 order.pop(5)
         
-        self.removeCloseMatches(diction)
         print (str(order[0]) + ", " , diction[order[0]])
         '''returndiction = {}
         for motif in order:
             returndiction[motif] = diction[motif]'''
-        return diction[order[0]]
+        dictionOrder = {}
+        for motif in order:
+            dictionOrder[motif.getOriginal()] = []
+            for sequence in diction[motif]:
+                dictionOrder[motif.getOriginal()].append(sequence.getOriginal())
+        return dictionOrder
         
     def removeCloseMatches(self, diction):
-        for key in diction:
+        for motif in diction:
             newList = []
-            keyList = diction[key]
-            besteReeks = keyList[0]
-            besteDist = key.compareEuclDist(besteReeks) 
-            for i in range(1,len(keyList)):
-                keyListItem = keyList[i]
-                if keyListItem.start == keyList[i-1].start + 1:
-                    newDist = key.compareEuclDist(keyListItem)
+            motifList = diction[motif]
+            besteReeks = motifList[0]
+            besteDist = motif.compareEuclDist(besteReeks) 
+            for i in range(1,len(motifList)):
+                keyListItem = motifList[i]
+                if keyListItem.start == motifList[i-1].start + 1:
+                    newDist = motif.compareEuclDist(keyListItem)
                     if(newDist < besteDist):
                         besteReeks = keyListItem
                         besteDist = newDist
                 else:
                     newList.append(besteReeks)
                     besteReeks = keyListItem
-                    besteDist = key.compareEuclDist(keyListItem)    
+                    besteDist = motif.compareEuclDist(keyListItem)    
             else:
                 newList.append(besteReeks)
-
-            diction[key] = newList
+            i = 0
+            while i < len(newList):
+                if (newList[i].start == motif.start - 1) or (newList[i].start == motif.start + 1):
+                    newList.pop(i)
+                else:
+                    i += 1
+            diction[motif] = newList
             

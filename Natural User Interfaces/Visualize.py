@@ -48,9 +48,9 @@ eog2 = Eog.Eog(data2)
 eog1.normalize()
 eog2.normalize()
 
-ts2 = Sax.TimeSequence(eog2.getMatrix(), 100, 6, 10, 3, .5)
-diction = ts2.calculateGoodMatches(ts2.getCollisionMatrix())
-print (diction)
+ts2 = Sax.TimeSequence(eog2.getMatrix(), 250, 6, 10, 3, 1)
+goodMatches = ts2.calculateGoodMatches(ts2.getCollisionMatrix())
+print (goodMatches)
 
 
 def plot_data():
@@ -73,18 +73,23 @@ def plot_data2(sequenceList):
     ax2 = fig.add_subplot(212)
     line1, = ax1.plot(eog1.getMatrix())
     line2, = ax2.plot(eog2.getMatrix())
-    for annotation in eog1.getAnnotations():
-        ax1.annotate(annotation[0], xy = annotation[1], xycoords = 'data', xytext = annotation[1], textcoords = 'data')
-        print(annotation[0])
-    for annotation in eog2.getAnnotations():
-        ax2.annotate(annotation[0], xy = annotation[1], xycoords = 'data', xytext = annotation[1], textcoords = 'data')
-        print(annotation[0])
     for sequence in sequenceList:
         ax2.plot(range(sequence.start, sequence.start + sequence.length), sequence.getAllPoints(), color = 'r')
     plt.show()
 
+def plot_data3(diction):
+    for motif in diction:
+        fig = plt.figure()
+        '''ax1 = fig.add_subplot(211)'''
+        ax2 = fig.add_subplot(212)
+        '''line1, = ax1.plot(eog1.getMatrix())'''
+        line2, = ax2.plot(eog2.getMatrix())
+        ax2.plot(range(motif.start, motif.start + motif.length), motif.getAllPoints(), color = 'g')
+        for sequence in diction[motif]:
+            ax2.plot(range(sequence.start, sequence.start + sequence.length), sequence.getAllPoints(), color = 'r')
+        plt.show()
 
-plot_data2(diction)
+plot_data3(goodMatches)
 '''
 Threshold.setThresholdDifference('left', -0.6)
 Threshold.setThresholdDifference('right', 0.6)
