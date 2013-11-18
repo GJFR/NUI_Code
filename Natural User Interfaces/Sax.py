@@ -7,6 +7,7 @@ import scipy.stats
 import scipy.sparse
 import itertools
 import Sequence
+import time
 
 class TimeSequence(object):
     '''
@@ -36,7 +37,7 @@ class TimeSequence(object):
         
     def getCollisionMatrix(self):
         saxArray = self.getSaxArray()
-        maskers = [[1,2,3],[2,3,4],[3,4,5],[1,3,5],[0,2,4],[0,1,2]]
+        maskers = [[0,1,2,3,4],[1,2,3,4,5],[2,3,4,5,6],[3,4,5,6,7],[4,5,6,7,8],[5,6,7,8,9],[1,3,5,7,9],[0,2,4,6,8],[0,1,2,3,4],[5,6,7,8,9]]
         cMatrix = scipy.sparse.lil_matrix((len(saxArray),len(saxArray)))
         for mask in maskers:
             buckets = self.fHash(saxArray,mask)
@@ -84,7 +85,11 @@ class TimeSequence(object):
     
     
     def calculateGoodMatches(self, cMatrix):
+        tijd = time.time()
         pairs = self.iterateMatrix(cMatrix)
+        self.checkpoint("iterateMatrix: ", tijd)
+        
+        
         diction = {}
         for (i,j) in pairs:
             eDist = i.compareEuclDist(j)
@@ -98,9 +103,21 @@ class TimeSequence(object):
                 else:
                     diction[j] = [i]
         
+        tijd = time.time()
         self.removeCloseMatches(diction)
+        pairs = self.iterateMatrix(cMatrix)
+        self.checkpoint("removeCloseMatch: ", tijd)
+        
+        
+        
         order = []
         for i in diction:
+            '''for motif in order:
+                if(abs(motif.start - i.start) < 25):
+                    if len(diction[i]) > len(diction[motif]):
+                        order.remove(motif)
+                        order.append(i)
+                    break'''
             for j in range(len(order)-1,-1,-1):
                 if len(diction[i]) < len(diction[order[j]]):
                     order.insert(j+1, i)
@@ -110,7 +127,6 @@ class TimeSequence(object):
             if len(order) > 5:
                 order.pop(5)
         
-        print (str(order[0]) + ", " , diction[order[0]])
         '''returndiction = {}
         for motif in order:
             returndiction[motif] = diction[motif]'''
@@ -148,3 +164,7 @@ class TimeSequence(object):
                     i += 1
             diction[motif] = newList
             
+    def checkpoint(self, message, previousTime):
+        tijd = time.time()
+        print (message + str(tijd - previousTime))
+        return tijd

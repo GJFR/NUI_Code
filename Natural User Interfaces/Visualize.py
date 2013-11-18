@@ -25,33 +25,6 @@ global eog2
 global eog1_filt
 global eog2_filt
 
-path = (os.getcwd()[:len(os.getcwd()) - 23])
-
-with open(path + 'Data\\test2_A.csv') as csvfile:
-    spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-    for row in spamreader:
-        data1 = [float(i) for i in row]
-        
-with open(path + 'Data\\test2_B.csv') as csvfile:
-    spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-    for row in spamreader:
-        data2 = [float(i) for i in row]
-
-
-b, a = butter(2, 0.05, 'low')
-data1 = filtfilt(b, a, data1)
-data2 = filtfilt(b, a, data2)
-
-eog1 = Eog.Eog(data1)
-eog2 = Eog.Eog(data2)
-
-eog1.normalize()
-eog2.normalize()
-
-ts2 = Sax.TimeSequence(eog2.getMatrix(), 250, 6, 10, 3, 1)
-goodMatches = ts2.calculateGoodMatches(ts2.getCollisionMatrix())
-print (goodMatches)
-
 
 def plot_data():
     fig = plt.figure()
@@ -77,7 +50,7 @@ def plot_data2(sequenceList):
         ax2.plot(range(sequence.start, sequence.start + sequence.length), sequence.getAllPoints(), color = 'r')
     plt.show()
 
-def plot_data3(diction):
+def plot_data3(eog1, eog2, diction):
     for motif in diction:
         fig = plt.figure()
         '''ax1 = fig.add_subplot(211)'''
@@ -89,7 +62,6 @@ def plot_data3(diction):
             ax2.plot(range(sequence.start, sequence.start + sequence.length), sequence.getAllPoints(), color = 'r')
         plt.show()
 
-plot_data3(goodMatches)
 '''
 Threshold.setThresholdDifference('left', -0.6)
 Threshold.setThresholdDifference('right', 0.6)

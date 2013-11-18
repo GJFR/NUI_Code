@@ -7,6 +7,8 @@ Created on 8-nov.-2013
 
 import numpy as np
 from scipy.signal import filtfilt, butter
+import os
+import csv
 
 class Eog(object):
     '''
@@ -14,11 +16,11 @@ class Eog(object):
     '''
 
 
-    def __init__(self, matrix):
+    def __init__(self, relativePath):
         '''
         Constructor
         '''
-        self.setMatrix(matrix)
+        self.setMatrix(self.readData(relativePath))
         self.setAnnotations([])
 
     def setMatrix(self,matrix):
@@ -50,3 +52,11 @@ class Eog(object):
         b, a = butter(2, 0.5, 'low')
         eog_filt = filtfilt(b, a, self.__matrix)
         self.setMatrix(eog_filt)
+    
+    def readData(self, relativePath):
+        path = (os.getcwd()[:len(os.getcwd()) - 23])
+
+        with open(path + relativePath) as csvfile:
+            spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+            for row in spamreader:
+                return [float(i) for i in row]
