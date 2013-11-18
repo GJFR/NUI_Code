@@ -22,6 +22,9 @@ class Sequence(object):
         self.start = start
         self.length = length
         
+    def getStart(self):
+        return self.start
+        
     def getPoint(self, i):
         return self.timeSeq[self.start + i]
         
@@ -29,11 +32,7 @@ class Sequence(object):
         return self.timeSeq[self.start: self.start + self.length]
         
     def getNormalized(self):
-        nMatrix = self.getAllPoints()
-        mean = sum(nMatrix)/self.length
-        nMatrix = [(x-mean) for x in nMatrix]
-        nMatrix = [(x/np.absolute(nMatrix).max()) for x in nMatrix]
-        return NormSequence(self.timeSeq, self.start, self.length, nMatrix, self)
+        return NormSequence(self.timeSeq, self.start, self.length, self)
     
     def compareEuclDist(self, other):
         som = 0
@@ -69,35 +68,48 @@ class Sequence(object):
     
 class NormSequence(Sequence):
     
-    def __init__(self,  timeSeq, start, length, normData, originalSeq):
+    def __init__(self,  timeSeq, start, length, originalSeq):
         '''
         Constructor
         '''
         super().__init__(timeSeq, start, length)
-        self.normData = normData
+        self.normData = self.getNormalized()
         self.originalSeq = originalSeq
         
+    def getStart(self):
+        return self.originalSeq.getStart()    
+    
     def getPoint(self, i):
         return self.normData[i]
     
     def getAllPoints(self):
         return self.normData
     
+    def getNormalized(self):
+        nMatrix = self.originalSeq.getAllPoints()
+        mean = sum(nMatrix)/self.length
+        nMatrix = [(x-mean) for x in nMatrix]
+        nMatrix = [(x/np.absolute(nMatrix).max()) for x in nMatrix]
+        return nMatrix
+    
     def getOriginal(self):
         return self.originalSeq
     
 class ScaledSequence(NormSequence):
     
-    def __init__(self, originalSeq, length):
-        self.originalSeq = originalSeq
-        self.length = length
-        self.data = self.scaleToLength()
+    def __init__(self, timeSeq, start, length, originalSeq, newLength):
+        '''
+        Constructor
+        '''
+        super().__init__(timeSeq, start, length, originalSeq)
+        self.newLength = newLength
+        self.scaledData = self.scaleToLength()
         
     def getPoint(self, i):
-        return self.data[i]
+        return self.scaledData[i]
     
     def getAllPoints(self):
-        return self.data
+        return self.scaledData
         
     def scaleToLength(self):
         scaledData = []
