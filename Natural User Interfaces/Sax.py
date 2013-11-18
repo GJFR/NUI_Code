@@ -58,7 +58,7 @@ class TimeSequence(object):
         array = self.mask(saxArray, masker)
         buckets = {}
         for seq in self.sequenceList:
-            i = seq.start
+            i = seq.getStart()
             if (array[i] in buckets):
                 buckets[array[i]].append(seq)
             else:
@@ -70,10 +70,10 @@ class TimeSequence(object):
     def checkBuckets(self, buckets, cMatrix):
         for key in buckets:
             bucket = buckets[key]
-            bucket.sort(key= lambda x : x.start)
+            bucket.sort(key= lambda x : x.getStart())
             for i in range(len(bucket)):
                 for j in range(i+1,len(bucket)):
-                    cMatrix[bucket[i].start,bucket[j].start] += 1
+                    cMatrix[bucket[i].getStart(),bucket[j].getStart()] += 1
                     
     def iterateMatrix(self, cMatrix):
         cooMatrix = cMatrix.tocoo()
@@ -113,7 +113,7 @@ class TimeSequence(object):
         order = []
         for motif in diction:
             for index in range(len(order)-1,-1,-1):
-                if abs(motif.start - order[index].start) <= 100 :
+                if abs(motif.getStart() - order[index].getStart()) <= 100 :
                     if len(diction[motif]) > len(diction[order[index]]):
                         order.pop(index)
                     else:
@@ -146,7 +146,7 @@ class TimeSequence(object):
             besteDist = motif.compareEuclDist(besteReeks) 
             for i in range(1,len(motifList)):
                 keyListItem = motifList[i]
-                if keyListItem.start == motifList[i-1].start + 1:
+                if keyListItem.getStart() == motifList[i-1].getStart() + 1:
                     newDist = motif.compareEuclDist(keyListItem)
                     if(newDist < besteDist):
                         besteReeks = keyListItem
@@ -159,7 +159,7 @@ class TimeSequence(object):
                 newList.append(besteReeks)
             i = len(newList) - 1
             while i >= 0:
-                if abs(newList[i].start - motif.start) <= 100 :
+                if abs(newList[i].getStart() - motif.getStart()) <= 100 :
                     newList.pop(i)
                 i -= 1
             diction[motif] = newList
