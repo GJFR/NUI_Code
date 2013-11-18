@@ -26,13 +26,13 @@ class Sequence(object):
         return self.start
         
     def getPoint(self, i):
-        return self.timeSeq[self.start + i]
+        return self.timeSeq[self.getStart() + i]
         
     def getAllPoints(self):
-        return self.timeSeq[self.start: self.start + self.length]
+        return self.timeSeq[self.getStart(): self.getStart() + self.length]
         
     def getNormalized(self):
-        return NormSequence(self.timeSeq, self.start, self.length, self)
+        return NormSequence(self.timeSeq, self.getStart(), self.length, self)
     
     def compareEuclDist(self, other):
         som = 0
@@ -61,10 +61,10 @@ class Sequence(object):
         return ""
     
     def __str__(self):
-        return str(self.start)
+        return str(self.getStart())
     
     def __repr__(self):
-        return str(self.start)
+        return str(self.getStart())
     
 class NormSequence(Sequence):
     
@@ -73,8 +73,8 @@ class NormSequence(Sequence):
         Constructor
         '''
         super().__init__(timeSeq, start, length)
-        self.normData = self.getNormalized()
         self.originalSeq = originalSeq
+        self.normData = self.getNormalized()
         
     def getStart(self):
         return self.originalSeq.getStart()    
