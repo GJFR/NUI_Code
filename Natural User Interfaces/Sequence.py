@@ -39,7 +39,16 @@ class Sequence(object):
         for i in range(self.length):
             som += (self.getPoint(i) - other.getPoint(i))**2
         return math.sqrt(som)
-        
+    
+    def compare(self, other):
+        if (self.length == other.length):
+            return self.compareEuclDist(other)
+        elif (self.length < other.length):
+            scaledSeq = ScaledSequence(self.timeSeq, self.start, self.length, self.originalSeq, other.length)
+            return scaledSeq.compareEuclDist(other)
+        else:
+            return other.compare(self)
+            
     def isNonTrivial(self, other):
         pass
     
@@ -61,10 +70,10 @@ class Sequence(object):
         return ""
     
     def __str__(self):
-        return str(self.getStart())
+        return str(self.getStart()) + ", (" + str(self.length) + ")"
     
     def __repr__(self):
-        return str(self.getStart())
+        return str(self.getStart()) + ", (" + str(self.length) + ")"
     
 class NormSequence(Sequence):
     
