@@ -27,7 +27,7 @@ class TimeSequence(object):
         for seqLengte in range(minSeqLengte,maxSeqLengte+1,10):
             a = len(data) - seqLengte
             for index in range(a):
-                normSeq = Sequence.Sequence(data, index, self.sequentieLengte).getNormalized()
+                normSeq = Sequence.Sequence(data, index, seqLengte).getNormalized()
                 self.sequenceList.append(normSeq)
     
     

@@ -15,8 +15,8 @@ def checkpoint(message, previousTime):
     
 tijd = time.time()
     
-eog1 = Eog.Eog('Data\\test1_A.csv')
-eog2 = Eog.Eog('Data\\test1_B.csv')
+eog1 = Eog.Eog('Data\\test2_A.csv')
+eog2 = Eog.Eog('Data\\test2_B.csv')
 
 eog1.filter()
 eog2.filter()
@@ -26,7 +26,7 @@ eog2.normalize()
 
 tijd = checkpoint("Init: ", tijd)
 
-ts2 = Sax.TimeSequence(eog2.getMatrix(), 250, 10, 10, 7, 1)
+ts2 = Sax.TimeSequence(eog2.getMatrix(), 200, 250, 10, 10, 7, 1)
 
 tijd = checkpoint("Create TimeSeq: ", tijd)
 
