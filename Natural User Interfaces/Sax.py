@@ -8,6 +8,7 @@ import scipy.sparse
 import itertools
 import Sequence
 import time
+import random
 
 class TimeSequence(object):
     '''
@@ -30,7 +31,6 @@ class TimeSequence(object):
                 normSeq = Sequence.Sequence(data, index, seqLengte).getNormalized()
                 self.sequenceList.append(normSeq)
     
-    
     def getSaxArray(self):
         saxArray = []
         for seq in self.sequenceList:
@@ -39,12 +39,33 @@ class TimeSequence(object):
         
     def getCollisionMatrix(self):
         saxArray = self.getSaxArray()
-        maskers = [[0,1,2,3,4],[1,2,3,4,5],[2,3,4,5,6],[3,4,5,6,7],[4,5,6,7,8],[5,6,7,8,9],[1,3,5,7,9],[0,2,4,6,8],[0,1,2,3,4],[5,6,7,8,9]]
+        '''maskers = [[0,1,2,3,4],[1,2,3,4,5],[2,3,4,5,6],[3,4,5,6,7],[4,5,6,7,8],[5,6,7,8,9],[1,3,5,7,9],[0,2,4,6,8],[0,1,2,3,4],[5,6,7,8,9]]'''
+        maskers = self.makeMasks(self.woordLengte)
+        print(maskers)
         cMatrix = scipy.sparse.lil_matrix((len(saxArray),len(saxArray)))
         for mask in maskers:
             buckets = self.fHash(saxArray,mask)
             self.checkBuckets(buckets, cMatrix)
         return cMatrix
+    
+    def makeMasks(self, aantal):
+        masks = []
+        while len(masks) < aantal:
+            mask = []
+            for j in range(0,self.woordLengte):
+                if (random.random() > 0.5):
+                    mask.append(j)
+            for m in masks:
+                if len(m) != len(mask):
+                    continue
+                for element in m:
+                    if not(element in mask):
+                        break
+                else:
+                    break
+            else:
+                masks.append(mask)
+        return masks
     
     def mask(self, saxArray, masker):
         maskArray = []
@@ -59,15 +80,12 @@ class TimeSequence(object):
     def fHash(self, saxArray, masker):
         array = self.mask(saxArray, masker)
         buckets = {}
-        for seq in self.sequenceList:
-            i = seq.getStart()
+        for i in range(len(self.sequenceList)):
             if (array[i] in buckets):
-                buckets[array[i]].append(seq)
+                buckets[array[i]].append(self.sequenceList[i])
             else:
-                buckets[array[i]] = [seq]
+                buckets[array[i]] = [self.sequenceList[i]]
         return buckets
-        
-    
         
     def checkBuckets(self, buckets, cMatrix):
         for key in buckets:
@@ -84,13 +102,11 @@ class TimeSequence(object):
             if v >= self.collisionThreshold:
                 thresholdList.append((self.sequenceList[i],self.sequenceList[j]))
         return thresholdList
-    
-    
+   
     def calculateGoodMatches(self, cMatrix):
         tijd = time.time()
         pairs = self.iterateMatrix(cMatrix)
-        self.checkpoint("iterateMatrix: ", tijd)
-        
+        tijd = self.checkpoint("iterateMatrix: ", tijd)
         
         diction = {}
         for (motif,index) in pairs:
@@ -105,7 +121,7 @@ class TimeSequence(object):
                 else:
                     diction[index] = [motif]
         
-        tijd = time.time()
+        tijd = self.checkpoint("makeDictionary: ", tijd)
         self.removeCloseMatches(diction)
         pairs = self.iterateMatrix(cMatrix)
         self.checkpoint("removeCloseMatch: ", tijd)
