@@ -77,24 +77,47 @@ class TimeSequence(object):
             maskArray.append(maskWord)
         return maskArray
     
+#     def fHash(self, saxArray, masker):
+#         array = self.mask(saxArray, masker)
+#         buckets = {}
+#         for i in range(len(self.sequenceList)):
+#             if (array[i] in buckets):
+#                 buckets[array[i]].append(self.sequenceList[i])
+#             else:
+#                 buckets[array[i]] = [self.sequenceList[i]]
+#         return buckets
+        
+#     def checkBuckets(self, buckets, cMatrix):
+#         for key in buckets:
+#             bucket = buckets[key]
+# #             bucket.sort(key= lambda x : x.getStart())
+#             for i in range(len(bucket)):
+#                 for j in range(i+1,len(bucket)):
+#                     cMatrix[bucket[i].getStart(),bucket[j].getStart()] += 1
+
+    """ gesStart werd op geroepen om te weten te komen welke rij en kolom men moest verhogen bij checkBuckets
+    bij uniforme schaling werkt dit natuurlijk niet meer.
+    
+    ipv sequences in buckets te steken doen we nu de positie in de sequenceList,
+    anders moesten we de hele sequenceList overlopen om te weten te komen welk nummer bij welke sequentie hoort.
+    cMatrix heeft immers een nummer nodig, want daar zijn de indexen integers"""
     def fHash(self, saxArray, masker):
         array = self.mask(saxArray, masker)
         buckets = {}
         for i in range(len(self.sequenceList)):
             if (array[i] in buckets):
-                buckets[array[i]].append(self.sequenceList[i])
+                buckets[array[i]].append(i)
             else:
-                buckets[array[i]] = [self.sequenceList[i]]
+                buckets[array[i]] = [i]
         return buckets
-        
+    
     def checkBuckets(self, buckets, cMatrix):
         for key in buckets:
             bucket = buckets[key]
-            bucket.sort(key= lambda x : x.getStart())
             for i in range(len(bucket)):
                 for j in range(i+1,len(bucket)):
-                    cMatrix[bucket[i].getStart(),bucket[j].getStart()] += 1
-                    
+                    cMatrix[bucket[i],bucket[j]] += 1
+               
     def iterateMatrix(self, cMatrix):
         cooMatrix = cMatrix.tocoo()
         thresholdList = []
@@ -125,7 +148,6 @@ class TimeSequence(object):
         self.removeCloseMatches(diction)
         pairs = self.iterateMatrix(cMatrix)
         self.checkpoint("removeCloseMatch: ", tijd)
-        
         
         
         order = []

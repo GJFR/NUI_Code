@@ -104,13 +104,16 @@ class NormSequence(Sequence):
     def getOriginal(self):
         return self.originalSeq
     
-class ScaledSequence(NormSequence):
+    """subklasse van Sequence want super.__init__ zou dit anders voor een 2de keer willen normalizeren
+    misschien later een tussen (of abstract) klasse maken van Sequences die een originele sequence hebben?"""
+class ScaledSequence(Sequence):
     
     def __init__(self, timeSeq, originalSeq, newLength):
         '''
         Constructor
         '''
-        super().__init__(timeSeq, originalSeq)
+        super().__init__(timeSeq, originalSeq.getStart(), originalSeq.getLength())
+        self.originalSeq = originalSeq
         self.newLength = newLength
         self.scaledData = self.scaleToLength()
         
@@ -122,9 +125,11 @@ class ScaledSequence(NormSequence):
     
     def getAllPoints(self):
         return self.scaledData
-        
+    def getOriginal(self):
+        return self.originalSeq
+    
     def scaleToLength(self):
         scaledData = []
         for i in range(0, self.getLength()):
-            scaledData.append(self.getPoint(math.ceil(i * (self.getLength() / self.getLength()))))
+            scaledData.append(self.getOriginal().getPoint(math.ceil(i * (self.getOriginal().getLength() / self.getLength()))))
         return scaledData
