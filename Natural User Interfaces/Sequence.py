@@ -24,27 +24,30 @@ class Sequence(object):
         
     def getStart(self):
         return self.start
+    
+    def getLength(self):
+        return self.length
         
     def getPoint(self, i):
         return self.timeSeq[self.getStart() + i]
         
     def getAllPoints(self):
-        return self.timeSeq[self.getStart(): self.getStart() + self.length]
+        return self.timeSeq[self.getStart(): self.getStart() + self.getLength()]
         
     def getNormalized(self):
-        return NormSequence(self.timeSeq, self.getStart(), self.length, self)
+        return NormSequence(self.timeSeq, self)
     
     def compareEuclDist(self, other):
         som = 0
-        for i in range(self.length):
+        for i in range(self.getLength()):
             som += (self.getPoint(i) - other.getPoint(i))**2
         return math.sqrt(som)
     
     def compare(self, other):
-        if (self.length == other.length):
+        if (self.getLength() == other.getLength()):
             return self.compareEuclDist(other)
-        elif (self.length < other.length):
-            scaledSeq = ScaledSequence(self.timeSeq, self.start, self.length, self.originalSeq, other.length)
+        elif (self.getLength() < other.getLength()):
+            scaledSeq = ScaledSequence(self.timeSeq, self.originalSeq, other.getLength())
             return scaledSeq.compareEuclDist(other)
         else:
             return other.compare(self)
@@ -56,9 +59,9 @@ class Sequence(object):
         word = ""
         for i in range(woordLengte):
             total = 0
-            for j in range(int((self.length/woordLengte) * (i - 1) + 1),int((self.length/woordLengte) * i) + 1):
+            for j in range(int((self.getLength()/woordLengte) * (i - 1) + 1),int((self.getLength()/woordLengte) * i) + 1):
                 total += self.getPoint(j)
-            value = (woordLengte/self.length) * total
+            value = (woordLengte/self.getLength()) * total
             word += self.getLetter(value, alfabetGrootte)
         return word
     
@@ -70,23 +73,20 @@ class Sequence(object):
         return ""
     
     def __str__(self):
-        return str(self.getStart()) + ", (" + str(self.length) + ")"
+        return str(self.getStart()) + " (" + str(self.getLength()) + ")"
     
     def __repr__(self):
-        return str(self.getStart()) + ", (" + str(self.length) + ")"
+        return str(self.getStart()) + " (" + str(self.getLength()) + ")"
     
 class NormSequence(Sequence):
     
-    def __init__(self,  timeSeq, start, length, originalSeq):
+    def __init__(self,  timeSeq, originalSeq):
         '''
         Constructor
         '''
-        super().__init__(timeSeq, start, length)
+        super().__init__(timeSeq, originalSeq.getStart(), originalSeq.getLength())
         self.originalSeq = originalSeq
-        self.normData = self.getNormalized()
-        
-    def getStart(self):
-        return self.originalSeq.getStart()    
+        self.normData = self.getNormalized() 
     
     def getPoint(self, i):
         return self.normData[i]
@@ -96,7 +96,7 @@ class NormSequence(Sequence):
     
     def getNormalized(self):
         nMatrix = self.originalSeq.getAllPoints()
-        mean = sum(nMatrix)/self.length
+        mean = sum(nMatrix)/self.getLength()
         nMatrix = [(x-mean) for x in nMatrix]
         nMatrix = [(x/np.absolute(nMatrix).max()) for x in nMatrix]
         return nMatrix
@@ -106,13 +106,16 @@ class NormSequence(Sequence):
     
 class ScaledSequence(NormSequence):
     
-    def __init__(self, timeSeq, start, length, originalSeq, newLength):
+    def __init__(self, timeSeq, originalSeq, newLength):
         '''
         Constructor
         '''
-        super().__init__(timeSeq, start, length, originalSeq)
+        super().__init__(timeSeq, originalSeq)
         self.newLength = newLength
         self.scaledData = self.scaleToLength()
+        
+    def getLength(self):
+        return self.newLength
         
     def getPoint(self, i):
         return self.scaledData[i]
@@ -122,6 +125,6 @@ class ScaledSequence(NormSequence):
         
     def scaleToLength(self):
         scaledData = []
-        for i in range(0, self.length):
-            scaledData.append(self.getPoint(math.ceil(i * (self.originalSeq.length / self.length))))
+        for i in range(0, self.getLength()):
+            scaledData.append(self.getPoint(math.ceil(i * (self.getLength() / self.getLength()))))
         return scaledData

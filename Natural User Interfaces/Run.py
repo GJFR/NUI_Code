@@ -26,15 +26,17 @@ eog2.normalize()
 
 tijd = checkpoint("Init: ", tijd)
 
-ts2 = Sax.TimeSequence(eog2.getMatrix(), 200, 200, 10, 10, 7, 1)
+ts = Sax.TimeSequence(eog2.getMatrix(), 200, 220, 10, 10, 7, 1)
+
+print(ts.makeMasks(10))
 
 tijd = checkpoint("Create TimeSeq: ", tijd)
 
-colMatrix = ts2.getCollisionMatrix()
+colMatrix = ts.getCollisionMatrix()
 
 tijd = checkpoint("Create colMatrix: ", tijd)
 
-goodMatches = ts2.calculateGoodMatches(colMatrix)
+goodMatches = ts.calculateGoodMatches(colMatrix)
 
 tijd = checkpoint("calculateGoodMatches: ", tijd)
 
