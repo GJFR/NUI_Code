@@ -48,13 +48,34 @@ class TimeSequence(object):
             self.checkBuckets(buckets, cMatrix)
         return cMatrix
     
+#     def makeMasks(self, aantal):
+#         masks = []
+#         while len(masks) < aantal:
+#             mask = []
+#             for j in range(0,self.woordLengte):
+#                 if (random.random() > 0.5):
+#                     mask.append(j)
+#             for m in masks:
+#                 if len(m) != len(mask):
+#                     continue
+#                 for element in m:
+#                     if not(element in mask):
+#                         break
+#                 else:
+#                     break
+#             else:
+#                 masks.append(mask)
+#         return masks
+
     def makeMasks(self, aantal):
         masks = []
         while len(masks) < aantal:
+            maskLengte = random.randrange(1,self.woordLengte/2)
             mask = []
-            for j in range(0,self.woordLengte):
-                if (random.random() > 0.5):
-                    mask.append(j)
+            while len(mask) < maskLengte:
+                punt = random.randrange(self.woordLengte)
+                if not(punt in mask):
+                    mask.append(punt)
             for m in masks:
                 if len(m) != len(mask):
                     continue
@@ -66,7 +87,7 @@ class TimeSequence(object):
             else:
                 masks.append(mask)
         return masks
-    
+
     def mask(self, saxArray, masker):
         maskArray = []
         for word in saxArray:
@@ -76,24 +97,6 @@ class TimeSequence(object):
                     maskWord += word[i]
             maskArray.append(maskWord)
         return maskArray
-    
-#     def fHash(self, saxArray, masker):
-#         array = self.mask(saxArray, masker)
-#         buckets = {}
-#         for i in range(len(self.sequenceList)):
-#             if (array[i] in buckets):
-#                 buckets[array[i]].append(self.sequenceList[i])
-#             else:
-#                 buckets[array[i]] = [self.sequenceList[i]]
-#         return buckets
-        
-#     def checkBuckets(self, buckets, cMatrix):
-#         for key in buckets:
-#             bucket = buckets[key]
-# #             bucket.sort(key= lambda x : x.getStart())
-#             for i in range(len(bucket)):
-#                 for j in range(i+1,len(bucket)):
-#                     cMatrix[bucket[i].getStart(),bucket[j].getStart()] += 1
 
     """ gesStart werd op geroepen om te weten te komen welke rij en kolom men moest verhogen bij checkBuckets
     bij uniforme schaling werkt dit natuurlijk niet meer.
@@ -178,32 +181,62 @@ class TimeSequence(object):
                 dictionOrder[motif.getOriginal()].append(sequence.getOriginal())
         return dictionOrder
         
+#     def removeCloseMatches(self, diction):
+#         for motif in diction:
+#             newList = []
+#             motifList = diction[motif]
+#             motifList.sort(key = lambda x: x.getStart())
+#             besteReeks = motifList[0]
+#             besteDist = motif.compare(besteReeks) 
+#             for i in range(1,len(motifList)):
+#                 keyListItem = motifList[i]
+#                 if keyListItem.getStart() == motifList[i-1].getStart() + 1 or keyListItem.getStart() == motifList[i-1].getStart() :
+#                     newDist = motif.compare(keyListItem)
+#                     if(newDist < besteDist):
+#                         besteReeks = keyListItem
+#                         besteDist = newDist
+#                 else:
+#                     newList.append(besteReeks)
+#                     besteReeks = keyListItem
+#                     besteDist = motif.compare(keyListItem)    
+#             else:
+#                 newList.append(besteReeks)
+#             i = len(newList) - 1
+#             while i >= 0:
+#                 if abs(newList[i].getStart() - motif.getStart()) <= 100 :
+#                     newList.pop(i)
+#                 i -= 1
+#             diction[motif] = newList
+
     def removeCloseMatches(self, diction):
         for motif in diction:
-            newList = []
-            motifList = diction[motif]
-            besteReeks = motifList[0]
-            besteDist = motif.compare(besteReeks) 
-            for i in range(1,len(motifList)):
-                keyListItem = motifList[i]
-                if keyListItem.getStart() == motifList[i-1].getStart() + 1:
-                    newDist = motif.compare(keyListItem)
-                    if(newDist < besteDist):
-                        besteReeks = keyListItem
-                        besteDist = newDist
-                else:
-                    newList.append(besteReeks)
-                    besteReeks = keyListItem
-                    besteDist = motif.compare(keyListItem)    
-            else:
-                newList.append(besteReeks)
-            i = len(newList) - 1
-            while i >= 0:
-                if abs(newList[i].getStart() - motif.getStart()) <= 100 :
-                    newList.pop(i)
-                i -= 1
-            diction[motif] = newList
+            volledigeLijst = [x for x in diction[motif]]
+            volledigeLijst.append(motif)
+            removeList = []
+            for seq1 in volledigeLijst:
+                for seq2 in volledigeLijst:
+                    if seq1 == seq2:
+                        continue
+                    eerste =  min(seq1, seq2, key = lambda x: x.getStart())
+                    if abs(seq1.getStart() - seq2.getStart()) < eerste.getLength():
+                        if motif.compare(seq1) < motif.compare(seq2):
+                            removeList.append(seq2)
+                        else:
+                            removeList.append(seq1)
+                            
+            volledigeLijst = [x for x in volledigeLijst if x not in removeList]
             
+            removeList.sort(key = lambda x: motif.compare(x))
+            for rem in removeList:
+                for seq in volledigeLijst:
+                    eerste =  min(rem, seq, key = lambda x: x.getStart())
+                    if abs(rem.getStart() - seq.getStart()) < eerste.getLength():
+                        break
+                else:
+                    volledigeLijst.append(rem)
+            volledigeLijst.remove(motif)
+            diction[motif] = volledigeLijst
+                   
     def checkpoint(self, message, previousTime):
         tijd = time.time()
         print (message + str(tijd - previousTime))
