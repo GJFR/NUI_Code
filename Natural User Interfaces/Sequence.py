@@ -72,6 +72,9 @@ class Sequence(object):
                 return self.lst[i]
         return ""
     
+    def getDistance(self, other):
+        return abs(self.getStart() - other.getStart())
+    
     def __str__(self):
         return str(self.getStart()) + " (" + str(self.getLength()) + ")"
     
