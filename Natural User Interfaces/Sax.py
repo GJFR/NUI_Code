@@ -14,7 +14,7 @@ class TimeSequence(object):
     '''
     classdocs
     '''
-    MIN_AFSTAND = 100
+    MIN_AFSTAND = 75
     def __init__(self, data, minSeqLengte, maxSeqLengte, woordLengte, alfabetGrootte, collisionThreshold, r):
         '''        Constructor        '''
         self.data = data
@@ -134,6 +134,16 @@ class TimeSequence(object):
         self.removeTrivialMotifs(diction)
         self.checkpoint("removeCloseMatch: ", tijd)
         
+        #################################################
+        reDiction = {}
+        for motif in diction:
+            reDiction[motif.getOriginal()] = []
+            for sequence in diction[motif]:
+                reDiction[motif.getOriginal()].append(sequence.getOriginal())
+        
+        return reDiction
+        ##############################################################
+        
         order = []
         for motif in diction:
             for index in range(len(order)-1,-1,-1):
@@ -249,10 +259,11 @@ class TimeSequence(object):
             else:
                 motifList.append(rem)
         
+        
         # verwijder dezelfde motifs (in elkaars groep)
         removeList = []
         motInSeq = {}
-        for mot in diction:
+        for mot in motifList:
             motInSeq[mot] = [x for x in diction[mot]]
             motInSeq[mot].append(mot)
                  
@@ -267,10 +278,13 @@ class TimeSequence(object):
                     removeList.append(mot1)
         
         for mot in removeList:
-            if mot in diction:
-                del diction[mot]
-            
+            if mot in motifList:
+                motifList.remove(mot)
         
+        '''filter hier motifList uit diction'''
+        removeList = [x for x in diction if x not in motifList]
+        for mot in removeList:
+            del diction[mot]
         
     def isSequenceSubsetOf(self, mot1, mot2, motInSeq):
         
