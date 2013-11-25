@@ -26,7 +26,7 @@ eog2.normalize()
 
 tijd = checkpoint("Init: ", tijd)
 
-ts = Sax.TimeSequence(eog2.getMatrix(), 200, 230, 10, 10, 7, 1)
+ts = Sax.TimeSequence(eog2.getMatrix(), 200, 230, 10, 10, 7, 1.5)
 
 tijd = checkpoint("Create TimeSeq: ", tijd)
 

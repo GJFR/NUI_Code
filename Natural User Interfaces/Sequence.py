@@ -33,16 +33,19 @@ class Sequence(object):
         
     def getAllPoints(self):
         return self.timeSeq[self.getStart(): self.getStart() + self.getLength()]
-        
+      
+    '''Returns a new object of class NormSequence made with timeSeq and self'''  
     def getNormalized(self):
         return NormSequence(self.timeSeq, self)
     
+    '''Calculates the Euclidean distance between 2 Sequences of the same length'''
     def compareEuclDist(self, other):
         som = 0
         for i in range(self.getLength()):
             som += (self.getPoint(i) - other.getPoint(i))**2
         return math.sqrt(som)
     
+    '''Compares 2 sequences and return their Euclidean distance after being scaled to equal lengths'''
     def compare(self, other):
         if (self.getLength() == other.getLength()):
             return self.compareEuclDist(other)
@@ -55,6 +58,7 @@ class Sequence(object):
     def isNonTrivial(self, other):
         pass
     
+    '''Returns the SAX-word of this sequence based on the woordLengte and alfabetGrootte'''
     def getWord(self, woordLengte, alfabetGrootte):
         word = ""
         for i in range(woordLengte):
@@ -65,6 +69,7 @@ class Sequence(object):
             word += self.getLetter(value, alfabetGrootte)
         return word
     
+    '''Returns the letter appropriate for the value based on alfabetGrootte'''
     def getLetter(self, value, alfabetGrootte):
         letterWaarde = self.x.cdf(value) * alfabetGrootte
         for i in range(1,alfabetGrootte + 1):
@@ -72,12 +77,15 @@ class Sequence(object):
                 return self.lst[i]
         return ""
     
+    '''Returns the distance between the starting position of this and other sequence'''
     def getDistance(self, other):
         return abs(self.getStart() - other.getStart())
     
+    '''override'''
     def __str__(self):
         return str(self.getStart()) + " (" + str(self.getLength()) + ")"
     
+    '''override'''
     def __repr__(self):
         return str(self.getStart()) + " (" + str(self.getLength()) + ")"
     
@@ -89,15 +97,18 @@ class NormSequence(Sequence):
         '''
         super().__init__(timeSeq, originalSeq.getStart(), originalSeq.getLength())
         self.originalSeq = originalSeq
-        self.normData = self.getNormalized() 
+        self.normData = self.getNormalizedData() 
     
+    '''override'''
     def getPoint(self, i):
         return self.normData[i]
     
+    '''override'''
     def getAllPoints(self):
         return self.normData
     
-    def getNormalized(self):
+    '''Returns and normalizes'''
+    def getNormalizedData(self):
         nMatrix = self.originalSeq.getAllPoints()
         mean = sum(nMatrix)/self.getLength()
         nMatrix = [(x-mean) for x in nMatrix]
@@ -107,8 +118,7 @@ class NormSequence(Sequence):
     def getOriginal(self):
         return self.originalSeq
     
-    """subklasse van Sequence want super.__init__ zou dit anders voor een 2de keer willen normalizeren
-    misschien later een tussen (of abstract) klasse maken van Sequences die een originele sequence hebben?"""
+    
 class ScaledSequence(Sequence):
     
     def __init__(self, timeSeq, originalSeq, newLength):
@@ -128,9 +138,11 @@ class ScaledSequence(Sequence):
     
     def getAllPoints(self):
         return self.scaledData
+    
     def getOriginal(self):
         return self.originalSeq
     
+    '''Scales the data of this sequence to the length, newLength, and returns the scaledData'''
     def scaleToLength(self):
         scaledData = []
         for i in range(0, self.getLength()):
