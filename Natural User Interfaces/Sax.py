@@ -130,8 +130,19 @@ class TimeSequence(object):
 #             volledigeLijst = self.removeTrivials(volledigeLijst, self.matchHelper, self.matchSorter, motif)
 #             volledigeLijst.remove(motif)
 #             diction[motif] = volledigeLijst
-        self.removeCloseMatches(diction)
-        self.removeTrivialMotifs(diction)
+        
+        diction2 = sorted(diction.keys(), key = lambda x: len(diction[x]), reverse = True)
+        it = iter(diction2)
+        topX = {}
+        while (len(topX) < 5):
+            motif = next(it)
+            topX[motif] = diction[motif]
+            temp = {motif: topX[motif]}
+            self.removeCloseMatches(temp)
+            topX[motif] = temp[motif]
+            self.removeTrivialMotifs(topX)
+        diction = topX
+            
         self.checkpoint("removeCloseMatch: ", tijd)
         
         #################################################
