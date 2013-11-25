@@ -135,7 +135,10 @@ class TimeSequence(object):
         it = iter(diction2)
         topX = {}
         while (len(topX) < 5):
-            motif = next(it)
+            try:
+                motif = next(it)
+            except:
+                break
             topX[motif] = diction[motif]
             temp = {motif: topX[motif]}
             self.removeCloseMatches(temp)
