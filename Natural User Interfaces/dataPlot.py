@@ -25,8 +25,8 @@ global eog2
 global eog1_filt
 global eog2_filt
 
-eog1 = Eog.Eog('Data\\test1_A.csv')
-eog2 = Eog.Eog('Data\\test1_B.csv')
+eog1 = Eog.Eog('Data\\test7_A.csv')
+eog2 = Eog.Eog('Data\\test7_B.csv')
 
 eog1.filter()
 eog2.filter()

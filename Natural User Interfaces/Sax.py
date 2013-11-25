@@ -31,16 +31,18 @@ class TimeSequence(object):
                 normSeq = Sequence.Sequence(data, index, seqLengte).getNormalized()
                 self.sequenceList.append(normSeq)
     
+    '''Returns the SAX-array of this timesequence.'''
     def getSaxArray(self):
         saxArray = []
         for seq in self.sequenceList:
             saxArray.append(seq.getWord(self.woordLengte, self.alfabetGrootte))
         return saxArray
-        
+    
+    '''Returns the collssion matrix of this timesequence, using makeMaks() to generate the needed masks.'''
     def getCollisionMatrix(self):
         saxArray = self.getSaxArray()
         '''maskers = [[0,1,2,3,4],[1,2,3,4,5],[2,3,4,5,6],[3,4,5,6,7],[4,5,6,7,8],[5,6,7,8,9],[1,3,5,7,9],[0,2,4,6,8],[0,1,2,3,4],[5,6,7,8,9]]'''
-        maskers = self.makeMasks(self.woordLengte)
+        maskers = self.getMasks(self.woordLengte)
         print(maskers)
         cMatrix = scipy.sparse.lil_matrix((len(saxArray),len(saxArray)))
         for mask in maskers:
@@ -48,7 +50,8 @@ class TimeSequence(object):
             self.checkBuckets(buckets, cMatrix)
         return cMatrix
 
-    def makeMasks(self, aantal):
+    '''Returns a random generated list of masks (who satisfy our conditions)'''
+    def getMasks(self, aantal):
         masks = []
         while len(masks) < aantal:
             maskLengte = random.randrange(1,self.woordLengte/2)
@@ -68,17 +71,19 @@ class TimeSequence(object):
             else:
                 masks.append(mask)
         return masks
-
-    def mask(self, saxArray, masker):
-        maskArray = []
+    
+    '''Returns a masked version of the given SAX-array by the given masks'''
+    def mask(self, saxArray, mask):
+        maskedSaxArray = []
         for word in saxArray:
             maskWord = ""
             for i in range(self.woordLengte):
-                if not(i in masker):
+                if not(i in mask):
                     maskWord += word[i]
-            maskArray.append(maskWord)
-        return maskArray
+            maskedSaxArray.append(maskWord)
+        return maskedSaxArray
 
+    '''Returns a list of buckets to which the given SAX-array entries hash, using the given masks.'''
     def fHash(self, saxArray, masker):
         array = self.mask(saxArray, masker)
         buckets = {}
@@ -89,25 +94,28 @@ class TimeSequence(object):
                 buckets[array[i]] = [i]
         return buckets
     
+    '''Iterates through the given buckets and increments each cell of the given collision matrix when there is a hashing collision'''
     def checkBuckets(self, buckets, cMatrix):
         for key in buckets:
             bucket = buckets[key]
             for i in range(len(bucket)):
                 for j in range(i+1,len(bucket)):
                     cMatrix[bucket[i],bucket[j]] += 1
-               
-    def iterateMatrix(self, cMatrix):
+    
+    '''Returns a list of all pairs of sequences who's number of collisions is higher than the collision threshold.'''
+    def getLikelyPairs(self, cMatrix):
         cooMatrix = cMatrix.tocoo()
         thresholdList = []
         for i,j,v in itertools.zip_longest(cooMatrix.row, cooMatrix.col, cooMatrix.data):
             if v >= self.collisionThreshold:
                 thresholdList.append((self.sequenceList[i],self.sequenceList[j]))
         return thresholdList
-   
+    
+    ''''''
     def calculateGoodMatches(self, cMatrix):
         tijd = time.time()
-        pairs = self.iterateMatrix(cMatrix)
-        tijd = self.checkpoint("iterateMatrix: ", tijd)
+        pairs = self.getLikelyPairs(cMatrix)
+        tijd = self.checkpoint("getLikelyPairs: ", tijd)
         
         diction = {}
         for (motif,index) in pairs:
@@ -123,13 +131,6 @@ class TimeSequence(object):
                     diction[index] = [motif]
         
         tijd = self.checkpoint("makeDictionary: ", tijd)
-#         self.removeCloseMatches(diction)
-#         for motif in diction:
-#             volledigeLijst = [x for x in diction[motif]]
-#             volledigeLijst.append(motif)
-#             volledigeLijst = self.removeTrivials(volledigeLijst, self.matchHelper, self.matchSorter, motif)
-#             volledigeLijst.remove(motif)
-#             diction[motif] = volledigeLijst
         
         diction2 = sorted(diction.keys(), key = lambda x: len(diction[x]), reverse = True)
         it = iter(diction2)
@@ -148,7 +149,6 @@ class TimeSequence(object):
             
         self.checkpoint("removeCloseMatch: ", tijd)
         
-        #################################################
         reDiction = {}
         for motif in diction:
             reDiction[motif.getOriginal()] = []
@@ -156,59 +156,6 @@ class TimeSequence(object):
                 reDiction[motif.getOriginal()].append(sequence.getOriginal())
         
         return reDiction
-        ##############################################################
-        
-        order = []
-        for motif in diction:
-            for index in range(len(order)-1,-1,-1):
-                if motif.getDistance(order[index]) <= self.MIN_AFSTAND :
-                    if len(diction[motif]) > len(diction[order[index]]):
-                        order.pop(index)
-                    else:
-                        break
-            else:
-                for index in range(len(order)-1,-1,-1):
-                    if len(diction[motif]) < len(diction[order[index]]):
-                        order.insert(index+1, motif)
-                        break
-                else:
-                    order.insert(0,motif)
-            if len(order) > 5:
-                order.pop(5)
-        
-        dictionOrder = {}
-        for motif in order:
-            dictionOrder[motif.getOriginal()] = []
-            for sequence in diction[motif]:
-                dictionOrder[motif.getOriginal()].append(sequence.getOriginal())
-        return dictionOrder
-        
-#     def removeCloseMatches(self, diction):
-#         for motif in diction:
-#             newList = []
-#             motifList = diction[motif]
-#             motifList.sort(key = lambda x: x.getStart())
-#             besteReeks = motifList[0]
-#             besteDist = motif.compare(besteReeks) 
-#             for i in range(1,len(motifList)):
-#                 keyListItem = motifList[i]
-#                 if keyListItem.getStart() == motifList[i-1].getStart() + 1 or keyListItem.getStart() == motifList[i-1].getStart() :
-#                     newDist = motif.compare(keyListItem)
-#                     if(newDist < besteDist):
-#                         besteReeks = keyListItem
-#                         besteDist = newDist
-#                 else:
-#                     newList.append(besteReeks)
-#                     besteReeks = keyListItem
-#                     besteDist = motif.compare(keyListItem)    
-#             else:
-#                 newList.append(besteReeks)
-#             i = len(newList) - 1
-#             while i >= 0:
-#                 if motif.getDistance(newList[i]) <= self.MIN_AFSTAND :
-#                     newList.pop(i)
-#                 i -= 1
-#             diction[motif] = newList
 
     def removeCloseMatches(self, diction):
         for motif in diction:
@@ -317,43 +264,9 @@ class TimeSequence(object):
                 total2 += mot2.compare(seq)
             if(total1 < total2):
                 return False
-        return True     
-        
-        
-#     def removeTrivials(self, lst, func, sortFunc, *args):
-#         removeList = []
-#         for seq1 in lst:
-#             for seq2 in lst:
-#                 if seq1 == seq2:
-#                     continue
-#                 rem = func(seq1,seq2, args)
-#                 if not(rem is None):
-#                     removeList.append(rem)
-#                      
-#         nieuweLst = [x for x in lst if x not in removeList]
-#         removeList.sort(key = lambda x: sortFunc(x, args))
-#         for rem in removeList:
-#             for seq in nieuweLst:
-#                 if not(func(rem,seq,args) is None):
-#                     break
-#             else:
-#                 nieuweLst.append(rem)
-#         return nieuweLst
-#     
-#     def matchHelper(self, seq1,seq2, arg):
-#         motif = arg[0]
-#         eerste =  min(seq1, seq2, key = lambda x: x.getStart())
-#         if seq1.getDistance(seq2) < eerste.getLength():
-#             if motif.compare(seq1) < motif.compare(seq2):
-#                 return seq2
-#             else:
-#                 return seq1
-#         return None
-#     
-#     def matchSorter(self ,seq , motif):
-#         return motif[0].compare(seq)
+        return True
     
-     
+    '''Prints the elapsed time and returns the current time'''
     def checkpoint(self, message, previousTime):
         tijd = time.time()
         print (message + str(tijd - previousTime))
