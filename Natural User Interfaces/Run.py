@@ -28,8 +28,6 @@ tijd = checkpoint("Init: ", tijd)
 
 ts = Sax.TimeSequence(eog2.getMatrix(), 200, 230, 10, 10, 7, 1)
 
-print(ts.makeMasks(10))
-
 tijd = checkpoint("Create TimeSeq: ", tijd)
 
 colMatrix = ts.getCollisionMatrix()
