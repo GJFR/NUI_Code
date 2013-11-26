@@ -59,16 +59,29 @@ class Sequence(object):
         pass
     
     '''Returns the SAX-word of this sequence based on the woordLengte and alfabetGrootte'''
+#     def getWord(self, woordLengte, alfabetGrootte):
+#         word = ""
+#         for i in range(woordLengte):
+#             total = 0
+#             for j in range(int((self.getLength()/woordLengte) * (i - 1) + 1),int((self.getLength()/woordLengte) * i) + 1):
+#                 total += self.getPoint(j)
+#             value = (woordLengte/self.getLength()) * total
+#             word += self.getLetter(value, alfabetGrootte)
+#         return word
     def getWord(self, woordLengte, alfabetGrootte):
+        a = int(self.getLength()/woordLengte)
         word = ""
         for i in range(woordLengte):
+            positie = i * a
             total = 0
-            for j in range(int((self.getLength()/woordLengte) * (i - 1) + 1),int((self.getLength()/woordLengte) * i) + 1):
-                total += self.getPoint(j)
+            while positie < self.getLength() and positie < (i+1) * a:
+                total += self.getPoint(positie)
+                positie += 1
             value = (woordLengte/self.getLength()) * total
             word += self.getLetter(value, alfabetGrootte)
+            
         return word
-    
+            
     '''Returns the letter appropriate for the value based on alfabetGrootte'''
     def getLetter(self, value, alfabetGrootte):
         letterWaarde = self.x.cdf(value) * alfabetGrootte
