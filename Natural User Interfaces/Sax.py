@@ -9,40 +9,43 @@ import itertools
 import Sequence
 import time
 import random
+import CompositeSequence
 
 class TimeSequence(object):
     '''
     classdocs
     '''
     MIN_AFSTAND = 75
-    def __init__(self, data, minSeqLengte, maxSeqLengte, woordLengte, alfabetGrootte, collisionThreshold, r):
+    def __init__(self, dataA, dataB, minSeqLengte, maxSeqLengte, woordLengte, alfabetGrootte, collisionThreshold, r, valueA):
         '''        Constructor        '''
-        self.data = data
+        self.dataA = dataA
+        self.dataB = dataB
         self.minSeqLengte = minSeqLengte
         self.maxSeqLengte = maxSeqLengte
-        self.woordLengte = woordLengte
+        self.woordLengtePerSeq = woordLengte
         self.alfabetGrootte = alfabetGrootte
         self.collisionThreshold = collisionThreshold
         self.r = r
         self.sequenceList = []
         for seqLengte in range(minSeqLengte,maxSeqLengte+1,10):
-            a = len(data) - seqLengte
+            a = len(dataA) - seqLengte
             for index in range(a):
-                normSeq = Sequence.Sequence(data, index, seqLengte).getNormalized()
-                self.sequenceList.append(normSeq)
+                normSeqA = Sequence.Sequence(dataA, index, seqLengte).getNormalized()
+                normSeqB = Sequence.Sequence(dataB, index, seqLengte).getNormalized()
+                self.sequenceList.append(CompositeSequence.CompositeSequence(normSeqA, normSeqB, valueA))
     
     '''Returns the SAX-array of this timesequence.'''
     def getSaxArray(self):
         saxArray = []
         for seq in self.sequenceList:
-            saxArray.append(seq.getWord(self.woordLengte, self.alfabetGrootte))
+            saxArray.append(seq.getWord(self.woordLengtePerSeq, self.alfabetGrootte))
         return saxArray
     
     '''Returns the collssion matrix of this timesequence, using makeMaks() to generate the needed masks.'''
     def getCollisionMatrix(self):
         saxArray = self.getSaxArray()
         '''maskers = [[0,1,2,3,4],[1,2,3,4,5],[2,3,4,5,6],[3,4,5,6,7],[4,5,6,7,8],[5,6,7,8,9],[1,3,5,7,9],[0,2,4,6,8],[0,1,2,3,4],[5,6,7,8,9]]'''
-        maskers = self.getMasks(self.woordLengte)
+        maskers = self.getMasks(self.woordLengtePerSeq * 2)
         print(maskers)
         cMatrix = scipy.sparse.lil_matrix((len(saxArray),len(saxArray)))
         for mask in maskers:
@@ -54,10 +57,10 @@ class TimeSequence(object):
     def getMasks(self, aantal):
         masks = []
         while len(masks) < aantal:
-            maskLengte = random.randrange(1,self.woordLengte/2)
+            maskLengte = random.randrange(1,self.woordLengtePerSeq)
             mask = []
             while len(mask) < maskLengte:
-                punt = random.randrange(self.woordLengte)
+                punt = random.randrange(self.woordLengtePerSeq * 2)
                 if not(punt in mask):
                     mask.append(punt)
             for m in masks:
@@ -77,7 +80,7 @@ class TimeSequence(object):
         maskedSaxArray = []
         for word in saxArray:
             maskWord = ""
-            for i in range(self.woordLengte):
+            for i in range(self.woordLengtePerSeq * 2):
                 if not(i in mask):
                     maskWord += word[i]
             maskedSaxArray.append(maskWord)
