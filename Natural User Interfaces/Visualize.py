@@ -57,11 +57,11 @@ def plot_data3(eog1, eog2, diction):
         ax2 = fig.add_subplot(212)
         line1, = ax1.plot(eog1.getMatrix())
         line2, = ax2.plot(eog2.getMatrix())
-        ax1.plot(range(motif.getStart(), motif.getStart() + motif.getLength()), motif.seqA.getAllPoints(), color = 'g')
-        ax2.plot(range(motif.getStart(), motif.getStart() + motif.getLength()), motif.seqB.getAllPoints(), color = 'g')
+        ax1.plot(range(motif.getStart(), motif.getStart() + motif.getLength()), motif.seqA.getOriginal().getAllPoints(), color = 'g')
+        ax2.plot(range(motif.getStart(), motif.getStart() + motif.getLength()), motif.seqB.getOriginal().getAllPoints(), color = 'g')
         for sequence in diction[motif]:
-            ax1.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.seqA.getAllPoints(), color = 'r')
-            ax2.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.seqB.getAllPoints(), color = 'r')
+            ax1.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.seqA.getOriginal().getAllPoints(), color = 'r')
+            ax2.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.seqB.getOriginal().getAllPoints(), color = 'r')
         plt.show()
 
 '''

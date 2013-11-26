@@ -152,11 +152,16 @@ class TimeSequence(object):
             
         self.checkpoint("removeCloseMatch: ", tijd)
         
+        '''
+        Elke keer dat er in deze loop 'motif' werd gebruikt, werd motif.getOriginal() opgeroepen, maar die bestaat natuurlijk niet.
+        Toen ik dit weg had gedaan, liep alles goed. Enkel toonde nu de grafiek de motieven als genormaliseerde sequenties, dus heb ik
+        in Visualize.py pas gezorgd dat de afzonderlijke sequenties hun originele sequenties oproepen.
+        '''
         reDiction = {}
         for motif in diction:
-            reDiction[motif.getOriginal()] = []
+            reDiction[motif] = []
             for sequence in diction[motif]:
-                reDiction[motif.getOriginal()].append(sequence.getOriginal())
+                reDiction[motif].append(sequence)
         
         return reDiction
 
