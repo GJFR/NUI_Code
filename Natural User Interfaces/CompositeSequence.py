@@ -36,7 +36,7 @@ class CompositeSequence(object):
         return self.seqA.getDistance(other.seqA)
     
     def getWord(self, woordLengte, alfabetGrootte):
-        return self.seqA.getWord(woordLengte, alfabetGrootte) + self.seqB.getWord(woordLengte, alfabetGrootte)
+        return (self.seqA.getWord(woordLengte, alfabetGrootte), self.seqB.getWord(woordLengte, alfabetGrootte))
     
     
     

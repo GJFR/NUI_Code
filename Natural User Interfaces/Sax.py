@@ -16,51 +16,47 @@ class TimeSequence(object):
     classdocs
     '''
     MIN_AFSTAND = 75
-    def __init__(self, dataA, dataB, minSeqLengte, maxSeqLengte, woordLengte, alfabetGrootte, collisionThreshold, r, valueA):
+    def __init__(self, data, minSeqLengte, maxSeqLengte, woordLengte, alfabetGrootte, collisionThreshold, r):
         '''        Constructor        '''
-        self.dataA = dataA
-        self.dataB = dataB
+        self.data = data
         self.minSeqLengte = minSeqLengte
         self.maxSeqLengte = maxSeqLengte
-        self.woordLengtePerSeq = woordLengte
         self.alfabetGrootte = alfabetGrootte
         self.collisionThreshold = collisionThreshold
         self.r = r
         self.sequenceList = []
         for seqLengte in range(minSeqLengte,maxSeqLengte+1,10):
-            a = len(dataA) - seqLengte
+            a = len(data) - seqLengte
             for index in range(a):
-                normSeqA = Sequence.Sequence(dataA, index, seqLengte).getNormalized()
-                normSeqB = Sequence.Sequence(dataB, index, seqLengte).getNormalized()
-                self.sequenceList.append(CompositeSequence.CompositeSequence(normSeqA, normSeqB, valueA))
+                normSeq = Sequence.Sequence(data, index, seqLengte).getNormalized()
+                self.sequenceList.append(normSeq)
     
     '''Returns the SAX-array of this timesequence.'''
     def getSaxArray(self):
         saxArray = []
         for seq in self.sequenceList:
-            saxArray.append(seq.getWord(self.woordLengtePerSeq, self.alfabetGrootte))
+            saxArray.append(seq.getWord(self.woordLengte, self.alfabetGrootte))
         return saxArray
     
     '''Returns the collssion matrix of this timesequence, using makeMaks() to generate the needed masks.'''
-    def getCollisionMatrix(self):
+    def getCollisionMatrix(self, masks):
         saxArray = self.getSaxArray()
         '''maskers = [[0,1,2,3,4],[1,2,3,4,5],[2,3,4,5,6],[3,4,5,6,7],[4,5,6,7,8],[5,6,7,8,9],[1,3,5,7,9],[0,2,4,6,8],[0,1,2,3,4],[5,6,7,8,9]]'''
-        maskers = self.getMasks(self.woordLengtePerSeq * 2)
-        print(maskers)
+        print(masks)
         cMatrix = scipy.sparse.lil_matrix((len(saxArray),len(saxArray)))
-        for mask in maskers:
+        for mask in masks:
             buckets = self.fHash(saxArray,mask)
             self.checkBuckets(buckets, cMatrix)
         return cMatrix
 
     '''Returns a random generated list of masks (who satisfy our conditions)'''
-    def getMasks(self, aantal):
+    def getMasks(self):
         masks = []
-        while len(masks) < aantal:
-            maskLengte = random.randrange(1,self.woordLengtePerSeq)
+        while len(masks) < self.woordLengte:
+            maskLengte = random.randrange(1,self.woordLengte)
             mask = []
             while len(mask) < maskLengte:
-                punt = random.randrange(self.woordLengtePerSeq * 2)
+                punt = random.randrange(self.woordLengte)
                 if not(punt in mask):
                     mask.append(punt)
             for m in masks:
@@ -80,7 +76,7 @@ class TimeSequence(object):
         maskedSaxArray = []
         for word in saxArray:
             maskWord = ""
-            for i in range(self.woordLengtePerSeq * 2):
+            for i in range(self.woordLengte):
                 if not(i in mask):
                     maskWord += word[i]
             maskedSaxArray.append(maskWord)
@@ -114,12 +110,8 @@ class TimeSequence(object):
                 thresholdList.append((self.sequenceList[i],self.sequenceList[j]))
         return thresholdList
     
-    ''''''
-    def calculateGoodMatches(self, cMatrix):
-        tijd = time.time()
+    def getMotifs(self, cMatrix):
         pairs = self.getLikelyPairs(cMatrix)
-        tijd = self.checkpoint("getLikelyPairs: ", tijd)
-        
         diction = {}
         for (motif,index) in pairs:
             eDist = motif.compare(index)
@@ -132,9 +124,9 @@ class TimeSequence(object):
                     diction[index].append(motif)
                 else:
                     diction[index] = [motif]
-        
-        tijd = self.checkpoint("makeDictionary: ", tijd)
-        
+        return diction
+    
+    def getTopXMotifs(self, topX, diction):
         diction2 = sorted(diction.keys(), key = lambda x: len(diction[x]), reverse = True)
         it = iter(diction2)
         topX = {}
@@ -148,22 +140,30 @@ class TimeSequence(object):
             self.removeCloseMatches(temp)
             topX[motif] = temp[motif]
             self.removeTrivialMotifs(topX)
-        diction = topX
-            
-        self.checkpoint("removeCloseMatch: ", tijd)
-        
-        '''
-        Elke keer dat er in deze loop 'motif' werd gebruikt, werd motif.getOriginal() opgeroepen, maar die bestaat natuurlijk niet.
-        Toen ik dit weg had gedaan, liep alles goed. Enkel toonde nu de grafiek de motieven als genormaliseerde sequenties, dus heb ik
-        in Visualize.py pas gezorgd dat de afzonderlijke sequenties hun originele sequenties oproepen.
-        '''
-        reDiction = {}
-        for motif in diction:
-            reDiction[motif] = []
-            for sequence in diction[motif]:
-                reDiction[motif].append(sequence)
-        
-        return reDiction
+        return topX
+    
+    ''''''
+    #===========================================================================
+    # def calculateGoodMatches(self, cMatrix):
+    #     tijd = time.time()
+    #     pairs = self.getLikelyPairs(cMatrix)
+    #     tijd = self.checkpoint("getLikelyPairs: ", tijd)
+    #     
+    #     diction = self.getMotifs()
+    #     
+    #     tijd = self.checkpoint("makeDictionary: ", tijd)
+    #     
+    #     diction = self.getTopXMotifs(5, diction)
+    #         
+    #     self.checkpoint("removeCloseMatch: ", tijd)
+    #     
+    #     '''
+    #     Elke keer dat er in deze loop 'motif' werd gebruikt, werd motif.getOriginal() opgeroepen, maar die bestaat natuurlijk niet.
+    #     Toen ik dit weg had gedaan, liep alles goed. Enkel toonde nu de grafiek de motieven als genormaliseerde sequenties, dus heb ik
+    #     in Visualize.py pas gezorgd dat de afzonderlijke sequenties hun originele sequenties oproepen.
+    #     '''
+    #     return diction
+    #===========================================================================
 
     def removeCloseMatches(self, diction):
         for motif in diction:
