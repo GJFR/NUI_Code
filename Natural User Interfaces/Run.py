@@ -7,6 +7,7 @@ import Eog
 import Sax
 import time
 import Visualize
+import CompTimeSeq
 
 MIN_SEQ_LENGTH = 200
 MAX_SEQ_LENGTH = 230
@@ -49,12 +50,14 @@ cMatrix = cMatrix1 + cMatrix2
 
 tijd = checkpoint("Create collision matrix: ", tijd)
 
+compTimeSeq = CompTimeSeq(ts1, ts2, cMatrix, VALUE_A)
 
+motifs = compTimeSeq.getMotifs()
 
-motifs1 = ts1.getMotifs(cMatrix1)
-motifs2 = ts2.getMotifs(cMatrix2)
 tijd = checkpoint("Get all motifs: ", tijd)
-motifs1 = ts1.getTopXMotifs(X, motifs1)
+
+motifs = compTimeSeq.getTopXMotifs(X, motifs)
+
 tijd = checkpoint("Get top " + str(X) + " of motifs: ", tijd)
 
 

@@ -21,6 +21,7 @@ class TimeSequence(object):
         self.data = data
         self.minSeqLengte = minSeqLengte
         self.maxSeqLengte = maxSeqLengte
+        self.woordLengte = woordLengte
         self.alfabetGrootte = alfabetGrootte
         self.collisionThreshold = collisionThreshold
         self.r = r
