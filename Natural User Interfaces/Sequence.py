@@ -68,7 +68,7 @@ class Sequence(object):
 #             value = (woordLengte/self.getLength()) * total
 #             word += self.getLetter(value, alfabetGrootte)
 #         return word
-    def getWord(self, woordLengte, alfabetGrootte):
+    def getWord2(self, woordLengte, alfabetGrootte):
         a = int(self.getLength()/woordLengte)
         word = ""
         for i in range(woordLengte):
@@ -81,7 +81,27 @@ class Sequence(object):
             word += self.getLetter(value, alfabetGrootte)
             
         return word
-            
+    def getWord(self, woordLengte, alfabetGrootte):
+        a = int(self.getLength()/woordLengte)
+        xtra = self.getLength() % woordLengte
+        word = ""
+        positie = 0
+        einde = 0
+        for i in range(woordLengte):
+            einde += a
+            if xtra > 0:
+                einde += 1
+                xtra += -1
+            total = 0
+            while positie < self.getLength() and positie < einde:
+                total += self.getPoint(positie)
+                positie += 1
+
+            value = (woordLengte/self.getLength()) * total
+            word += self.getLetter(value, alfabetGrootte)
+        
+        return word
+        
     '''Returns the letter appropriate for the value based on alfabetGrootte'''
     def getLetter(self, value, alfabetGrootte):
         letterWaarde = self.x.cdf(value) * alfabetGrootte

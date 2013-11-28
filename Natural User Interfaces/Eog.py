@@ -9,6 +9,7 @@ import numpy as np
 from scipy.signal import filtfilt, butter
 import os
 import csv
+import math
 
 class Eog(object):
     '''
@@ -49,7 +50,7 @@ class Eog(object):
         
     def filter(self):
         eog_filt = np.zeros(len(self.__matrix))
-        b, a = butter(2, 0.5, 'low')
+        b, a = butter(2, 0.025, 'low')
         eog_filt = filtfilt(b, a, self.__matrix)
         self.setMatrix(eog_filt)
     
