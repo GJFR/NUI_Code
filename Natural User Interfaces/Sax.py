@@ -9,7 +9,6 @@ import itertools
 import Sequence
 import time
 import random
-import CompositeSequence
 
 class TimeSequence(object):
     '''
@@ -142,29 +141,6 @@ class TimeSequence(object):
             topX[motif] = temp[motif]
             self.removeTrivialMotifs(topX)
         return topX
-    
-    ''''''
-    #===========================================================================
-    # def calculateGoodMatches(self, cMatrix):
-    #     tijd = time.time()
-    #     pairs = self.getLikelyPairs(cMatrix)
-    #     tijd = self.checkpoint("getLikelyPairs: ", tijd)
-    #     
-    #     diction = self.getMotifs()
-    #     
-    #     tijd = self.checkpoint("makeDictionary: ", tijd)
-    #     
-    #     diction = self.getTopXMotifs(5, diction)
-    #         
-    #     self.checkpoint("removeCloseMatch: ", tijd)
-    #     
-    #     '''
-    #     Elke keer dat er in deze loop 'motif' werd gebruikt, werd motif.getOriginal() opgeroepen, maar die bestaat natuurlijk niet.
-    #     Toen ik dit weg had gedaan, liep alles goed. Enkel toonde nu de grafiek de motieven als genormaliseerde sequenties, dus heb ik
-    #     in Visualize.py pas gezorgd dat de afzonderlijke sequenties hun originele sequenties oproepen.
-    #     '''
-    #     return diction
-    #===========================================================================
 
     def removeCloseMatches(self, diction):
         for motif in diction:

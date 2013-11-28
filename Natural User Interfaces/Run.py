@@ -7,7 +7,6 @@ import Eog
 import Sax
 import time
 import Visualize
-import CompTimeSeq
 
 MIN_SEQ_LENGTH = 200
 MAX_SEQ_LENGTH = 230
@@ -35,33 +34,18 @@ eog1.normalize()
 eog2.normalize()
 
 tijd = checkpoint("Init: ", tijd)
-
 ts1 = Sax.TimeSequence(eog1.getMatrix(), MIN_SEQ_LENGTH, MAX_SEQ_LENGTH, WORD_LENGTH, ALPHABET_SIZE, COLLISION_THRESHOLD, RANGE)
-ts2 = Sax.TimeSequence(eog2.getMatrix(), MIN_SEQ_LENGTH, MAX_SEQ_LENGTH, WORD_LENGTH, ALPHABET_SIZE, COLLISION_THRESHOLD, RANGE)
-
 tijd = checkpoint("Create TimeSeq: ", tijd)
 masks1 = ts1.getMasks()
-masks2 = ts2.getMasks()
 tijd = checkpoint("Create masks: ", tijd)
 cMatrix1 = ts1.getCollisionMatrix(masks1)
-cMatrix2 = ts2.getCollisionMatrix(masks2)
-
-cMatrix = cMatrix1 + cMatrix2
-
 tijd = checkpoint("Create collision matrix: ", tijd)
-
-compTimeSeq = CompTimeSeq(ts1, ts2, cMatrix, VALUE_A)
-
-motifs = compTimeSeq.getMotifs()
-
+motifs = ts1.getMotifs(cMatrix1)
 tijd = checkpoint("Get all motifs: ", tijd)
-
-motifs = compTimeSeq.getTopXMotifs(X, motifs)
-
+motifs = ts1.getTopXMotifs(X, motifs)
 tijd = checkpoint("Get top " + str(X) + " of motifs: ", tijd)
-
 
 for motif in motifs:
     print (str(motif) + "  :  " + str(motifs[motif]))
 
-Visualize.plot_data3(eog1, eog2, motifs)
+Visualize.plot_data3(eog1, eog2, motifs, {})

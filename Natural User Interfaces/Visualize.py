@@ -50,19 +50,22 @@ def plot_data2(sequenceList):
         ax2.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.getAllPoints(), color = 'r')
     plt.show()
 
-def plot_data3(eog1, eog2, diction):
-    for motif in diction:
-        fig = plt.figure()
+def plot_data3(eog1, eog2, diction1, diction2):
+    fig = plt.figure()
+    for motif in diction1:
         ax1 = fig.add_subplot(211)
-        ax2 = fig.add_subplot(212)
         line1, = ax1.plot(eog1.getMatrix())
+        ax1.plot(range(motif.getStart(), motif.getStart() + motif.getLength()), motif.getOriginal().getAllPoints(), color = 'g')
+        for sequence in diction1[motif]:
+            ax1.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.getOriginal().getAllPoints(), color = 'r')
+        plt
+    for motif in diction2:
+        ax2 = fig.add_subplot(212)
         line2, = ax2.plot(eog2.getMatrix())
-        ax1.plot(range(motif.getStart(), motif.getStart() + motif.getLength()), motif.seqA.getOriginal().getAllPoints(), color = 'g')
-        ax2.plot(range(motif.getStart(), motif.getStart() + motif.getLength()), motif.seqB.getOriginal().getAllPoints(), color = 'g')
-        for sequence in diction[motif]:
-            ax1.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.seqA.getOriginal().getAllPoints(), color = 'r')
-            ax2.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.seqB.getOriginal().getAllPoints(), color = 'r')
-        plt.show()
+        ax2.plot(range(motif.getStart(), motif.getStart() + motif.getLength()), motif.getOriginal().getAllPoints(), color = 'g')
+        for sequence in diction2[motif]:
+            ax2.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.getOriginal().getAllPoints(), color = 'r')
+    plt.show()
 
 '''
 Threshold.setThresholdDifference('left', -0.6)
