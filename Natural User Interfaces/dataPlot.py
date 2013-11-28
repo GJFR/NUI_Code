@@ -25,14 +25,14 @@ global eog2
 global eog1_filt
 global eog2_filt
 
-eog1 = Eog.Eog('Data\\test4_A.csv')
-eog2 = Eog.Eog('Data\\test4_A.csv')
+eog1 = Eog.Eog('Data\\test2_A.csv')
+eog2 = Eog.Eog('Data\\test2_B.csv')
 
 
 eog1.normalize()
 eog2.normalize()
 
-eog1.filter()
+# eog1.filter()
 
 def plot_data():
     fig = plt.figure()

@@ -15,9 +15,10 @@ class TimeSequence(object):
     classdocs
     '''
     MIN_AFSTAND = 75
-    def __init__(self, data, minSeqLengte, maxSeqLengte, woordLengte, alfabetGrootte, collisionThreshold, r):
+    def __init__(self, data, verdeelPunten, minSeqLengte, maxSeqLengte, woordLengte, alfabetGrootte, collisionThreshold, r):
         '''        Constructor        '''
         self.data = data
+        self.verdeelPunten = verdeelPunten
         self.minSeqLengte = minSeqLengte
         self.maxSeqLengte = maxSeqLengte
         self.woordLengte = woordLengte
@@ -25,11 +26,14 @@ class TimeSequence(object):
         self.collisionThreshold = collisionThreshold
         self.r = r
         self.sequenceList = []
-        for seqLengte in range(minSeqLengte,maxSeqLengte+1,10):
-            a = len(data) - seqLengte
-            for index in range(a):
-                normSeq = Sequence.Sequence(data, index, seqLengte).getNormalized()
-                self.sequenceList.append(normSeq)
+        for i in range(len(verdeelPunten)-1):
+            begin = verdeelPunten[i]
+            einde = verdeelPunten[i+1]
+            for seqLengte in range(minSeqLengte,maxSeqLengte+1,10):
+                a = einde - seqLengte
+                for j in range(begin,a):
+                    normSeq = Sequence.Sequence(data, j, seqLengte).getNormalized()
+                    self.sequenceList.append(normSeq)
     
     '''Returns the SAX-array of this timesequence.'''
     def getSaxArray(self):
@@ -41,8 +45,7 @@ class TimeSequence(object):
     '''Returns the collssion matrix of this timesequence, using makeMaks() to generate the needed masks.'''
     def getCollisionMatrix(self, masks):
         saxArray = self.getSaxArray()
-        '''maskers = [[0,1,2,3,4],[1,2,3,4,5],[2,3,4,5,6],[3,4,5,6,7],[4,5,6,7,8],[5,6,7,8,9],[1,3,5,7,9],[0,2,4,6,8],[0,1,2,3,4],[5,6,7,8,9]]'''
-        print(masks)
+        
         cMatrix = scipy.sparse.lil_matrix((len(saxArray),len(saxArray)))
         for mask in masks:
             buckets = self.fHash(saxArray,mask)
@@ -99,7 +102,20 @@ class TimeSequence(object):
             bucket = buckets[key]
             for i in range(len(bucket)):
                 for j in range(i+1,len(bucket)):
-                    cMatrix[bucket[i],bucket[j]] += 1
+                    if self.test(i,j):
+                        cMatrix[bucket[i],bucket[j]] += 1
+    
+    def test(self, i, j):
+        startI = self.sequenceList[i].getStart()
+        startJ = self.sequenceList[j].getStart()
+        for k in self.verdeelPunten[1:]:
+            if startI < k and startJ < k:
+                return False
+            if startI < k:
+                return True
+            if startJ < k:
+                return True
+    
     
     '''Returns a list of all pairs of sequences who's number of collisions is higher than the collision threshold.'''
     def getLikelyPairs(self, cMatrix):

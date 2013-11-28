@@ -8,9 +8,9 @@ import Sax
 import time
 import Visualize
 
-MIN_SEQ_LENGTH = 200
-MAX_SEQ_LENGTH = 230
-WORD_LENGTH = 11
+MIN_SEQ_LENGTH = 100
+MAX_SEQ_LENGTH = 150
+WORD_LENGTH = 10
 ALPHABET_SIZE = 10
 COLLISION_THRESHOLD = 7
 RANGE = 2
@@ -24,9 +24,10 @@ def checkpoint(message, previousTime):
     
 tijd = time.time()
     
-eog1 = Eog.Eog('Data\\test5_A.csv')
-eog2 = Eog.Eog('Data\\test5_B.csv')
-
+eog1 = Eog.Eog('Data\\test2_A.csv')
+eog2 = Eog.Eog('Data\\test2_B.csv')
+# verdeelPunten = [0,675,1100,1600,2450,2850,3400]
+verdeelPunten = [0,1600,3400]
 eog1.filter()
 eog2.filter()
 
@@ -35,10 +36,11 @@ eog2.normalize()
 
 tijd = checkpoint("Init: ", tijd)
 
-ts1 = Sax.TimeSequence(eog1.getMatrix(), MIN_SEQ_LENGTH, MAX_SEQ_LENGTH, WORD_LENGTH, ALPHABET_SIZE, COLLISION_THRESHOLD, RANGE)
+ts1 = Sax.TimeSequence(eog2.getMatrix(), verdeelPunten, MIN_SEQ_LENGTH, MAX_SEQ_LENGTH, WORD_LENGTH, ALPHABET_SIZE, COLLISION_THRESHOLD, RANGE)
 
 tijd = checkpoint("Create TimeSeq: ", tijd)
 masks1 = ts1.getMasks()
+print (masks1)
 tijd = checkpoint("Create masks: ", tijd)
 cMatrix1 = ts1.getCollisionMatrix(masks1)
 tijd = checkpoint("Create collision matrix: ", tijd)
