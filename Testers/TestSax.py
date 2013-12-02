@@ -25,11 +25,11 @@ class TestSax(unittest.TestCase):
         self.r = 1
         self.timeSeq = Sax.TimeSequence(self.data, self.verdeelPunten, self.minSeqLengte, self.maxSeqLengte, self.woordLengte, self.alfabetGrootte, self.collisionThreshold, self.r)
         
-        self.sArray = ["abcd", "bbde", "bcda", "bdee", "abed", "ddac", "cccc", "dcba", "abab", "bcdc", "abad", "ebee", "bbbb", "bbbd", "ccaa"]
-        self.mask = [0,2]
-        self.dictie = {"bd" : [0,4,10,13], "be" : [1,11], "ca" : [2,7,14], "de" : [3],"dc" : [5] ,"cc" : [6,9], "bb" : [8,12]}
+        self.sArray = self.timeSeq.getSaxArray()
         
-        
+        a = set(range(36)) - set(range(7,13)) - set(range(25,31))
+        b = set(range(31)) - set(range(7)) - set(range(13,25))
+        self.dictie = {"c": a, "d" : b}
         
 
     def testConstructor(self):
@@ -66,36 +66,17 @@ class TestSax(unittest.TestCase):
         
     
     def testGetSaxArray(self):
-        pass
-        self.sArray = self.timeSeq.getSaxArray()
         
         for i in range(7):
             self.assertEqual(self.sArray[i], "bc", "saxArray:" + str(i))
         for i in range(7,13):
             self.assertEqual(self.sArray[i], "bd" , "saxArray:" + str(i))
-        self.assertEqual(self.sArray[13], "bc", "saxArray:13")
-        self.assertEqual(self.sArray[14], "bc", "saxArray:14")
-        self.assertEqual(self.sArray[15], "bc", "saxArray:10")
-        self.assertEqual(self.sArray[16], "bc", "saxArray:11")
-        self.assertEqual(self.sArray[17], "bc", "saxArray:12")
-        self.assertEqual(self.sArray[18], "bc", "saxArray:13")
-        self.assertEqual(self.sArray[19], "bc", "saxArray:14")
-        self.assertEqual(self.sArray[20], "bc", "saxArray:10")
-        self.assertEqual(self.sArray[21], "bc", "saxArray:11")
-        self.assertEqual(self.sArray[22], "bc", "saxArray:12")
-        self.assertEqual(self.sArray[23], "bc", "saxArray:13")
-        self.assertEqual(self.sArray[24], "bc", "saxArray:14")
-        self.assertEqual(self.sArray[25], "bd", "saxArray:10")
-        self.assertEqual(self.sArray[26], "bd", "saxArray:11")
-        self.assertEqual(self.sArray[27], "bd", "saxArray:12")
-        self.assertEqual(self.sArray[28], "bd", "saxArray:13")
-        self.assertEqual(self.sArray[29], "bd", "saxArray:14")
-        self.assertEqual(self.sArray[30], "bd", "saxArray:10")
-        self.assertEqual(self.sArray[31], "bc", "saxArray:11")
-        self.assertEqual(self.sArray[32], "bc", "saxArray:12")
-        self.assertEqual(self.sArray[33], "bc", "saxArray:13")
-        self.assertEqual(self.sArray[34], "bc", "saxArray:14")
-        self.assertEqual(self.sArray[35], "bc", "saxArray:10")
+        for i in range(13,25):
+            self.assertEqual(self.sArray[i], "bc", "saxArray:" + str(i))
+        for i in range(25,31):
+            self.assertEqual(self.sArray[i], "bd", "saxArray:" + str(i))
+        for i in range(31,36):
+            self.assertEqual(self.sArray[i], "bc", "saxArray:" + str(i))
     
     def testGetCollisionMatrix(self):
         pass
@@ -120,15 +101,16 @@ class TestSax(unittest.TestCase):
     def testFHash(self):
 
         
-        hashy = self.timeSeq.fHash(self.sArray, self.mask)
+        hashy = self.timeSeq.fHash(self.sArray, [0])
         for sax in hashy:
-            self.assertEqual(hashy[sax], self.dictie[sax], "fhash" + sax)
+            self.assertEqual(hashy[sax], list(self.dictie[sax]), "fhash" + sax)
         
     def testCheckBuckets(self):
         cMatrix = scipy.sparse.lil_matrix((len(self.sArray),len(self.sArray)))
-        hashy = self.timeSeq.fHash(self.sArray, self.mask)
+        hashy = self.timeSeq.fHash(self.sArray, [0])
         self.timeSeq.checkBuckets(hashy, cMatrix)
         cooMatrix = cMatrix.tocoo()
+
         for i,j,v in itertools.zip_longest(cooMatrix.row, cooMatrix.col, cooMatrix.data):
             aantal = 0
             for key in self.dictie:
@@ -137,14 +119,14 @@ class TestSax(unittest.TestCase):
             self.assertEqual(v, aantal, "CheckBuckets: " + str(i) + " : " + str(j))
         
     def testTest(self):
-        for i in range(9):
-            for j in range(i+1,9):
+        for i in range(18):
+            for j in range(i+1,18):
                 self.assertFalse(self.timeSeq.test(i, j), "testFalse:" + str(i) + " : " + str(j))
-        for i in range(9,15):
-            for j in range(i+1,15):
+        for i in range(18,36):
+            for j in range(i+1,36):
                 self.assertFalse(self.timeSeq.test(i, j), "testFalse:" + str(i) + " : " + str(j))
-        for i in range(9):
-            for j in range(9,15):
+        for i in range(18):
+            for j in range(18,36):
                 self.assertTrue(self.timeSeq.test(i, j),  "testTrue:" + str(i) + " : " + str(j))
         
     def testLikelyPairs(self):
