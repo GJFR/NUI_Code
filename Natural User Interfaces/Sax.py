@@ -9,6 +9,7 @@ import itertools
 import Sequence
 import time
 import random
+import math
 
 class TimeSequence(object):
     '''
@@ -21,6 +22,8 @@ class TimeSequence(object):
         self.verdeelPunten = verdeelPunten
         self.minSeqLengte = minSeqLengte
         self.maxSeqLengte = maxSeqLengte
+        if woordLengte > minSeqLengte:
+            raise AttributeError("woordLengte groter dan minSeqLengte")
         self.woordLengte = woordLengte
         self.alfabetGrootte = alfabetGrootte
         self.collisionThreshold = collisionThreshold
@@ -29,9 +32,9 @@ class TimeSequence(object):
         for i in range(len(verdeelPunten)-1):
             begin = verdeelPunten[i]
             einde = verdeelPunten[i+1]
-            for seqLengte in range(minSeqLengte,maxSeqLengte+1,10):
+            for seqLengte in range(minSeqLengte,maxSeqLengte+1,math.ceil(maxSeqLengte*0.03)):
                 a = einde - seqLengte
-                for j in range(begin,a):
+                for j in range(begin,a+1):
                     normSeq = Sequence.Sequence(data, j, seqLengte).getNormalized()
                     self.sequenceList.append(normSeq)
     
@@ -102,9 +105,9 @@ class TimeSequence(object):
             bucket = buckets[key]
             for i in range(len(bucket)):
                 for j in range(i+1,len(bucket)):
-                    if self.test(i,j):
+                    if self.test(bucket[i],bucket[j]):
                         cMatrix[bucket[i],bucket[j]] += 1
-    groot = 0
+
     def test(self, i, j):
   
         startI = self.sequenceList[i].getStart()
@@ -113,14 +116,12 @@ class TimeSequence(object):
             print(str(startI) + ", " + str(startJ))
         for k in self.verdeelPunten:
             if startI < k and startJ < k:
-                '''print("false")'''
                 return False
             if startI < k:
-                print("true1")
                 return True
             if startJ < k:
-                print("true2")
                 return True
+        print("test:probleem")
 
     
     
@@ -273,9 +274,3 @@ class TimeSequence(object):
             if(total1 < total2):
                 return False
         return True
-    
-    '''Prints the elapsed time and returns the current time'''
-    def checkpoint(self, message, previousTime):
-        tijd = time.time()
-        print (message + str(tijd - previousTime))
-        return tijd
