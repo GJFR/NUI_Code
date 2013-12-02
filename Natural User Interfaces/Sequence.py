@@ -29,7 +29,12 @@ class Sequence(object):
         return self.length
         
     def getPoint(self, i):
+        self.testIndex(i)
         return self.timeSeq[self.getStart() + i]
+        
+    def testIndex(self, i):
+        if self.getLength() <= i:
+            raise IndexError
         
     def getAllPoints(self):
         return self.timeSeq[self.getStart(): self.getStart() + self.getLength()]
@@ -42,18 +47,10 @@ class Sequence(object):
     def compareEuclDist(self, other):
         som = 0
         for i in range(self.getLength()):
+            p1 = self.getPoint(i)
+            p2 = other.getPoint(i)
             som += (self.getPoint(i) - other.getPoint(i))**2
         return math.sqrt(som)
-    
-    '''Compares 2 sequences and return their Euclidean distance after being scaled to equal lengths'''
-    def compare(self, other):
-        if (self.getLength() == other.getLength()):
-            return self.compareEuclDist(other)
-        elif (self.getLength() < other.getLength()):
-            scaledSeq = ScaledSequence(self.timeSeq, self.originalSeq, other.getLength())
-            return scaledSeq.compareEuclDist(other)
-        else:
-            return other.compare(self)
             
     def isNonTrivial(self, other):
         pass
@@ -81,7 +78,10 @@ class Sequence(object):
             word += self.getLetter(value, alfabetGrootte)
             
         return word
+    
     def getWord(self, woordLengte, alfabetGrootte):
+        if woordLengte > self.getLength():
+            raise AttributeError('De woordlengte is groter dan dan sequentielengte')
         a = int(self.getLength()/woordLengte)
         xtra = self.getLength() % woordLengte
         word = ""
@@ -92,12 +92,15 @@ class Sequence(object):
             if xtra > 0:
                 einde += 1
                 xtra += -1
+                b = 1
+            else:
+                b = 0
             total = 0
             while positie < self.getLength() and positie < einde:
                 total += self.getPoint(positie)
                 positie += 1
 
-            value = (woordLengte/self.getLength()) * total
+            value = (woordLengte/self.getLength() + b) * total
             word += self.getLetter(value, alfabetGrootte)
         
         return word
@@ -130,10 +133,11 @@ class NormSequence(Sequence):
         '''
         super().__init__(timeSeq, originalSeq.getStart(), originalSeq.getLength())
         self.originalSeq = originalSeq
-        self.normData = self.getNormalizedData() 
+        self.normData = self.calculateNormalizedData() 
     
     '''override'''
     def getPoint(self, i):
+        self.testIndex(i)
         return self.normData[i]
     
     '''override'''
@@ -141,7 +145,7 @@ class NormSequence(Sequence):
         return self.normData
     
     '''Returns and normalizes'''
-    def getNormalizedData(self):
+    def calculateNormalizedData(self):
         nMatrix = self.originalSeq.getAllPoints()
         mean = sum(nMatrix)/self.getLength()
         nMatrix = [(x-mean) for x in nMatrix]
@@ -150,6 +154,16 @@ class NormSequence(Sequence):
     
     def getOriginal(self):
         return self.originalSeq
+    
+    '''Compares 2 sequences and return their Euclidean distance after being scaled to equal lengths'''
+    def compare(self, other):
+        if (self.getLength() == other.getLength()):
+            return self.compareEuclDist(other)
+        elif (self.getLength() < other.getLength()):
+            scaledSeq = ScaledSequence(self.timeSeq, self, other.getLength())
+            return scaledSeq.compareEuclDist(other)
+        else:
+            return other.compare(self)
     
     
 class ScaledSequence(Sequence):
@@ -167,6 +181,7 @@ class ScaledSequence(Sequence):
         return self.newLength
         
     def getPoint(self, i):
+        self.testIndex(i)
         return self.scaledData[i]
     
     def getAllPoints(self):
@@ -179,5 +194,6 @@ class ScaledSequence(Sequence):
     def scaleToLength(self):
         scaledData = []
         for i in range(0, self.getLength()):
-            scaledData.append(self.getOriginal().getPoint(math.ceil(i * (self.getOriginal().getLength() / self.getLength()))))
+            j = math.floor(i * (self.getOriginal().getLength() / self.getLength()))
+            scaledData.append(self.getOriginal().getPoint(j))
         return scaledData
