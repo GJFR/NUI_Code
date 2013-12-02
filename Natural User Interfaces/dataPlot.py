@@ -26,20 +26,20 @@ global eog1_filt
 global eog2_filt
 
 eog1 = Eog.Eog('Data\\test2_A.csv')
-eog2 = Eog.Eog('Data\\test2_B.csv')
+eog1f = Eog.Eog('Data\\test2_B.csv')
 
 
 eog1.normalize()
-eog2.normalize()
+eog1f.normalize()
 
-# eog1.filter()
+eog1f.filter()
 
 def plot_data():
     fig = plt.figure()
     ax1 = fig.add_subplot(211)
     ax2 = fig.add_subplot(212)
     line1, = ax1.plot(eog1.getMatrix())
-    line2, = ax2.plot(eog2.getMatrix())
+    line2, = ax2.plot(eog1f.getMatrix())
     plt.show()
 
 plot_data()
