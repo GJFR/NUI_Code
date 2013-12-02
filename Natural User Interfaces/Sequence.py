@@ -33,7 +33,7 @@ class Sequence(object):
         return self.timeSeq[self.getStart() + i]
         
     def testIndex(self, i):
-        if self.getLength() <= i:
+        if self.getLength() <= abs(i):
             raise IndexError
         
     def getAllPoints(self):
