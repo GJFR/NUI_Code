@@ -112,8 +112,6 @@ class TimeSequence(object):
   
         startI = self.sequenceList[i].getStart()
         startJ = self.sequenceList[j].getStart()
-        if (startI < 1600 and startJ > 1600):
-            print(str(startI) + ", " + str(startJ))
         for k in self.verdeelPunten:
             if startI < k and startJ < k:
                 return False

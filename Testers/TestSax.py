@@ -40,11 +40,17 @@ class TestSax(unittest.TestCase):
         self.assertEqual(self.timeSeq.alfabetGrootte, self.alfabetGrootte, "Constructor:alfabetGrootte")
         self.assertEqual(self.timeSeq.collisionThreshold, self.collisionThreshold, "Constructor:collisionThreshold")
         self.assertEqual(self.timeSeq.r, self.r, "Constructor:r")
-        self.assertEqual(len(self.timeSeq.sequenceList), 352, "Constructor:sequenceList:len")
+        self.assertEqual(len(self.timeSeq.sequenceList), 36, "Constructor:sequenceList:len")
         
         for seq in self.timeSeq.sequenceList:
             self.assertIsInstance(seq, Sequence.NormSequence, "Constructor:sequenceList:class")
         
+        for i in range(7):
+            self.assertEqual(self.timeSeq.sequenceList[i].getStart(),i)
+            self.assertEqual(self.timeSeq.sequenceList[i].getLength(),4)
+        for i in range(7,13):
+            self.assertEqual(self.timeSeq.sequenceList[i].getStart(),i)
+            self.assertEqual(self.timeSeq.sequenceList[i].getLength(),4)
         
     
 #     def testGetSaxArray(self):
