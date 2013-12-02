@@ -100,7 +100,7 @@ class Sequence(object):
                 total += self.getPoint(positie)
                 positie += 1
 
-            value = (woordLengte/self.getLength() + b) * total
+            value = total / (a+b)
             word += self.getLetter(value, alfabetGrootte)
         
         return word

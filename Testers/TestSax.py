@@ -49,29 +49,53 @@ class TestSax(unittest.TestCase):
             self.assertEqual(self.timeSeq.sequenceList[i].getStart(),i)
             self.assertEqual(self.timeSeq.sequenceList[i].getLength(),4)
         for i in range(7,13):
-            self.assertEqual(self.timeSeq.sequenceList[i].getStart(),i)
+            self.assertEqual(self.timeSeq.sequenceList[i].getStart(),i-7)
+            self.assertEqual(self.timeSeq.sequenceList[i].getLength(),5)
+        for i in range(13,18):
+            self.assertEqual(self.timeSeq.sequenceList[i].getStart(),i-13)
+            self.assertEqual(self.timeSeq.sequenceList[i].getLength(),6)
+        for i in range(18,25):
+            self.assertEqual(self.timeSeq.sequenceList[i].getStart(),i-8)
             self.assertEqual(self.timeSeq.sequenceList[i].getLength(),4)
+        for i in range(25,31):
+            self.assertEqual(self.timeSeq.sequenceList[i].getStart(),i-15)
+            self.assertEqual(self.timeSeq.sequenceList[i].getLength(),5)
+        for i in range(31,36):
+            self.assertEqual(self.timeSeq.sequenceList[i].getStart(),i-21)
+            self.assertEqual(self.timeSeq.sequenceList[i].getLength(),6)
         
     
-#     def testGetSaxArray(self):
-#         pass
-#         self.sArray = self.timeSeq.getSaxArray()
-#         
-#         self.assertEqual(self.sArray[0], "acd", "saxArray:0")
-#         self.assertEqual(self.sArray[1], "acd", "saxArray:1")
-#         self.assertEqual(self.sArray[2], "acd", "saxArray:2")
-#         self.assertEqual(self.sArray[3], "acd ", "saxArray:3")
-#         self.assertEqual(self.sArray[4], "acd ", "saxArray:4")
-#         self.assertEqual(self.sArray[5], "acd ", "saxArray:5")
-#         self.assertEqual(self.sArray[6], "acd ", "saxArray:6")
-#         self.assertEqual(self.sArray[7], "acd ", "saxArray:7")
-#         self.assertEqual(self.sArray[8], "acd" , "saxArray:8")
-#         self.assertEqual(self.sArray[9], "acd", "saxArray:9")
-#         self.assertEqual(self.sArray[10], "acd", "saxArray:10")
-#         self.assertEqual(self.sArray[11], "acd", "saxArray:11")
-#         self.assertEqual(self.sArray[12], "acd ", "saxArray:12")
-#         self.assertEqual(self.sArray[13], "acd ", "saxArray:13")
-#         self.assertEqual(self.sArray[14], "acd ", "saxArray:14")
+    def testGetSaxArray(self):
+        pass
+        self.sArray = self.timeSeq.getSaxArray()
+        
+        for i in range(7):
+            self.assertEqual(self.sArray[i], "bc", "saxArray:" + str(i))
+        for i in range(7,13):
+            self.assertEqual(self.sArray[i], "bd" , "saxArray:" + str(i))
+        self.assertEqual(self.sArray[13], "bc", "saxArray:13")
+        self.assertEqual(self.sArray[14], "bc", "saxArray:14")
+        self.assertEqual(self.sArray[15], "bc", "saxArray:10")
+        self.assertEqual(self.sArray[16], "bc", "saxArray:11")
+        self.assertEqual(self.sArray[17], "bc", "saxArray:12")
+        self.assertEqual(self.sArray[18], "bc", "saxArray:13")
+        self.assertEqual(self.sArray[19], "bc", "saxArray:14")
+        self.assertEqual(self.sArray[20], "bc", "saxArray:10")
+        self.assertEqual(self.sArray[21], "bc", "saxArray:11")
+        self.assertEqual(self.sArray[22], "bc", "saxArray:12")
+        self.assertEqual(self.sArray[23], "bc", "saxArray:13")
+        self.assertEqual(self.sArray[24], "bc", "saxArray:14")
+        self.assertEqual(self.sArray[25], "bd", "saxArray:10")
+        self.assertEqual(self.sArray[26], "bd", "saxArray:11")
+        self.assertEqual(self.sArray[27], "bd", "saxArray:12")
+        self.assertEqual(self.sArray[28], "bd", "saxArray:13")
+        self.assertEqual(self.sArray[29], "bd", "saxArray:14")
+        self.assertEqual(self.sArray[30], "bd", "saxArray:10")
+        self.assertEqual(self.sArray[31], "bc", "saxArray:11")
+        self.assertEqual(self.sArray[32], "bc", "saxArray:12")
+        self.assertEqual(self.sArray[33], "bc", "saxArray:13")
+        self.assertEqual(self.sArray[34], "bc", "saxArray:14")
+        self.assertEqual(self.sArray[35], "bc", "saxArray:10")
     
     def testGetCollisionMatrix(self):
         pass
