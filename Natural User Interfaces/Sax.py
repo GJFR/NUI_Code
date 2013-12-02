@@ -104,17 +104,25 @@ class TimeSequence(object):
                 for j in range(i+1,len(bucket)):
                     if self.test(i,j):
                         cMatrix[bucket[i],bucket[j]] += 1
-    
+    groot = 0
     def test(self, i, j):
+  
         startI = self.sequenceList[i].getStart()
         startJ = self.sequenceList[j].getStart()
+        if startI > self.groot:
+            self.groot = startI
+        if startJ > self.groot:
+            self.groot = startJ
         for k in self.verdeelPunten[1:]:
             if startI < k and startJ < k:
                 return False
             if startI < k:
+                print (i)
                 return True
             if startJ < k:
+                print (j)
                 return True
+
     
     
     '''Returns a list of all pairs of sequences who's number of collisions is higher than the collision threshold.'''
