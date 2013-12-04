@@ -64,6 +64,7 @@ class TestSequence(unittest.TestCase):
         self.assertEqual(self.nSeq4.getWord(4, 3), 'abbc')
         self.assertEqual(self.nSeq4.getWord(4, 6), 'acdf')
         self.assertEqual(self.nSeq4.getWord(2, 3), 'ac')
+        self.assertEqual(self.nSeq4.getWord(3, 3), 'abc')
         with self.assertRaises(AttributeError):
             self.seq.getWord(110, 20)
         

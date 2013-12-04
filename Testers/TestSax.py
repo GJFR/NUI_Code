@@ -148,11 +148,15 @@ class TestSax(unittest.TestCase):
 
 
     def testGetMotifs(self):
-        data = range(20)
-        data.extend([20])
-        data.extend(range(21,40))
-        timeSeq = Sax.TimeSequence(data, self.verdeelPunten, self.minSeqLengte, self.maxSeqLengte, self.woordLengte, self.alfabetGrootte, self.collisionThreshold, self.r)
-        timeSeq.getMotifs(),
+        data = list(range(20))
+        data.extend([20] * 20)
+        data.extend(range(41,60))
+        verdeelPunten = [0,30,60]
+        timeSeq = Sax.TimeSequence(data, verdeelPunten, 25, 25, 5, 5, 2, self.r)
+        masks = timeSeq.getMasks()
+        cMatrix = timeSeq.getCollisionMatrix(masks)
+        motifs = timeSeq.getMotifs(cMatrix)
+        self.assertEqual(len(motifs), 1)
         
 
 
