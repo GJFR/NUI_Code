@@ -82,8 +82,32 @@ class TestSax(unittest.TestCase):
             self.assertEqual(self.sArray[i], "bc", "saxArray:" + str(i))
     
     def testGetCollisionMatrix(self):
-        pass
-    
+        masks = [[0],[1]]
+        cMatrix1 = self.timeSeq.getCollisionMatrix(masks)
+        cooMatrix = cMatrix1.tocoo()
+        print(cooMatrix)
+        cMatrix = scipy.sparse.lil_matrix((36,36))
+
+        for i in range(0,18):
+            for j in range(18,36):
+                cMatrix[i,j] += 2
+        for i in range(7):
+            for j in range(25,31):
+                cMatrix[i,j] -= 1
+        for i in range(13,18):
+            for j in range(25,31):
+                cMatrix[i,j] -= 1
+        for i in range(7,13):
+            for j in range(18,25):
+                cMatrix[i,j] -= 1
+            for j in range(31,36):
+                cMatrix[i,j] -= 1
+        
+
+        for i,j,v in itertools.zip_longest(cooMatrix.row, cooMatrix.col, cooMatrix.data):
+            self.assertEqual(v, cMatrix[i,j], str(i) + "," + str(j) + ":" + str(v))
+            
+            
     def testGetMasks(self):
         masks = self.timeSeq.getMasks()
         
@@ -173,9 +197,8 @@ class TestSax(unittest.TestCase):
         self.timeSeq.checkBuckets(self.timeSeq.fHash(self.sArray, [0,2]), cMatrix)
 
         Tlist = self.timeSeq.getLikelyPairs(cMatrix)
-        print (Tlist)
+        self.assertGreater(len(Tlist), 0)
         for i,j in Tlist:
-            print("a")
             self.assertGreaterEqual(cMatrix[self.timeSeq.sequenceList.index(i), self.timeSeq.sequenceList.index(j)], 2, "LikelyPairs:" + str(i)+" : "+ str(j))
 
 
