@@ -20,7 +20,7 @@ class TimeSequence(object):
         '''        Constructor        '''
         self.data = data
         self.verdeelPunten = verdeelPunten
-        if verdeelPunten[-1] < len(data):
+        if verdeelPunten[-1] > len(data):
             raise AttributeError("verdeelpunten groter dan de lengte")
         self.minSeqLengte = minSeqLengte
         self.maxSeqLengte = maxSeqLengte
