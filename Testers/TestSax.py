@@ -40,7 +40,7 @@ class TestSax(unittest.TestCase):
         self.assertEqual(self.timeSeq.alfabetGrootte, self.alfabetGrootte, "Constructor:alfabetGrootte")
         self.assertEqual(self.timeSeq.collisionThreshold, self.collisionThreshold, "Constructor:collisionThreshold")
         self.assertEqual(self.timeSeq.r, self.r, "Constructor:r")
-        self.assertEqual(len(self.timeSeq.sequenceList), 352, "Constructor:sequenceList:len")
+        self.assertEqual(len(self.timeSeq.sequenceList), 36, "Constructor:sequenceList:len")
         
         for seq in self.timeSeq.sequenceList:
             self.assertIsInstance(seq, Sequence.NormSequence, "Constructor:sequenceList:class")
@@ -65,6 +65,8 @@ class TestSax(unittest.TestCase):
             self.assertEqual(self.timeSeq.sequenceList[i].getStart(),i-21)
             self.assertEqual(self.timeSeq.sequenceList[i].getLength(),6)
         
+        for seq in self.timeSeq.sequenceList:
+            self.assertEqual(seq.getLength(), len(seq.getAllPoints()), "verkeerde sequences")
     
     def testGetSaxArray(self):
         
@@ -82,22 +84,56 @@ class TestSax(unittest.TestCase):
     def testGetCollisionMatrix(self):
         pass
     
+    def testGetMasks(self):
+        masks = self.timeSeq.getMasks()
+        
+        self.assertEqual(len(masks), self.woordLengte, "getMasks:length")
+        
+        for mask in masks:
+            mask.sort()
+            self.assertGreaterEqual(len(mask), 1, "getMasks:mask:MinLength")
+            self.assertLess(len(mask), self.woordLengte, "getMasks:mask:MaxLength")
+            self.assertEqual(len(mask), len(set(mask)), "getMasks:mask:duplicates")
+            for m in mask:
+                self.assertIn(m, range(self.woordLengte), "getMasks:point:outOfRange")
+        for mask1 in masks:
+            for mask2 in masks:
+                if mask1 != mask2:
+                    with self.assertRaises(AssertionError):
+                        self.assertListEqual(mask1, mask2, "getMasks:equal Masks")
+    
     def testMask(self):
-        sArray2 = ["abcd", "bbde", "bcda", "bdee", "abed", "ddac", "cccc", "dabc", "abab", "bcdb"]
-        self.mask = [0,2]
+        sArray2 = ["ab", "bb", "bc", "bd", "ab", "dd", "cc", "da", "ab", "bc"]
+        self.mask = [0]
         
         sArray2 = self.timeSeq.mask(sArray2, self.mask)
         
-        self.assertEqual(sArray2[0], "bd", "self.mask:0")
-        self.assertEqual(sArray2[1], "be", "self.mask:1")
-        self.assertEqual(sArray2[2], "ca", "self.mask:2")
-        self.assertEqual(sArray2[3], "de", "self.mask:3")
-        self.assertEqual(sArray2[4], "bd", "self.mask:4")
-        self.assertEqual(sArray2[5], "dc", "self.mask:5")
-        self.assertEqual(sArray2[6], "cc", "self.mask:6")
-        self.assertEqual(sArray2[7], "ac", "self.mask:7")
-        self.assertEqual(sArray2[8], "bb", "self.mask:8")
-        self.assertEqual(sArray2[9], "cb", "self.mask:9")
+        self.assertEqual(sArray2[0], "b", "self.mask:0")
+        self.assertEqual(sArray2[1], "b", "self.mask:1")
+        self.assertEqual(sArray2[2], "c", "self.mask:2")
+        self.assertEqual(sArray2[3], "d", "self.mask:3")
+        self.assertEqual(sArray2[4], "b", "self.mask:4")
+        self.assertEqual(sArray2[5], "d", "self.mask:5")
+        self.assertEqual(sArray2[6], "c", "self.mask:6")
+        self.assertEqual(sArray2[7], "a", "self.mask:7")
+        self.assertEqual(sArray2[8], "b", "self.mask:8")
+        self.assertEqual(sArray2[9], "c", "self.mask:9")
+        
+        sArray2 = ["ab", "bb", "bc", "bd", "ab", "dd", "cc", "da", "ab", "bc"]
+        self.mask = [1]
+        
+        sArray2 = self.timeSeq.mask(sArray2, self.mask)
+        
+        self.assertEqual(sArray2[0], "a", "self.mask:0")
+        self.assertEqual(sArray2[1], "b", "self.mask:1")
+        self.assertEqual(sArray2[2], "b", "self.mask:2")
+        self.assertEqual(sArray2[3], "b", "self.mask:3")
+        self.assertEqual(sArray2[4], "a", "self.mask:4")
+        self.assertEqual(sArray2[5], "d", "self.mask:5")
+        self.assertEqual(sArray2[6], "c", "self.mask:6")
+        self.assertEqual(sArray2[7], "d", "self.mask:7")
+        self.assertEqual(sArray2[8], "a", "self.mask:8")
+        self.assertEqual(sArray2[9], "b", "self.mask:9")
     
     def testFHash(self):
 

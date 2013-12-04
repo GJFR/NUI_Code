@@ -20,6 +20,8 @@ class TimeSequence(object):
         '''        Constructor        '''
         self.data = data
         self.verdeelPunten = verdeelPunten
+        if verdeelPunten[-1] < len(data):
+            raise AttributeError("verdeelpunten groter dan de lengte")
         self.minSeqLengte = minSeqLengte
         self.maxSeqLengte = maxSeqLengte
         if woordLengte > minSeqLengte:
@@ -45,7 +47,7 @@ class TimeSequence(object):
             saxArray.append(seq.getWord(self.woordLengte, self.alfabetGrootte))
         return saxArray
     
-    '''Returns the collssion matrix of this timesequence, using makeMaks() to generate the needed masks.'''
+    '''Returns the collission matrix of this timesequence, using makeMaks() to generate the needed masks.'''
     def getCollisionMatrix(self, masks):
         saxArray = self.getSaxArray()
         
