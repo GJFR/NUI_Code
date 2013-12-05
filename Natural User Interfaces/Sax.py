@@ -238,13 +238,15 @@ class TimeSequence(object):
             motInSeq[mot].append(mot)
                  
         for mot1 in motifList:
-            if len(motInSeq[mot1]) == 1:
+            motList1 = motInSeq[mot1]
+            if len(motList1) == 1:
                 removeList.append(mot1)
                 continue
             for mot2 in motifList:
-                if mot1 == mot2 or len(motInSeq[mot2]) == 1:
+                motList2 = motInSeq[mot2]
+                if mot1 == mot2 or len(motList2) == 1 or mot2 in removeList:
                     continue
-                if self.isSequenceSubsetOf(mot1,mot2,motInSeq):
+                if self.isSequenceSubsetOf(mot1,mot2,motList1,motList2):
                     removeList.append(mot1)
         
         for mot in removeList:
@@ -256,20 +258,20 @@ class TimeSequence(object):
         for mot in removeList:
             del diction[mot]
         
-    def isSequenceSubsetOf(self, mot1, mot2, motInSeq):
+    def isSequenceSubsetOf(self, mot1, mot2, motList1, motList2):
         
-        for elem1 in motInSeq[mot1]:
-            for elem2 in motInSeq[mot2]:
+        for elem1 in motList1:
+            for elem2 in motList2:
                 if elem1.getDistance(elem2) <= self.MIN_AFSTAND:
                     break
             else:
                 return False
-        if len(motInSeq[mot1]) == len(motInSeq[mot2]):
+        if len(motList1) == len(motList2):
             total1 = 0
-            for seq in motInSeq[mot1]:
+            for seq in motList1:
                 total1 += mot1.compare(seq)
             total2 = 0
-            for seq in motInSeq[mot2]:
+            for seq in motList2:
                 total2 += mot2.compare(seq)
             if(total1 < total2):
                 return False
