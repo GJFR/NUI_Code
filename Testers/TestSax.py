@@ -226,40 +226,18 @@ class TestSax(unittest.TestCase):
 
 
     def testGetMotifs(self):
-        data = list(range(30))
-        data.extend([30] * 10)
-        '''7 motieven: 0, 1, 2, 3, 4, 5, 6'''
-        data.extend(range(31,60))
-        '''6 motieven: 30, 31, 32, 33, 34, 35'''
-        verdeelPunten1 = [0,35,70]
-        verdeelPunten2 = [0,35,69]
-        with self.assertRaises(AttributeError):
-            timeSeq = Sax.TimeSequence(data, verdeelPunten1, 25, 25, 5, 5, 2, self.r)
-        timeSeq = Sax.TimeSequence(data, verdeelPunten2, 25, 25, 5, 5, 1, 0)
-        masks = [[0,1],[1,2],[2,3],[3,4],[0,1,2],[1,2,3],[2,3,4]]
-        cMatrix = timeSeq.getCollisionMatrix(masks)
-        motifs = timeSeq.getMotifs(cMatrix)
-        self.assertEqual(len(motifs), 13)
+        self.assertEqual(len(self.motifs), 13)
         '''Totaal: 7 + 6 = 13 motieven'''
     
     def testRemoveCloseMatches(self):
-        data = list(range(30))
-        data.extend([30] * 10)
-        '''7 motieven: 0, 1, 2, 3, 4, 5, 6'''
-        data.extend(range(31,60))
-        '''6 motieven: 30, 31, 32, 33, 34, 35'''
-        verdeelPunten1 = [0,35,70]
-        verdeelPunten2 = [0,35,69]
-        with self.assertRaises(AttributeError):
-            timeSeq = Sax.TimeSequence(data, verdeelPunten1, 25, 25, 5, 5, 2, self.r)
-        timeSeq = Sax.TimeSequence(data, verdeelPunten2, 25, 25, 5, 5, 1, 0)
-        masks = [[0,1],[1,2],[2,3],[3,4],[0,1,2],[1,2,3],[2,3,4]]
-        cMatrix = timeSeq.getCollisionMatrix(masks)
-        motifs = timeSeq.getMotifs(cMatrix)
-        self.assertEqual(len(motifs), 13)
-        '''Totaal: 7 + 6 = 13 motieven'''
-        timeSeq.removeCloseMatches(motifs)
-        self.assertEqual(len(motifs), 1)
+        self.timeSeq2.removeCloseMatches(self.motifs)
+        self.assertEqual(len(self.motifs), 13)
+        for motif in self.motifs:
+            self.assertEqual(len(self.motifs[motif]),1)
+
+    def testRemoveTrivialMotifs(self):
+        self.timeSeq2.removeTrivialMotifs(self.motifs)
+        self.assertEqual(len(self.motifs), 1)
 
 
 if __name__ == "__main__":
