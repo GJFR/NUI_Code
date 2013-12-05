@@ -31,6 +31,17 @@ class TestSax(unittest.TestCase):
         b = set(range(31)) - set(range(7)) - set(range(13,25))
         self.dictie = {"c": a, "d" : b}
         
+        self.data2 = list(range(30))
+        self.data2.extend([30] * 10)
+        '''7 motieven: 0, 1, 2, 3, 4, 5, 6'''
+        self.data2.extend(range(31,60))
+        '''6 motieven: 30, 31, 32, 33, 34, 35'''
+        verdeelPunten2 = [0,35,69]
+        self.timeSeq2 = Sax.TimeSequence(self.data2, verdeelPunten2, 25, 25, 5, 5, 1, 0)
+        masks = [[0,1],[1,2],[2,3],[3,4],[0,1,2],[1,2,3],[2,3,4]]
+        cMatrix = self.timeSeq2.getCollisionMatrix(masks)
+        self.motifs = self.timeSeq2.getMotifs(cMatrix)
+        
 
     def testConstructor(self):
         self.assertEqual(self.timeSeq.verdeelPunten, self.verdeelPunten, "Constructor:verdeelPunten")
@@ -67,6 +78,10 @@ class TestSax(unittest.TestCase):
         
         for seq in self.timeSeq.sequenceList:
             self.assertEqual(seq.getLength(), len(seq.getAllPoints()), "verkeerde sequences")
+        
+        verdeelPunten1 = [0,35,70]
+        with self.assertRaises(AttributeError):
+            timeSeq = Sax.TimeSequence(self.data2, verdeelPunten1, 25, 25, 5, 5, 2, self.r)
     
     def testGetSaxArray(self):
         
@@ -85,7 +100,6 @@ class TestSax(unittest.TestCase):
         masks = [[0],[1]]
         cMatrix1 = self.timeSeq.getCollisionMatrix(masks)
         cooMatrix = cMatrix1.tocoo()
-        print(cooMatrix)
         cMatrix = scipy.sparse.lil_matrix((36,36))
 
         for i in range(0,18):
@@ -201,7 +215,21 @@ class TestSax(unittest.TestCase):
         for i,j in Tlist:
             self.assertGreaterEqual(cMatrix[self.timeSeq.sequenceList.index(i), self.timeSeq.sequenceList.index(j)], 2, "LikelyPairs:" + str(i)+" : "+ str(j))
 
-
+    def TestIsSequenceSubSetOf(self):
+        data = list(range(30))
+        data.extend([30] * 10)
+        '''7 motieven: 0, 1, 2, 3, 4, 5, 6'''
+        data.extend(range(31,60))
+        '''6 motieven: 30, 31, 32, 33, 34, 35'''
+        verdeelPunten1 = [0,35,70]
+        verdeelPunten2 = [0,35,69]
+        with self.assertRaises(AttributeError):
+            timeSeq = Sax.TimeSequence(data, verdeelPunten1, 25, 25, 5, 5, 2, self.r)
+        timeSeq = Sax.TimeSequence(data, verdeelPunten2, 25, 25, 5, 5, 1, 0)
+        masks = [[0,1],[1,2],[2,3],[3,4],[0,1,2],[1,2,3],[2,3,4]]
+        cMatrix = timeSeq.getCollisionMatrix(masks)
+        motifs = timeSeq.getMotifs(cMatrix)
+        print (motifs)
            
 #####################################################################
 
