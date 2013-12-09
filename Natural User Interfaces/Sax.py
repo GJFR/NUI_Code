@@ -250,6 +250,27 @@ class TimeSequence(object):
         removeList = [x for x in diction if x not in motifList]
         for mot in removeList:
             del diction[mot]
+            
+    def getBestMotifs(self, diction):
+        it = iter(diction)
+        aantalGroepen = len(self.verdeelPunten) - 1
+        bestMotif = None
+        bestDist = self.r * aantalGroepen
+        while it.has:
+            motif = it.next()
+            dist = self.getTotalDistance(motif, diction[motif])
+            if dist < bestDist and diction[motif] >= aantalGroepen:
+                bestMotif = motif
+                bestDist = dist
+        if (bestMotif == None):
+            raise Exception("No best motif was found.")
+        return bestMotif
+    
+    def getTotalDistance(self, matchDistPairs):
+        dist = 0
+        for match,dist in matchDistPairs:
+            dist += dist
+        return dist
         
     def isSequenceSubsetOf(self, mot1, mot2, motList1, motList2):
         
