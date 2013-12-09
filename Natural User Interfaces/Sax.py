@@ -65,7 +65,7 @@ class TimeSequence(object):
     '''Returns a random generated list of masks (who satisfy our conditions)'''
     def getMasks(self):
         masks = []
-        maskLengte = self.woordLengte * 3 / 4
+        maskLengte = self.woordLengte * 1 / 4
         while len(masks) < self.woordLengte:
             mask = []
             while len(mask) < maskLengte:
