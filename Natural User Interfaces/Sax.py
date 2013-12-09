@@ -159,34 +159,29 @@ class TimeSequence(object):
             self.removeTrivialMotifs(topX)
         return topX
 
-    def removeCloseMatches(self, diction):
-        for motif in diction:
-            volledigeLijst = [x for x in diction[motif]]
-            volledigeLijst.append(motif)
-            removeList = []
-            for i in range(len(volledigeLijst)):
-                seq1 = volledigeLijst[i]
-                for j in range(i+1,len(volledigeLijst)):
-                    seq2 = volledigeLijst[j]
-                    eerste =  min(seq1, seq2, key = lambda x: x.getStart())
-                    if seq1.getDistance(seq2) < eerste.getLength():
-                        if motif.compare(seq1) < motif.compare(seq2):
-                            removeList.append(seq2)
-                        else:
-                            removeList.append(seq1)
-                             
-            volledigeLijst = [x for x in volledigeLijst if x not in removeList]
-             
-            removeList.sort(key = lambda x: motif.compare(x))
-            for rem in removeList:
-                for seq in volledigeLijst:
-                    eerste =  min(rem, seq, key = lambda x: x.getStart())
-                    if rem.getDistance(seq) < eerste.getLength():
-                        break
+    def removeCloseMatches(self, matchDistDict):
+        for motif in matchDistDict:
+            groupMatch = {}
+            for match,dist in matchDistDict[motif]:
+                group = self.sequenceHash[match]
+                if group in groupMatch:
+                    bSeq,bDist = groupMatch[group]
+                    if dist < bDist:
+                        groupMatch[group] = (match,dist)
                 else:
-                    volledigeLijst.append(rem)
-            volledigeLijst.remove(motif)
-            diction[motif] = volledigeLijst
+                    groupMatch[group] = (match,dist)
+            matchDistDict[motif] = []
+            for match,dist in groupMatch.values():
+                matchDistDict[motif].append((match,dist))
+            
+    def makeMatchDistancePair(self,diction):
+        newD = {}
+        for motif in diction:
+            newD[motif] = []
+            for seq in diction[motif]:
+                dist = motif.compare(seq)
+                newD[motif].append((seq,dist))
+        return newD
     
     
     def removeTrivialMotifs(self, diction):

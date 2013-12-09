@@ -219,7 +219,7 @@ class TestSax(unittest.TestCase):
         print (self.motifs)
         for i in self.motifs:
             for j in self.motifs:
-                self.assertTrue(self.timeSeq2.isSequenceSubsetOf(i, j,self.motifs), str(i) + " : "  + str(j))
+                self.assertTrue(self.timeSeq2.isSequenceSubsetOf(i, j,self.motifs[i],self.motifs[j]), str(i) + " : "  + str(j))
         
            
 #####################################################################
