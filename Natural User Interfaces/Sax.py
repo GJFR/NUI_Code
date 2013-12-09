@@ -248,8 +248,11 @@ class TimeSequence(object):
         aantalGroepen = len(self.verdeelPunten) - 1
         bestMotif = None
         bestDist = self.r * aantalGroepen
-        while it.has:
-            motif = it.next()
+        while True:
+            try:
+                motif = it.next()
+            except StopIteration:
+                break
             dist = self.getTotalDistance(motif, diction[motif])
             if dist < bestDist and diction[motif] >= aantalGroepen:
                 bestMotif = motif

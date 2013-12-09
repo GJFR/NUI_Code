@@ -26,8 +26,8 @@ tijd = time.time()
     
 eog1 = Eog.Eog('Data\\test2_A.csv')
 eog2 = Eog.Eog('Data\\test2_B.csv')
-#verdeelPunten = [0,675,1100,1600,2450,2850,3400]
-verdeelPunten = [675,1100,1600]
+verdeelPunten = [0,675,1100,1600,2450,2850,3400]
+#verdeelPunten = [675,1100,1600]
 eog1.filter()
 eog2.filter()
 
