@@ -66,7 +66,15 @@ def plot_data3(eog1, eog2, diction1, diction2):
         for sequence in diction2[motif]:
             ax2.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.getOriginal().getAllPoints(), color = 'r')
         plt.show()
-
+        
+def plot_data4(eog1, eog2, motif, matches):
+    fig = plt.figure()
+    ax1 = fig.add_subplot(211)
+    line1, = ax1.plot(eog2.getMatrix())
+    ax1.plot(range(motif.getStart(), motif.getStart() + motif.getLength()), motif.getOriginal().getAllPoints(), color = 'g')
+    for sequence in matches:
+        ax1.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.getOriginal().getAllPoints(), color = 'r')
+    plt.show()
 '''
 Threshold.setThresholdDifference('left', -0.6)
 Threshold.setThresholdDifference('right', 0.6)
