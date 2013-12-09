@@ -31,14 +31,19 @@ class TimeSequence(object):
         self.collisionThreshold = collisionThreshold
         self.r = r
         self.sequenceList = []
+        self.sequenceHash = {}
+        self.groupHash = {}
         for i in range(len(verdeelPunten)-1):
             begin = verdeelPunten[i]
             einde = verdeelPunten[i+1]
+            self.groupHash[i] = []
             for seqLengte in range(minSeqLengte,maxSeqLengte+1,math.ceil(maxSeqLengte*0.03)):
                 a = einde - seqLengte
                 for j in range(begin,a+1):
                     normSeq = Sequence.Sequence(data, j, seqLengte).getNormalized()
                     self.sequenceList.append(normSeq)
+                    self.sequenceHash[normSeq] = i
+                    self.groupHash[i].append(normSeq)
     
     '''Returns the SAX-array of this timesequence.'''
     def getSaxArray(self):
@@ -111,20 +116,8 @@ class TimeSequence(object):
                         cMatrix[bucket[i],bucket[j]] += 1
 
     def test(self, i, j):
-  
-        startI = self.sequenceList[i].getStart()
-        startJ = self.sequenceList[j].getStart()
-        for k in self.verdeelPunten:
-            if startI < k and startJ < k:
-                return False
-            if startI < k:
-                return True
-            if startJ < k:
-                return True
-        print("test:probleem")
+        return self.sequenceHash[self.sequenceList[i]] == self.sequenceHash[self.sequenceList[j]]
 
-    
-    
     '''Returns a list of all pairs of sequences who's number of collisions is higher than the collision threshold.'''
     def getLikelyPairs(self, cMatrix):
         cooMatrix = cMatrix.tocoo()
