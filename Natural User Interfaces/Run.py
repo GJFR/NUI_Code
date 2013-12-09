@@ -26,8 +26,8 @@ tijd = time.time()
     
 eog1 = Eog.Eog('Data\\test2_A.csv')
 eog2 = Eog.Eog('Data\\test2_B.csv')
-verdeelPunten = [0,675,1100,1600,2450,2850,3400]
-# verdeelPunten = [1600,2500,3400]
+#verdeelPunten = [0,675,1100,1600,2450,2850,3400]
+verdeelPunten = [675,1100,1600]
 eog1.filter()
 eog2.filter()
 
@@ -46,8 +46,12 @@ cMatrix1 = ts1.getCollisionMatrix(masks1)
 tijd = checkpoint("Create collision matrix: ", tijd)
 motifs = ts1.getMotifs(cMatrix1)
 tijd = checkpoint("Get all motifs: ", tijd)
-motifs = ts1.getTopXMotifs(X, motifs)
-tijd = checkpoint("Get top " + str(X) + " of motifs: ", tijd)
+matchDistDict = ts1.makeMatchDistancePair(motifs)
+tijd = checkpoint("Make match,dist pairs: ", tijd)
+ts1.removeCloseMatches(matchDistDict)
+tijd = checkpoint("Remove close matches: ", tijd)
+ts1.getBestMotifs(matchDistDict)
+tijd = checkpoint("Get best motif: ", tijd)
 
 for motif in motifs:
     print (str(motif) + "  :  " + str(motifs[motif]))
