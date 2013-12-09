@@ -127,20 +127,18 @@ class TimeSequence(object):
                 thresholdList.append((self.sequenceList[i],self.sequenceList[j]))
         return thresholdList
     
-    def getMotifs(self, cMatrix):
-        pairs = self.getLikelyPairs(cMatrix)
+    def getMotifs(self, triples):
         diction = {}
-        for (motif,index) in pairs:
-            eDist = motif.compare(index)
-            if eDist <= self.r:
-                if motif in diction:
-                    diction[motif].append(index)
+        for (seq1,seq2,dist) in triples:
+            if dist <= self.r:
+                if seq1 in diction:
+                    diction[seq1].append((seq2,dist))
                 else:
-                    diction[motif] = [index]
-                if index in diction:
-                    diction[index].append(motif)
+                    diction[seq1] = [(seq2,dist)]
+                if seq2 in diction:
+                    diction[seq2].append((seq1,dist))
                 else:
-                    diction[index] = [motif]
+                    diction[seq2] = [(seq1,dist)]
         return diction
     
     def getTopXMotifs(self, topX, diction):
