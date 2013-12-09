@@ -244,7 +244,7 @@ class TimeSequence(object):
         for mot in removeList:
             del diction[mot]
             
-    def getBestMotifs(self, diction):
+    def getBestMotif(self, diction):
         it = iter(diction)
         aantalGroepen = len(self.verdeelPunten) - 1
         bestMotif = None
@@ -257,7 +257,7 @@ class TimeSequence(object):
                 bestDist = dist
         if (bestMotif == None):
             raise Exception("No best motif was found.")
-        return bestMotif
+        return (bestMotif, diction[bestMotif])
     
     def getTotalDistance(self, matchDistPairs):
         dist = 0
