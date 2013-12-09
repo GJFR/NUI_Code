@@ -116,7 +116,7 @@ class TimeSequence(object):
                         cMatrix[bucket[i],bucket[j]] += 1
 
     def test(self, i, j):
-        return self.sequenceHash[self.sequenceList[i]] == self.sequenceHash[self.sequenceList[j]]
+        return self.sequenceHash[self.sequenceList[i]] != self.sequenceHash[self.sequenceList[j]]
 
     '''Returns a list of all pairs of sequences who's number of collisions is higher than the collision threshold.'''
     def getLikelyPairs(self, cMatrix):
@@ -245,16 +245,16 @@ class TimeSequence(object):
             
     def getBestMotif(self, diction):
         it = iter(diction)
-        aantalGroepen = len(self.verdeelPunten) - 1
+        aantalMatches = len(self.verdeelPunten) - 2
         bestMotif = None
-        bestDist = self.r * aantalGroepen
+        bestDist = self.r * aantalMatches
         while True:
             try:
-                motif = it.next()
+                motif = next(it)
             except StopIteration:
                 break
-            dist = self.getTotalDistance(motif, diction[motif])
-            if dist < bestDist and diction[motif] >= aantalGroepen:
+            dist = self.getTotalDistance(diction[motif])
+            if dist < bestDist and len(diction[motif]) >= aantalMatches:
                 bestMotif = motif
                 bestDist = dist
         if (bestMotif == None):
