@@ -44,16 +44,17 @@ print (masks1)
 tijd = checkpoint("Create masks: ", tijd)
 cMatrix1 = ts1.getCollisionMatrix(masks1)
 tijd = checkpoint("Create collision matrix: ", tijd)
-motifs = ts1.getMotifs(cMatrix1)
-tijd = checkpoint("Get all motifs: ", tijd)
-matchDistDict = ts1.makeMatchDistancePair(motifs)
+matchDistPairs = ts1.makeMatchDistancePair(cMatrix1)
 tijd = checkpoint("Make match,dist pairs: ", tijd)
+matchDistDict = ts1.getMotifs(matchDistPairs)
+tijd = checkpoint("Get all motifs: ", tijd)
 ts1.removeCloseMatches(matchDistDict)
 tijd = checkpoint("Remove close matches: ", tijd)
-ts1.getBestMotifs(matchDistDict)
-tijd = checkpoint("Get best motif: ", tijd)
+motif = ts1.getBestMotif(matchDistDict)
+tijd = checkpoint("Get best motifs: ", tijd)
 
-for motif in motifs:
-    print (str(motif) + "  :  " + str(motifs[motif]))
+motif,matches = motif
+print (str(motif) + "  :  " + str(matches))
 
-Visualize.plot_data3(eog1, eog2, motifs, {})
+Visualize.plot_data4(eog1, eog2, motif, matches)
+

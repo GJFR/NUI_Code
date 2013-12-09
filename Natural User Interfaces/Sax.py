@@ -172,14 +172,13 @@ class TimeSequence(object):
             for match,dist in groupMatch.values():
                 matchDistDict[motif].append((match,dist))
             
-    def makeMatchDistancePair(self,diction):
-        newD = {}
-        for motif in diction:
-            newD[motif] = []
-            for seq in diction[motif]:
-                dist = motif.compare(seq)
-                newD[motif].append((seq,dist))
-        return newD
+    def makeMatchDistancePair(self,cMatrix):
+        pairs = self.getLikelyPairs(cMatrix)
+        newL = []
+        for seq1,seq2 in pairs:
+            dist = seq1.compare(seq2)
+            newL.append((seq1,seq2,dist))
+        return newL
     
     
     def removeTrivialMotifs(self, diction):
