@@ -6,6 +6,7 @@ Created on 9-dec.-2013
 
 import IOFunctions
 import DynamicSax
+import Visualize
 import threading
 import queue
 import time
@@ -36,13 +37,12 @@ def calibrate(directions):
         tijd = checkpoint("Group is done: ", tijd)
     motifs = dts.getMotifs()
     tijd = checkpoint("Get all motifs: ", tijd)
-    motifs = dts.removeCloseMatches(motifs)
+    dts.removeCloseMatches(motifs)
     tijd = checkpoint("Remove close matches: ", tijd)
-    motif = dts.getBestMotif(motifs)
+    motif,matches = dts.getBestMotif(motifs)
     tijd = checkpoint("Get best motifs: ", tijd)
+    IOFunctions.dataPlot(motif, matches)
     
-    motif,matches = motif
-    print (str(motif) + "  :  " + str(matches))
 
 def nextGroup(queue):
     return queue.get()

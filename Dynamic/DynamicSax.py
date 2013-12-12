@@ -128,8 +128,8 @@ class DynamicTimeSeq(object):
     '''Iterates through the given buckets and increments each cell of the given collision matrix when there is a hashing collision'''
     def checkBuckets(self, buckets, maskKey, cMatrix):
         for index in range(len(self.maskDict[maskKey])):
-            for seq in buckets[self.maskDict[maskKey][index]]:
-                cMatrix[index,seq] += 1
+            for seq in buckets.get(self.maskDict[maskKey][index], []):
+                cMatrix[seq,index] += 1
             
 
     def test(self, i, j):
@@ -141,7 +141,7 @@ class DynamicTimeSeq(object):
         thresholdList = []
         for i,j,v in itertools.zip_longest(cooMatrix.row, cooMatrix.col, cooMatrix.data):
             if v >= self.collisionThreshold:
-                thresholdList.append((self.group[i],self.sequenceList[j]))
+                thresholdList.append((group[i],self.sequenceList[j]))
         return thresholdList
     
     def getMotifs(self):
@@ -262,7 +262,7 @@ class DynamicTimeSeq(object):
             
     def getBestMotif(self, diction):
         it = iter(diction)
-        aantalMatches = len(self.verdeelPunten) - 2
+        aantalMatches = self.numberOfGroups - 1
         bestMotif = None
         bestDist = self.r * aantalMatches
         while True:

@@ -6,6 +6,7 @@ Created on 9-dec.-2013
 
 import Eog
 import Sequence
+import Visualize
 import math
 import time
 
@@ -33,3 +34,7 @@ def read(relativePath):
 
 def IORecognition():
     pass
+
+def dataPlot(motif, matches):
+    Visualize.plot_data4(read('Data\\test2_B.csv'), motif, matches)
+    print(str(motif) + "  :  " + str(matches))

@@ -56,5 +56,5 @@ tijd = checkpoint("Get best motifs: ", tijd)
 motif,matches = motif
 print (str(motif) + "  :  " + str(matches))
 
-Visualize.plot_data4(eog1, eog2, motif, matches)
+Visualize.plot_data4(eog2.getMatrix(), motif, matches)
 
