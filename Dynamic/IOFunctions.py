@@ -9,10 +9,11 @@ import Sequence
 import math
 import time
 
-def IOCalibration(communicationGroups, minSeqLengte, maxSeqLengte):
+def IOCalibration(communicationGroups, minSeqLengte, maxSeqLengte, semaphore):
     data = read('Data\\test2_B.csv')
     verdeelPunten = [675,1100,1600,2450]
     for i in range(len(verdeelPunten)-1):
+            sequenceList = []
             sequenceHash = {}
             begin = verdeelPunten[i]
             einde = verdeelPunten[i+1]
@@ -20,8 +21,10 @@ def IOCalibration(communicationGroups, minSeqLengte, maxSeqLengte):
                 a = einde - seqLengte
                 for j in range(begin,a+1):
                     normSeq = Sequence.Sequence(data, j, seqLengte).getNormalized()
+                    sequenceList.append(normSeq)
                     sequenceHash[normSeq] = i
-            communicationGroups.append(sequenceHash)
+            communicationGroups.put((sequenceList, sequenceHash))
+            semaphore.release()
             time.sleep(5)
 
 def read(relativePath):

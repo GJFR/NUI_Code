@@ -10,4 +10,4 @@ import Recognition
 
 if __name__ == '__main__':
     labels = Calibration.calibrate(["Rechts","Links"])
-    Recognition.recognize(labels)
+    #Recognition.recognize(labels)

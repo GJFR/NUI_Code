@@ -56,7 +56,7 @@ class Eog(object):
         self.setMatrix(eog_filt)
     
     def readData(self, relativePath):
-        path = (os.getcwd()[:len(os.getcwd()) - 23])
+        path = (os.getcwd()[:len(os.getcwd()) - 7])
 
         with open(path + relativePath) as csvfile:
             spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
