@@ -20,8 +20,6 @@ WORD_LENGTH = 10
 ALPHABET_SIZE = 10
 COLLISION_THRESHOLD = 7
 RANGE = 2
-VALUE_A = 0.8
-X = 5
 
 def run(directions):
     labels = {}

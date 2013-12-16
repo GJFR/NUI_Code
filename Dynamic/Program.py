@@ -1,7 +1,7 @@
 '''
 Created on 9-dec.-2013
 
-@author: Gertjan
+@author: Kevin & Gertjan
 '''
 
 import Calibration

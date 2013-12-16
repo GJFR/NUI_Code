@@ -1,7 +1,7 @@
 '''
 Created on 9-dec.-2013
 
-@author: Gertjan
+@author: Kevin & Gertjan
 '''
 
 import Eog
@@ -33,9 +33,15 @@ def read(relativePath):
     eog.filter()
     return eog.getMatrix()
 
-def IORecognition():
-    pass
-
+def IORecognition(communicationSequences, minSeqLengte, maxSeqLengte, semaphore):
+    data = read('Data\\test2_B.csv')
+    for einde in range(minSeqLengte,len(data)+1):
+        for seqLengte in range(minSeqLengte,maxSeqLengte+1,math.ceil(maxSeqLengte*0.03)):
+            if einde - seqLengte >= 0:
+                normSeq = Sequence.Sequence(data, einde-seqLengte, seqLengte).getNormalized()
+                communicationSequences.put(normSeq)
+                semaphore.release()
+            
 def dataPlot(motif, matches):
     print(str(motif) + "  :  " + str(matches))
     Visualize.plot_data4(read('Data\\test2_B.csv'), motif, matches)
