@@ -23,7 +23,13 @@ RANGE = 2
 VALUE_A = 0.8
 X = 5
 
-def calibrate(directions):
+def run(directions):
+    labels = {}
+    for direction in directions:
+        labels[direction] = calibrate()
+    return labels
+
+def calibrate():
     tijd = time.time()
     communicationGroups = queue.Queue()
     semaphore = threading.Semaphore(0)
@@ -35,14 +41,14 @@ def calibrate(directions):
         semaphore.acquire()
         dts.addSequenceGroup(nextGroup(communicationGroups))
         tijd = checkpoint("Group is done: ", tijd)
-    motifs = dts.getMotifs()
+    dts.calculateMotifs()
     tijd = checkpoint("Get all motifs: ", tijd)
-    dts.removeCloseMatches(motifs)
+    dts.removeCloseMatches()
     tijd = checkpoint("Remove close matches: ", tijd)
-    motif,matches = dts.getBestMotif(motifs)
+    motif,matches = dts.getBestMotif()
     tijd = checkpoint("Get best motifs: ", tijd)
     IOFunctions.dataPlot(motif, matches)
-    
+    return [motif]
 
 def nextGroup(queue):
     return queue.get()

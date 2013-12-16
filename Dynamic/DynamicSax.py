@@ -26,6 +26,7 @@ class DynamicTimeSeq(object):
         self.alfabetGrootte = alfabetGrootte
         self.collisionThreshold = collisionThreshold
         self.r = r
+        self.motifs = []
         self.numberOfGroups = 0
         self.pairs = []
         self.masks = self.getMasks()
@@ -145,6 +146,9 @@ class DynamicTimeSeq(object):
         return thresholdList
     
     def getMotifs(self):
+        return self.motifs
+    
+    def calculateMotifs(self):
         diction = {}
         for (seq1,seq2,dist) in self.pairs:
             if dist <= self.r:
@@ -156,10 +160,10 @@ class DynamicTimeSeq(object):
                     diction[seq2].append((seq1,dist))
                 else:
                     diction[seq2] = [(seq1,dist)]
-        return diction
+        self.motifs = diction
     
-    def getTopXMotifs(self, topX, diction):
-        diction2 = sorted(diction.keys(), key = lambda x: len(diction[x]), reverse = True)
+    def getTopXMotifs(self, topX):
+        diction2 = sorted(self.motifs.keys(), key = lambda x: len(self.motifs[x]), reverse = True)
         it = iter(diction2)
         topX = {}
         while (len(topX) < 5):
@@ -167,17 +171,17 @@ class DynamicTimeSeq(object):
                 motif = next(it)
             except:
                 break
-            topX[motif] = diction[motif]
+            topX[motif] = self.motifs[motif]
             temp = {motif: topX[motif]}
             self.removeCloseMatches(temp)
             topX[motif] = temp[motif]
             self.removeTrivialMotifs(topX)
         return topX
 
-    def removeCloseMatches(self, matchDistDict):
-        for motif in matchDistDict:
+    def removeCloseMatches(self):
+        for motif in self.motifs:
             groupMatch = {}
-            for match,dist in matchDistDict[motif]:
+            for match,dist in self.motifs[motif]:
                 group = self.sequenceHash[match]
                 if group in groupMatch:
                     bSeq,bDist = groupMatch[group]
@@ -185,9 +189,9 @@ class DynamicTimeSeq(object):
                         groupMatch[group] = (match,dist)
                 else:
                     groupMatch[group] = (match,dist)
-            matchDistDict[motif] = []
+            self.motifs[motif] = []
             for match,dist in groupMatch.values():
-                matchDistDict[motif].append((match,dist))
+                self.motifs[motif].append((match,dist))
             
     def makeMatchDistancePair(self,cMatrix, group):
         pairs = self.getLikelyPairs(cMatrix, group)
@@ -260,8 +264,8 @@ class DynamicTimeSeq(object):
         for mot in removeList:
             del diction[mot]
             
-    def getBestMotif(self, diction):
-        it = iter(diction)
+    def getBestMotif(self):
+        it = iter(self.motifs)
         aantalMatches = self.numberOfGroups - 1
         bestMotif = None
         bestDist = self.r * aantalMatches
@@ -270,13 +274,13 @@ class DynamicTimeSeq(object):
                 motif = next(it)
             except StopIteration:
                 break
-            dist = self.getTotalDistance(diction[motif])
-            if dist < bestDist and len(diction[motif]) >= aantalMatches:
+            dist = self.getTotalDistance(self.motifs[motif])
+            if dist < bestDist and len(self.motifs[motif]) >= aantalMatches:
                 bestMotif = motif
                 bestDist = dist
         if (bestMotif == None):
             raise Exception("No best motif was found.")
-        return (bestMotif, diction[bestMotif])
+        return (bestMotif, self.motifs[bestMotif])
     
     def getTotalDistance(self, matchDistPairs):
         dist = 0
