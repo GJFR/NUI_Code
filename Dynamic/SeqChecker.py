@@ -24,7 +24,7 @@ class SeqChecker(object):
         self.collisionThreshold = collisionThreshold
         self.r = r
         self.masks = self.getMasks()
-        self.maskLabeling = {}
+        self.maskedLabeling = {}
         for label in labeling:
             self.maskedLabeling[label] = []
             saxArray = self.getSaxArray(self.labeling[label])
