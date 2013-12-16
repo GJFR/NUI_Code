@@ -36,5 +36,5 @@ def IORecognition():
     pass
 
 def dataPlot(motif, matches):
-    Visualize.plot_data4(read('Data\\test2_B.csv'), motif, matches)
     print(str(motif) + "  :  " + str(matches))
+    Visualize.plot_data4(read('Data\\test2_B.csv'), motif, matches)
