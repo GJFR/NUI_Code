@@ -26,7 +26,7 @@ class DynamicTimeSeq(object):
         self.alfabetGrootte = alfabetGrootte
         self.collisionThreshold = collisionThreshold
         self.r = r
-        self.motifs = []
+        self.motifs = {}
         self.numberOfGroups = 0
         self.pairs = []
         self.masks = self.getMasks()
@@ -264,23 +264,24 @@ class DynamicTimeSeq(object):
         for mot in removeList:
             del diction[mot]
             
-    def getBestMotif(self):
-        it = iter(self.motifs)
-        aantalMatches = self.numberOfGroups - 1
-        bestMotif = None
-        bestDist = self.r * aantalMatches
-        while True:
+    def getBestMotifs(self, nbMotifs):
+        motifs = sorted(self.motifs.keys(),key=lambda motif: self.getTotalDistance(self.motifs[motif]))
+        it = iter(sorted(motifs, key=len))
+        bestMotifs = []
+        while len(bestMotifs) < nbMotifs:
             try:
                 motif = next(it)
             except StopIteration:
                 break
-            dist = self.getTotalDistance(self.motifs[motif])
-            if dist < bestDist and len(self.motifs[motif]) >= aantalMatches:
-                bestMotif = motif
-                bestDist = dist
-        if (bestMotif == None):
-            raise Exception("No best motif was found.")
-        return (bestMotif, self.motifs[bestMotif])
+            for m in bestMotifs:
+                if motif.compare(m) < self.r:
+                    break
+            else:
+                bestMotifs.append(motif)
+                    
+        if (len(bestMotifs) < nbMotifs):
+            raise Exception("Not enough best motifs found.")
+        return bestMotifs
     
     def getTotalDistance(self, matchDistPairs):
         dist = 0

@@ -43,10 +43,11 @@ def calibrate():
     tijd = checkpoint("Get all motifs: ", tijd)
     dts.removeCloseMatches()
     tijd = checkpoint("Remove close matches: ", tijd)
-    motif,matches = dts.getBestMotif()
+    bestMotifs = dts.getBestMotifs(2)
     tijd = checkpoint("Get best motifs: ", tijd)
-    IOFunctions.dataPlot(motif, matches)
-    return [motif]
+    for motif in bestMotifs:
+        IOFunctions.dataPlot(motif, dts.getMotifs()[motif])
+    return bestMotifs
 
 def nextGroup(queue):
     return queue.get()

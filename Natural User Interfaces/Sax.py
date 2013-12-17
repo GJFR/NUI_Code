@@ -243,7 +243,7 @@ class TimeSequence(object):
         for mot in removeList:
             del diction[mot]
             
-    def getBestMotif(self, diction):
+    def getBestMotifs(self, diction):
         it = iter(diction)
         aantalMatches = len(self.verdeelPunten) - 2
         bestMotif = None
