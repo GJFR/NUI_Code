@@ -59,7 +59,7 @@ class SeqChecker(object):
         for i in range(len(self.masks)):
             maskedWord = self.mask(word, self.masks[i])
             for label in self.labeling:
-                if maskedWord == self.maskedLabeling[label][i]:
+                if maskedWord[0] == self.maskedLabeling[label][i][self.states[label]]:
                     counters[label] += 1
         
         possibleLabels = []

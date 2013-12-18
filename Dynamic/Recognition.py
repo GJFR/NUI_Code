@@ -27,7 +27,7 @@ def recognize(labels):
     thread = threading.Thread(target=IOFunctions.IORecognition, args=(communicationSequences, MIN_SEQ_LENGTH, MAX_SEQ_LENGTH, semaphore))
     thread.start()
     tijd = checkpoint("Init: ", tijd)
-    for i in range(3000 * 11):
+    for i in range(3000 * 2):
         semaphore.acquire()
         nextSeq = nextSequence(communicationSequences)
         label = seqChecker.checkSequence(nextSeq)

@@ -19,7 +19,7 @@ def IOCalibration(communicationGroups, minSeqLengte, maxSeqLengte, semaphore):
         sequenceHash = {}
         begin = verdeelPunten[i]
         einde = verdeelPunten[i+1]
-        for seqLengte in range(minSeqLengte,maxSeqLengte+1,math.ceil(maxSeqLengte*0.03)):
+        for seqLengte in range(minSeqLengte,maxSeqLengte+1,math.ceil(maxSeqLengte*0.030)):
             a = einde - seqLengte
             for j in range(begin,a+1):
                 normSeq = Sequence.Sequence(data, j, seqLengte).getNormalized()
@@ -29,14 +29,14 @@ def IOCalibration(communicationGroups, minSeqLengte, maxSeqLengte, semaphore):
         semaphore.release()
 
 def read(relativePath):
-    eog = Eog.Eog(relativePath)
+    eog = Eog.Eog(relativePath, 7)
     eog.filter()
     return eog.getMatrix()
 
 def IORecognition(communicationSequences, minSeqLengte, maxSeqLengte, semaphore):
-    data = read('Data\\test2_B.csv')
+    data = read('Data\\test1_B.csv')
     for einde in range(minSeqLengte,len(data)+1):
-        for seqLengte in range(minSeqLengte,maxSeqLengte+1,math.ceil(maxSeqLengte*0.03)):
+        for seqLengte in range(minSeqLengte,maxSeqLengte+1,math.ceil(maxSeqLengte*0.09)):
             if einde - seqLengte >= 0:
                 normSeq = Sequence.Sequence(data, einde-seqLengte, seqLengte).getNormalized()
                 communicationSequences.put(normSeq)
