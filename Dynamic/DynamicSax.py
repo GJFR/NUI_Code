@@ -286,14 +286,14 @@ class DynamicTimeSeq(object):
     def overlappen(self, motif1, motif2):
         if self.sequenceHash[motif1] == self.sequenceHash[motif2] and motif1.overlap(motif2):
             return True
-        for match2 in self.motifs[motif2]:
+        for match2,comp in self.motifs[motif2]:
              if self.sequenceHash[motif1] == self.sequenceHash[match2] and motif1.overlap(match2):
                 return True
-        for match1 in self.motifs[motif1]:
+        for match1,comp in self.motifs[motif1]:
             if self.sequenceHash[match1] == self.sequenceHash[motif2] and motif2.overlap(match1):
                 return True
-        for match1 in self.motifs[motif1]:
-            for match2 in self.motifs[motif2]:
+        for match1,comp in self.motifs[motif1]:
+            for match2,comp in self.motifs[motif2]:
                 if self.sequenceHash[match1] == self.sequenceHash[match2] and match1.overlap(match2):
                     return True
         return False
