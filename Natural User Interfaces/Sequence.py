@@ -118,9 +118,9 @@ class Sequence(object):
         return abs(self.getStart() - other.getStart())
     
     def overlap(self,seq):
-        if(self.getStart() + self.getLength() > seq.getStart() and self.getStart() < seq.getStart()):
+        if(self.getStart() + self.getLength() > seq.getStart() and self.getStart() <= seq.getStart()):
             return True
-        elif(seq.getStart() + seq.getLength() > self.getStart() and seq.getStart() < self.getStart()):
+        elif(seq.getStart() + seq.getLength() > self.getStart() and seq.getStart() <= self.getStart()):
             return True
         return False
     

@@ -30,7 +30,7 @@ def recognize(labels):
     for label in labels:
         labeledMatches[label] = []
     tijd = checkpoint("Init: ", tijd)
-    for i in range(3000 * 2):
+    for i in range(3000 * 11):
         semaphore.acquire()
         nextSeq = nextSequence(communicationSequences)
         label = seqChecker.checkSequence(nextSeq)
