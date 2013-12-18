@@ -266,7 +266,7 @@ class DynamicTimeSeq(object):
             
     def getBestMotifs(self, nbMotifs):
         motifs = sorted(self.motifs.keys(),key=lambda motif: self.getTotalDistance(self.motifs[motif]))
-        it = iter(sorted(motifs, key=len))
+        it = iter(sorted(motifs, key=lambda motif: len(self.motifs[motif]), reverse=True))
         bestMotifs = []
         while len(bestMotifs) < nbMotifs:
             try:

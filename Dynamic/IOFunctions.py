@@ -12,7 +12,7 @@ import time
 
 def IOCalibration(communicationGroups, minSeqLengte, maxSeqLengte, semaphore):
     data = read('Data\\test2_B.csv')
-    verdeelPunten = [675,1100,1600,2450]
+    verdeelPunten = [675,1100,1600,1950,2450]
     for i in range(len(verdeelPunten)-1):
         time.sleep(20)
         sequenceList = []
