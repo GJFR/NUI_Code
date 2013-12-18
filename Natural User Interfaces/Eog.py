@@ -17,11 +17,11 @@ class Eog(object):
     '''
 
 
-    def __init__(self, relativePath):
+    def __init__(self, relativePath, nbr):
         '''
         Constructor
         '''
-        self.setMatrix(self.readData(relativePath))
+        self.setMatrix(self.readData(relativePath, nbr))
         self.setAnnotations([])
 
     def setMatrix(self,matrix):
@@ -55,8 +55,8 @@ class Eog(object):
         eog_filt = filtfilt(b, a, self.__matrix)
         self.setMatrix(eog_filt)
     
-    def readData(self, relativePath):
-        path = (os.getcwd()[:len(os.getcwd()) - 7])
+    def readData(self, relativePath, nbr):
+        path = (os.getcwd()[:len(os.getcwd()) - nbr])
 
         with open(path + relativePath) as csvfile:
             spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')

@@ -29,12 +29,12 @@ def IOCalibration(communicationGroups, minSeqLengte, maxSeqLengte, semaphore):
         semaphore.release()
 
 def read(relativePath):
-    eog = Eog.Eog(relativePath)
+    eog = Eog.Eog(relativePath, 7)
     eog.filter()
     return eog.getMatrix()
 
 def IORecognition(communicationSequences, minSeqLengte, maxSeqLengte, semaphore):
-    data = read('Data\\test2_B.csv')
+    data = read('Data\\test1_B.csv')
     for einde in range(minSeqLengte,len(data)+1):
         for seqLengte in range(minSeqLengte,maxSeqLengte+1,math.ceil(maxSeqLengte*0.3)):
             if einde - seqLengte >= 0:

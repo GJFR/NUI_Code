@@ -18,6 +18,5 @@ def initial():
 
 if __name__ == '__main__':
     labels = Calibration.run(["Rechts"])
-    print(labels)
     #labels = initial()
     Recognition.recognize(labels)

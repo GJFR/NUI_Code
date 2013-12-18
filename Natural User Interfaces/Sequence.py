@@ -117,6 +117,13 @@ class Sequence(object):
     def getDistance(self, other):
         return abs(self.getStart() - other.getStart())
     
+    def overlap(self,seq):
+        if(self.getStart() + self.getLength() > seq.getStart() and self.getStart() < seq.getStart()):
+            return True
+        elif(seq.getStart() + seq.getLength() > self.getStart() and seq.getStart() < self.getStart()):
+            return True
+        return False
+    
     '''override'''
     def __str__(self):
         return str(self.getStart()) + " (" + str(self.getLength()) + ")"
