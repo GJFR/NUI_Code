@@ -14,8 +14,8 @@ dataString = 'Data\\test2_B.csv'
 
 def IOCalibration(communicationGroups, minSeqLengte, maxSeqLengte, semaphore):
     data = read(dataString)
-    #verdeelPunten = [675,1100,1600,1950,2450]
-    verdeelPunten = [100,500,1050,1450,1900]
+    verdeelPunten = [675,1100,1600,1950,2450]
+    #verdeelPunten = [100,500,1050,1450,1900]
     for i in range(len(verdeelPunten)-1):
         time.sleep(20)
         sequenceList = []

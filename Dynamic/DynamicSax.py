@@ -26,12 +26,16 @@ class DynamicTimeSeq(object):
         self.alfabetGrootte = alfabetGrootte
         self.collisionThreshold = collisionThreshold
         self.r = r
+        '''motifs: Sequence -> Lijst van matches (sequenties) '''
         self.motifs = {}
         self.numberOfGroups = 0
         self.pairs = []
         self.masks = self.getMasks()
+        '''sequenceHash: Sequence -> Groepnummer '''
         self.sequenceHash = {}
+        '''maskDict: mask-key -> met dat masker gemaskerde sax-woorden'''
         self.maskDict = {}
+        '''maskKeys: mask-key -> masker met die key'''
         self.maskKeys = {}
         for mask in self.masks:
             key = self.calculateKey(mask)
@@ -40,18 +44,15 @@ class DynamicTimeSeq(object):
         self.sequenceList = []
     
     def addSequenceGroup(self, pair):
-        group, sequenceHash = pair
-        if self.numberOfGroups == 0:
-            self.numberOfGroups += 1
-            self.sequenceList = self.sequenceList + group
-            self.sequenceHash.update(sequenceHash)
-            return
+        group, newSequenceHash = pair
         
-        cMatrix = self.getCollisionMatrix(self.masks, sequenceHash)
-        self.pairs = self.pairs + self.makeMatchDistancePair(cMatrix, group)
+        if self.numberOfGroups != 0:
+            cMatrix = self.getCollisionMatrix(self.masks, newSequenceHash)
+            self.pairs = self.pairs + self.makeMatchDistancePair(cMatrix, group)
+        
         self.numberOfGroups += 1
         self.sequenceList = self.sequenceList + group
-        self.sequenceHash.update(sequenceHash)
+        self.sequenceHash.update(newSequenceHash)
         
     def getNumberOfGroups(self):
         return self.numberOfGroups
@@ -97,6 +98,18 @@ class DynamicTimeSeq(object):
             else:
                 masks.append(mask)
         return masks
+    
+    def orderMotifs(self, motifs):
+        matches = {}
+        for motif in motifs:
+            if self.sequenceHash[motif] == 0:
+                matches[motif] = motif
+                continue
+            for match in self.getMotifs()[motif]:
+                if self.sequenceHash[match] == 0:
+                    matches[motif] = match
+                    break
+        return sorted(motifs, key=lambda motif: matches[motif].getStart())
     
     def calculateKey(self, mask):
         key = ""
@@ -161,22 +174,6 @@ class DynamicTimeSeq(object):
                 else:
                     diction[seq2] = [(seq1,dist)]
         self.motifs = diction
-    
-    def getTopXMotifs(self, topX):
-        diction2 = sorted(self.motifs.keys(), key = lambda x: len(self.motifs[x]), reverse = True)
-        it = iter(diction2)
-        topX = {}
-        while (len(topX) < 5):
-            try:
-                motif = next(it)
-            except:
-                break
-            topX[motif] = self.motifs[motif]
-            temp = {motif: topX[motif]}
-            self.removeCloseMatches(temp)
-            topX[motif] = temp[motif]
-            self.removeTrivialMotifs(topX)
-        return topX
 
     def removeCloseMatches(self):
         for motif in self.motifs:
@@ -199,70 +196,7 @@ class DynamicTimeSeq(object):
         for seq1,seq2 in pairs:
             dist = seq1.compare(seq2)
             newL.append((seq1,seq2,dist))
-        return newL
-    
-    
-    def removeTrivialMotifs(self, diction):
-        #verwijder dichtbij elkaarliggende motieven
-        motifList = []
-        for motif in diction:
-            motifList.append(motif)
-        
-        removeList = []
-        for i in range(len(motifList)):
-            mot1 = motifList[i]
-            for j in range(i+1, len(motifList)):
-                mot2 = motifList[j]
-                eerste =  min(mot1, mot2, key = lambda x: x.getStart())
-                if mot1.getDistance(mot2) < eerste.getLength():
-                    if len(diction[mot1]) == len(diction[mot2]):
-                        if mot1.getLength() < mot2.getLength():
-                            removeList.append(mot2)
-                        else:
-                            removeList.append(mot1)
-                    else:
-                        slechtste = min(mot1, mot2, key = lambda x: len(diction[x]))
-                        removeList.append(slechtste)
-            
-        motifList = [x for x in motifList if x not in removeList]
-         
-        removeList.sort(key = lambda x: (len(diction[x]), x.getLength()))
-        for rem in removeList:
-            for mot in motifList:
-                eerste =  min(rem, mot, key = lambda x: x.getStart())
-                if rem.getDistance(mot) < eerste.getLength():
-                    break
-            else:
-                motifList.append(rem)
-        
-        
-        # verwijder dezelfde motifs (in elkaars groep)
-        removeList = []
-        motInSeq = {}
-        for mot in motifList:
-            motInSeq[mot] = [x for x in diction[mot]]
-            motInSeq[mot].append(mot)
-                 
-        for mot1 in motifList:
-            motList1 = motInSeq[mot1]
-            if len(motList1) == 1:
-                removeList.append(mot1)
-                continue
-            for mot2 in motifList:
-                motList2 = motInSeq[mot2]
-                if mot1 == mot2 or len(motList2) == 1 or mot2 in removeList:
-                    continue
-                if self.isSequenceSubsetOf(mot1,mot2,motList1,motList2):
-                    removeList.append(mot1)
-        
-        for mot in removeList:
-            if mot in motifList:
-                motifList.remove(mot)
-        
-        '''filter hier motifList uit diction'''
-        removeList = [x for x in diction if x not in motifList]
-        for mot in removeList:
-            del diction[mot]
+        return 
             
     def getBestMotifs(self, nbMotifs):
         motifs = sorted(self.motifs.keys(),key=lambda motif: self.getTotalDistance(self.motifs[motif]))
@@ -303,22 +237,3 @@ class DynamicTimeSeq(object):
         for match,dist in matchDistPairs:
             dist += dist
         return dist
-        
-    def isSequenceSubsetOf(self, mot1, mot2, motList1, motList2):
-        
-        for elem1 in motList1:
-            for elem2 in motList2:
-                if elem1.getDistance(elem2) <= self.MIN_AFSTAND:
-                    break
-            else:
-                return False
-        if len(motList1) == len(motList2):
-            total1 = 0
-            for seq in motList1:
-                total1 += mot1.compare(seq)
-            total2 = 0
-            for seq in motList2:
-                total2 += mot2.compare(seq)
-            if(total1 < total2):
-                return False
-        return True
