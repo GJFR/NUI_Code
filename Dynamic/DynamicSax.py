@@ -47,9 +47,13 @@ class DynamicTimeSeq(object):
         group, newSequenceHash = pair
         
         if self.numberOfGroups != 0:
-            cMatrix = self.getCollisionMatrix(self.masks, newSequenceHash)
-            self.pairs = self.pairs + self.makeMatchDistancePair(cMatrix, group)
-        
+            self.numberOfGroups += 1
+            self.sequenceList = self.sequenceList + group
+            self.sequenceHash.update(newSequenceHash)
+            return
+            
+        cMatrix = self.getCollisionMatrix(self.masks, newSequenceHash)
+        self.pairs = self.pairs + self.makeMatchDistancePair(cMatrix, group)
         self.numberOfGroups += 1
         self.sequenceList = self.sequenceList + group
         self.sequenceHash.update(newSequenceHash)
