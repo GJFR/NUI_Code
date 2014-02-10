@@ -34,8 +34,6 @@ def recognize(labels):
         semaphore.acquire()
         nextSeq = nextSequence(communicationSequences)
         label = seqChecker.checkSequence(nextSeq)
-        if nextSeq.getStart() % 100 == 0:
-            print(nextSeq)
         if (label is not None):
             labeledMatches[label] = nextSeq
             print(str(nextSeq) + ": " + label)

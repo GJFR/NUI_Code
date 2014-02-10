@@ -10,9 +10,12 @@ import Visualize
 import math
 import time
 
+dataString = 'Data\\test2_B.csv'
+
 def IOCalibration(communicationGroups, minSeqLengte, maxSeqLengte, semaphore):
-    data = read('Data\\test2_B.csv')
-    verdeelPunten = [675,1100,1600,1950,2450]
+    data = read(dataString)
+    #verdeelPunten = [675,1100,1600,1950,2450]
+    verdeelPunten = [100,500,1050,1450,1900]
     for i in range(len(verdeelPunten)-1):
         time.sleep(20)
         sequenceList = []
@@ -21,7 +24,7 @@ def IOCalibration(communicationGroups, minSeqLengte, maxSeqLengte, semaphore):
         einde = verdeelPunten[i+1]
         for seqLengte in range(minSeqLengte,maxSeqLengte+1,math.ceil(maxSeqLengte*0.03)):
             a = einde - seqLengte
-            for j in range(begin,a+1):
+            for j in range(begin,a+1,2):
                 normSeq = Sequence.Sequence(data, j, seqLengte).getNormalized()
                 sequenceList.append(normSeq)
                 sequenceHash[normSeq] = i
@@ -34,9 +37,9 @@ def read(relativePath):
     return eog.getMatrix()
 
 def IORecognition(communicationSequences, minSeqLengte, maxSeqLengte, semaphore):
-    data = read('Data\\test2_B.csv')
-    print("Recognize test2_B")
-    for einde in range(minSeqLengte,len(data)+1):
+    data = read(dataString)
+    print(dataString)
+    for einde in range(minSeqLengte,len(data)+1,2):
         for seqLengte in range(minSeqLengte,maxSeqLengte+1,math.ceil(maxSeqLengte*0.03)):
             if einde - seqLengte >= 0:
                 normSeq = Sequence.Sequence(data, einde-seqLengte, seqLengte).getNormalized()
@@ -46,4 +49,4 @@ def IORecognition(communicationSequences, minSeqLengte, maxSeqLengte, semaphore)
             
 def dataPlot(motif, matches):
     print(str(motif) + "  :  " + str(matches))
-    Visualize.plot_data4(read('Data\\test2_B.csv'), motif, matches)
+    Visualize.plot_data4(read(dataString), motif, matches)
