@@ -10,14 +10,19 @@ import Visualize
 import math
 import time
 
-dataString = 'Data\\test2_B.csv'
+dataStringDict = {'Rechts' : 'Data\\test3_B.csv' , 'Links' : 'Data\\test2_B.csv'}
+dataStringRec = 'Data\\test2_B.csv'
 verdeelPunten2B = [675,1100,1600,1950,2450]
 verdeelPunten4A = [100,500,1050,1450,1900]
-verdeelPunten = verdeelPunten2B
+verdeelPunten3B = [75,534,1072,1642,2244,2742,3328]
+verdeelPuntenDict = {'Rechts' : verdeelPunten3B , 'Links' : verdeelPunten2B }
 
-def IOCalibration(communicationGroups, minSeqLengte, maxSeqLengte, semaphore):
+
+def IOCalibration(communicationGroups, minSeqLengte, maxSeqLengte, semaphore, direction):
+    dataString = dataStringDict[direction]
     data = read(dataString)
-
+    verdeelPunten = verdeelPuntenDict[direction]
+    
     for i in range(len(verdeelPunten)-1):
         time.sleep(20)
         sequenceList = []
@@ -39,8 +44,8 @@ def read(relativePath):
     return eog.getMatrix()
 
 def IORecognition(communicationSequences, minSeqLengte, maxSeqLengte, semaphore):
-    data = read(dataString)
-    print(dataString)
+    data = read(dataStringRec)
+    print(dataStringRec)
     for einde in range(minSeqLengte,len(data)+1,2):
         for seqLengte in range(minSeqLengte,maxSeqLengte+1,math.ceil(maxSeqLengte*0.03)):
             if einde - seqLengte >= 0:
@@ -49,6 +54,6 @@ def IORecognition(communicationSequences, minSeqLengte, maxSeqLengte, semaphore)
                 semaphore.release()
     print("IO-End")
             
-def dataPlot(motif, matches):
+def dataPlot(motif, matches, direction):
     print(str(motif) + "  :  " + str(matches))
-    Visualize.plot_data4(read(dataString), motif, matches)
+    Visualize.plot_data4(read(dataStringDict[direction]), motif, matches)

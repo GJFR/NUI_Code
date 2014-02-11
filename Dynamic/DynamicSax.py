@@ -109,7 +109,7 @@ class DynamicTimeSeq(object):
             if self.sequenceHash[motif] == 0:
                 matches[motif] = motif
                 continue
-            for match in self.getMotifs()[motif]:
+            for match,afstand in self.getMotifs()[motif]:
                 if self.sequenceHash[match] == 0:
                     matches[motif] = match
                     break

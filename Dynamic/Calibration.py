@@ -24,14 +24,14 @@ RANGE = 2
 def run(directions):
     labels = {}
     for direction in directions:
-        labels[direction] = calibrate()
+        labels[direction] = calibrate(direction)
     return labels
 
-def calibrate():
+def calibrate(direction):
     tijd = time.time()
     communicationGroups = queue.Queue()
     semaphore = threading.Semaphore(0)
-    thread = threading.Thread(target=IOFunctions.IOCalibration, args=(communicationGroups, MIN_SEQ_LENGTH, MAX_SEQ_LENGTH, semaphore))
+    thread = threading.Thread(target=IOFunctions.IOCalibration, args=(communicationGroups, MIN_SEQ_LENGTH, MAX_SEQ_LENGTH, semaphore, direction))
     thread.start()
     dts = DynamicSax.DynamicTimeSeq(MIN_SEQ_LENGTH, MAX_SEQ_LENGTH, WORD_LENGTH, ALPHABET_SIZE, COLLISION_THRESHOLD, RANGE)
     tijd = checkpoint("Init: ", tijd)
@@ -47,7 +47,7 @@ def calibrate():
     orderedBestMotifs = dts.orderMotifs(bestMotifs)
     tijd = checkpoint("Get best motifs: ", tijd)
     for motif in orderedBestMotifs:
-        IOFunctions.dataPlot(motif, dts.getMotifs()[motif])
+        IOFunctions.dataPlot(motif, dts.getMotifs()[motif], direction)
     return orderedBestMotifs
 
 def nextGroup(queue):
