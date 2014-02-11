@@ -26,12 +26,16 @@ class DynamicTimeSeq(object):
         self.alfabetGrootte = alfabetGrootte
         self.collisionThreshold = collisionThreshold
         self.r = r
+        '''motifs: Sequence -> Lijst van matches (sequenties) '''
         self.motifs = {}
         self.numberOfGroups = 0
         self.pairs = []
         self.masks = self.getMasks()
+        '''sequenceHash: Sequence -> Groepnummer '''
         self.sequenceHash = {}
+        '''maskDict: mask-key -> met dat masker gemaskerde sax-woorden'''
         self.maskDict = {}
+        '''maskKeys: mask-key -> masker met die key'''
         self.maskKeys = {}
         for mask in self.masks:
             key = self.calculateKey(mask)
@@ -40,18 +44,19 @@ class DynamicTimeSeq(object):
         self.sequenceList = []
     
     def addSequenceGroup(self, pair):
-        group, sequenceHash = pair
+        newSequences, newSequenceHash = pair
+        
         if self.numberOfGroups == 0:
             self.numberOfGroups += 1
-            self.sequenceList = self.sequenceList + group
-            self.sequenceHash.update(sequenceHash)
+            self.sequenceList = self.sequenceList + newSequences
+            self.sequenceHash.update(newSequenceHash)
             return
-        
-        cMatrix = self.getCollisionMatrix(self.masks, sequenceHash)
-        self.pairs = self.pairs + self.makeMatchDistancePair(cMatrix, group)
+            
+        cMatrix = self.getCollisionMatrix(self.masks, newSequenceHash)
+        self.pairs = self.pairs + self.makeMatchDistancePair(cMatrix, newSequences)
         self.numberOfGroups += 1
-        self.sequenceList = self.sequenceList + group
-        self.sequenceHash.update(sequenceHash)
+        self.sequenceList = self.sequenceList + newSequences
+        self.sequenceHash.update(newSequenceHash)
         
     def getNumberOfGroups(self):
         return self.numberOfGroups
@@ -97,6 +102,18 @@ class DynamicTimeSeq(object):
             else:
                 masks.append(mask)
         return masks
+    
+    def orderMotifs(self, motifs):
+        matches = {}
+        for motif in motifs:
+            if self.sequenceHash[motif] == 0:
+                matches[motif] = motif
+                continue
+            for match in self.getMotifs()[motif]:
+                if self.sequenceHash[match] == 0:
+                    matches[motif] = match
+                    break
+        return sorted(motifs, key=lambda motif: matches[motif].getStart())
     
     def calculateKey(self, mask):
         key = ""
@@ -184,7 +201,6 @@ class DynamicTimeSeq(object):
             dist = seq1.compare(seq2)
             newL.append((seq1,seq2,dist))
         return newL
- 
             
     def getBestMotifs(self, nbMotifs):
         motifs = sorted(self.motifs.keys(),key=lambda motif: self.getTotalDistance(self.motifs[motif]))

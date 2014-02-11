@@ -17,6 +17,7 @@ verdeelPunten = verdeelPunten2B
 
 def IOCalibration(communicationGroups, minSeqLengte, maxSeqLengte, semaphore):
     data = read(dataString)
+
     for i in range(len(verdeelPunten)-1):
         time.sleep(20)
         sequenceList = []
