@@ -46,7 +46,7 @@ def calibrate():
     bestMotifs = dts.getBestMotifs(2)
     tijd = checkpoint("Get best motifs: ", tijd)
     for motif in bestMotifs:
-        IOFunctions.dataPlot(motif, dts.getMotifs()[motif])
+        IOFunctions.dataPlot(motif, dts.getMotifs()[motif]) 
     return bestMotifs
 
 def nextGroup(queue):
