@@ -44,18 +44,18 @@ class DynamicTimeSeq(object):
         self.sequenceList = []
     
     def addSequenceGroup(self, pair):
-        group, newSequenceHash = pair
+        newSequences, newSequenceHash = pair
         
-        if self.numberOfGroups != 0:
+        if self.numberOfGroups == 0:
             self.numberOfGroups += 1
-            self.sequenceList = self.sequenceList + group
+            self.sequenceList = self.sequenceList + newSequences
             self.sequenceHash.update(newSequenceHash)
             return
             
         cMatrix = self.getCollisionMatrix(self.masks, newSequenceHash)
-        self.pairs = self.pairs + self.makeMatchDistancePair(cMatrix, group)
+        self.pairs = self.pairs + self.makeMatchDistancePair(cMatrix, newSequences)
         self.numberOfGroups += 1
-        self.sequenceList = self.sequenceList + group
+        self.sequenceList = self.sequenceList + newSequences
         self.sequenceHash.update(newSequenceHash)
         
     def getNumberOfGroups(self):
@@ -200,7 +200,7 @@ class DynamicTimeSeq(object):
         for seq1,seq2 in pairs:
             dist = seq1.compare(seq2)
             newL.append((seq1,seq2,dist))
-        return 
+        return newL
             
     def getBestMotifs(self, nbMotifs):
         motifs = sorted(self.motifs.keys(),key=lambda motif: self.getTotalDistance(self.motifs[motif]))
