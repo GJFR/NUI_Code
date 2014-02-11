@@ -26,8 +26,8 @@ global eog1_filt
 global eog2_filt
 
 
-eog1 = Eog.Eog('Data\\test2_B.csv',23)
-eog1f = Eog.Eog('Data\\test2_B.csv',23)
+eog1 = Eog.Eog('Data\\test3_B.csv',23)
+eog1f = Eog.Eog('Data\\test3_B.csv',23)
 
 
 eog1.normalize()
