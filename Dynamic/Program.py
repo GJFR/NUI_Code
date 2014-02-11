@@ -17,6 +17,6 @@ def initial():
 
 
 if __name__ == '__main__':
-    labels = Calibration.run(["Rechts"])
+    labels = Calibration.run(["Rechts","Links"])
     #labels = initial()
     Recognition.recognize(labels)
