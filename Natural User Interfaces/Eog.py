@@ -50,11 +50,13 @@ class Eog(object):
         
     def filter(self):
         
-        eog_filt = np.zeros(len(self.__matrix))
+        eog_filt1 = np.zeros(len(self.__matrix))
         '''4, 0.016'''
-        b, a = butter(3, 0.032, 'low')
-        eog_filt = filtfilt(b, a, self.__matrix)
-        self.setMatrix(eog_filt)
+        b1, a1 = butter(1, 0.024, 'lowpass')
+        b2, a2 = butter(1, 0.35, 'lowpass')
+        eog_filt1 = filtfilt(b2, a2, self.__matrix)
+        eog_filt2 = filtfilt(b1, a1, eog_filt1)   
+        self.setMatrix(eog_filt2)
     
     def readData(self, relativePath, nbr):
         path = (os.getcwd()[:len(os.getcwd()) - nbr])

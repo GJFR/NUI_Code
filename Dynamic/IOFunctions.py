@@ -11,7 +11,7 @@ import math
 import time
 
 dataStringDict = {'Rechts' : 'Data\\test3_B.csv' , 'Links' : 'Data\\test2_B.csv'}
-dataStringRec = 'Data\\test2_B.csv'
+dataStringRec = 'Data\\test1_B.csv'
 verdeelPunten2B = [675,1100,1600,1950,2450]
 verdeelPunten4A = [100,500,1050,1450,1900]
 verdeelPunten3B = [75,534,1072,1642,2244,2742,3328]
