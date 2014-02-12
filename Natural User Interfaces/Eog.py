@@ -51,7 +51,8 @@ class Eog(object):
     def filter(self):
         
         eog_filt = np.zeros(len(self.__matrix))
-        b, a = butter(4, 0.016, 'low')
+        '''4, 0.016'''
+        b, a = butter(3, 0.032, 'low')
         eog_filt = filtfilt(b, a, self.__matrix)
         self.setMatrix(eog_filt)
     
