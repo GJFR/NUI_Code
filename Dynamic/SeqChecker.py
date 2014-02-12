@@ -15,6 +15,7 @@ class SeqChecker(object):
         '''
         Constructor
         '''
+        self.wait = -1
         self.labeling = labeling
         self.states = {}
         for label in labeling:
@@ -32,11 +33,15 @@ class SeqChecker(object):
                 self.maskedLabeling[label].append(self.mask(saxArray,masker))
                 
     def checkSequence(self, sequence):
+        if sequence.getStart() < self.wait:
+            return None
         possibleLabels = self.saxCheck(sequence)
         matchLabels = self.rangeCheck(possibleLabels, sequence)
         for label in matchLabels:
             if self.incrementState(label):
                 self.resetStates()
+                #self.wait = sequence.getStart() + sequence.getLength()
+                print(str(sequence))
                 return label
         return None
             
