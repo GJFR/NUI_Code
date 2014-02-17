@@ -9,7 +9,6 @@ import Recognition
 import IOFunctions
 import Sequence
 
-
 def initial():
     data = IOFunctions.read('Data\\test2_B.csv')
     return {"Rechts" : [Sequence.Sequence(data, 1998, 100).getNormalized(), Sequence.Sequence(data, 1828, 100).getNormalized()]}
