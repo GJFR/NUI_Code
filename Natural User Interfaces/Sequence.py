@@ -167,7 +167,7 @@ class NormSequence(Sequence):
         if (self.getLength() == other.getLength()):
             return self.compareEuclDist(other)
         elif (self.getLength() < other.getLength()):
-            scaledSeq = ScaledSequence(self.timeSeq, self, other.getLength())
+            scaledSeq = ScaledSequence(self, other.getLength())
             return scaledSeq.compareEuclDist(other)
         else:
             return other.compare(self)
@@ -175,11 +175,11 @@ class NormSequence(Sequence):
     
 class ScaledSequence(Sequence):
     
-    def __init__(self, timeSeq, originalSeq, newLength):
+    def __init__(self, originalSeq, newLength):
         '''
         Constructor
         '''
-        super().__init__(timeSeq, originalSeq.getStart(), originalSeq.getLength())
+        super().__init__(originalSeq.timeSeq, originalSeq.getStart(), originalSeq.getLength())
         self.originalSeq = originalSeq
         self.newLength = newLength
         self.scaledData = self.scaleToLength()
