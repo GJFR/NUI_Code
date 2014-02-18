@@ -16,12 +16,8 @@ class DynamicTimeSeq(object):
     classdocs
     '''
     MIN_AFSTAND = 75
-    def __init__(self, minSeqLengte, maxSeqLengte, woordLengte, alfabetGrootte, collisionThreshold, r):
+    def __init__(self, woordLengte, alfabetGrootte, collisionThreshold, r):
         '''        Constructor        '''
-        self.minSeqLengte = minSeqLengte
-        self.maxSeqLengte = maxSeqLengte
-        if woordLengte > minSeqLengte:
-            raise AttributeError("woordLengte groter dan minSeqLengte")
         self.woordLengte = woordLengte
         self.alfabetGrootte = alfabetGrootte
         self.collisionThreshold = collisionThreshold

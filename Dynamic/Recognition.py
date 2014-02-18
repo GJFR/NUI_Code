@@ -9,8 +9,6 @@ import threading
 import queue
 import time
 
-MIN_SEQ_LENGTH = 100
-MAX_SEQ_LENGTH = 150
 WORD_LENGTH = 10
 ALPHABET_SIZE = 10
 COLLISION_THRESHOLD = 7
@@ -19,12 +17,12 @@ RANGE = 2
 if __name__ == '__main__':
     pass
 
-def recognize(labels):
+def recognize(labels, minSeqLength, allLengths):
     tijd = time.time()
     seqChecker = SeqChecker.SeqChecker(labels, WORD_LENGTH, ALPHABET_SIZE, COLLISION_THRESHOLD, RANGE)
     semaphore = threading.Semaphore(0)
     communicationSequences = queue.Queue()
-    thread = threading.Thread(target=IOFunctions.IORecognition, args=(communicationSequences, MIN_SEQ_LENGTH, MAX_SEQ_LENGTH, semaphore))
+    thread = threading.Thread(target=IOFunctions.IORecognition, args=(communicationSequences, minSeqLength, allLengths, semaphore))
     thread.start()
     labeledMatches = {}
     for label in labels:
@@ -37,7 +35,6 @@ def recognize(labels):
         if (label is not None):
             labeledMatches[label] = nextSeq
             print(str(nextSeq) + ": " + label)
-    
     
 def nextSequence(queue):
     return queue.get()

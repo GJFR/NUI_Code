@@ -14,26 +14,24 @@ import time
 if __name__ == '__main__':
     pass
 
-MIN_SEQ_LENGTH = 100
-MAX_SEQ_LENGTH = 150
 WORD_LENGTH = 10
 ALPHABET_SIZE = 10
 COLLISION_THRESHOLD = 7
 RANGE = 2
 
-def run(directions):
+def run(directions, allLengths):
     labels = {}
     for direction in directions:
-        labels[direction] = calibrate(direction)
+        labels[direction] = calibrate(direction, allLengths)
     return labels
 
-def calibrate(direction):
+def calibrate(direction, allLengths):
     tijd = time.time()
     communicationGroups = queue.Queue()
     semaphore = threading.Semaphore(0)
-    thread = threading.Thread(target=IOFunctions.IOCalibration, args=(communicationGroups, MIN_SEQ_LENGTH, MAX_SEQ_LENGTH, semaphore, direction))
+    thread = threading.Thread(target=IOFunctions.IOCalibration, args=(communicationGroups, allLengths, semaphore, direction))
     thread.start()
-    dts = DynamicSax.DynamicTimeSeq(MIN_SEQ_LENGTH, MAX_SEQ_LENGTH, WORD_LENGTH, ALPHABET_SIZE, COLLISION_THRESHOLD, RANGE)
+    dts = DynamicSax.DynamicTimeSeq(WORD_LENGTH, ALPHABET_SIZE, COLLISION_THRESHOLD, RANGE)
     tijd = checkpoint("Init: ", tijd)
     while (dts.getNumberOfGroups() < 3):
         semaphore.acquire()
