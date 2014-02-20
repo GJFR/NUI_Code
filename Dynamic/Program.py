@@ -23,7 +23,7 @@ def initial():
 
 def getAllLengths():
     allLengths = []
-    for seqLength in range(MIN_SEQ_LENGTH,MAX_SEQ_LENGTH+1,math.ceil(MAX_SEQ_LENGTH*0.03)):
+    for seqLength in range(MIN_SEQ_LENGTH,MAX_SEQ_LENGTH+1,math.ceil(MAX_SEQ_LENGTH*0.1)):
         allLengths.append(seqLength)
     return allLengths
 
