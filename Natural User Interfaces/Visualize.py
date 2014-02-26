@@ -75,13 +75,39 @@ def plot_data4(data2, motif, matches):
     for sequence,dist in matches:
         ax1.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.getOriginal().getAllPoints(), color = 'r')
     plt.show()
-'''
-Threshold.setThresholdDifference('left', -0.6)
-Threshold.setThresholdDifference('right', 0.6)
-Threshold.setThresholdDifference('down', 15000)
-Threshold.setThresholdDifference('up', -7000)
+    
+def plot_data_saxString(eog,aantal):
+    eog.makeSaxString(aantal)
+    saxToMatrix = []
+    lst = "abcdefghijklmnopqrstuvwxyz"
+    for letter in eog.getSaxString():
+        for letterIndex in range(aantal):
+            if letter == lst[letterIndex]:
+                waarde = (eog.getThresholds()[letterIndex] + eog.getThresholds()[letterIndex+1]) / 2
+                for i in range(aantal):
+                    saxToMatrix.append(waarde)
+    
+    fig = plt.figure()
+    ax1 = fig.add_subplot(211)
+    ax1.plot(eog.getMatrix())
+    ax1.plot(saxToMatrix, color = 'g')
+    
+    ax2 = fig.add_subplot(212)
+    
+    ax2.plot(saxToMatrix, color = 'g')
+    plt.show()
 
-'''
-'''Threshold.processData(eog1)
-Threshold.processData(eog2)'''
-'''plot_data()'''
+eog1 = Eog.Eog('Data2\\test26_B.csv',23)
+eog2 = Eog.Eog('Data2\\test27_B.csv',23)
+
+#eog1.filter()
+#eog2.filter()
+
+
+eog1.append(eog2)
+
+
+
+aantal = 20
+
+plot_data_saxString(eog1,aantal)
