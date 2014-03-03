@@ -12,8 +12,8 @@ import threading
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
-import Threshold
 import TimeSequence
+import ThresholdSolution
 import Sax
 from scipy.signal import filtfilt, butter
 from time import sleep
@@ -108,18 +108,25 @@ if __name__ == '__main__':
     aantalLetters = 8
     waardesPerLetter = 15
 
-    data1 = readData('Data2\\test26_B.csv', 23)
-    data2 = readData('Data2\\test27_B.csv', 23)
+    data1 = readData('Data2\\test7_B.csv', 23)
+    data2 = readData('Data2\\test29_B.csv', 23)
      
     timeSeq1 = TimeSequence.TimeSequence(data1, aantalLetters, waardesPerLetter)
     
-    timeSeq2 = TimeSequence.TimeSequence(data2, aantalLetters, waardesPerLetter)
+    timeSeq2 = TimeSequence.TimeSequence(data1, aantalLetters, waardesPerLetter)
 
     #timeSeq1.filter()
     #timeSeq2.filter()
 
     timeSeq = timeSeq1.extend(timeSeq2)
 
-    #timeSeq1.filter()
+    timeSeq.filter()
+
+    sortedMatrix = sorted(timeSeq.getMatrix())
+    timeSeq.makeThresholds(sortedMatrix)
+    timeSeq.makeSaxString(sortedMatrix)
+
+    thresholdSol = ThresholdSolution.ThresholdSolution(timeSeq, {"Left" : "c", "Right" : "f"}, 14)
+    thresholdSol.processTimeSequence()
 
     plot_data_saxString(timeSeq,aantalLetters,waardesPerLetter)

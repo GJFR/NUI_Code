@@ -12,7 +12,6 @@ import threading
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
-import Threshold
 import TimeSequence
 import Sax
 import os
@@ -36,7 +35,7 @@ def readData(relativePath, nbr):
 aantalLetters = 8
 waardesPerLetter = 15
 
-path = 'Data2\\test30_B.csv'
+path = 'Data2\\test24_B.csv'
 
 
 matrix = readData(path, 23)
@@ -53,9 +52,8 @@ def plot_data():
     fig = plt.figure()
     ax1 = fig.add_subplot(211)
     ax2 = fig.add_subplot(212)
-    line1, = ax1.plot(timeSeq1.getMatrix())
+    ax1.plot(timeSeq1.getMatrix())
     ax1.plot(timeSeq1f.getMatrix())
-    line2, = ax2.plot(timeSeq1.getMatrix() - timeSeq1f.getMatrix())
     plt.show()
 
 plot_data()

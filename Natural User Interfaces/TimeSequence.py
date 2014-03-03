@@ -28,9 +28,7 @@ class TimeSequence(object):
         self.aantalLetters = aantalLetters
         self.waardesPerLetter = waardesPerLetter
         self.setMatrix(matrix)
-        sortedMatrix = sorted(self.getMatrix())
-        self.makeThresholds(sortedMatrix)
-        self.makeSaxString(sortedMatrix)
+        
 
     def getThresholds(self):
         return self.thresholds
@@ -60,10 +58,8 @@ class TimeSequence(object):
         eog_filt1 = np.zeros(len(self.matrix))
         '''4, 0.016'''
         b1, a1 = butter(1, 0.0003, 'lowpass')
-        b2, a2 = butter(4, 0.00005, 'highpass')
-        #eog_filt1 = filtfilt(b2, a2, self.__matrix)
-        eog_filt2 = filtfilt(b1, a1, self.matrix)   
-        self.setMatrix(eog_filt2)
+        eog_filt2 = filtfilt(b1, a1, self.matrix)
+        self.setMatrix(self.getMatrix() - eog_filt2)
 
     def extend(self, other):
         appendedMatrix = self.getMatrix().copy()
