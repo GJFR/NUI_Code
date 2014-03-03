@@ -65,7 +65,9 @@ class TimeSequence(object):
         self.setMatrix(eog_filt2)
 
     def extend(self, other):
-        appendedMatrix = self.getMatrix().extend(other.getMatrix())
+        appendedMatrix = self.getMatrix().copy()
+        otherMatrix = other.getMatrix().copy()
+        appendedMatrix.extend(otherMatrix)
         return TimeSequence(appendedMatrix, self.aantalLetters, self.waardesPerLetter)
         
     def makeSaxString(self, sortedMatrix):
