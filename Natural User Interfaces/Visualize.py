@@ -13,7 +13,7 @@ import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
 import Threshold
-import Eog
+import TimeSequence
 import Sax
 from scipy.signal import filtfilt, butter
 from time import sleep
@@ -76,38 +76,49 @@ def plot_data4(data2, motif, matches):
         ax1.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.getOriginal().getAllPoints(), color = 'r')
     plt.show()
     
-def plot_data_saxString(eog,aantal):
-    eog.makeSaxString(aantal)
+def plot_data_saxString(timeSeq,aantal,waardesPerLetter):
     saxToMatrix = []
-    lst = "abcdefghijklmnopqrstuvwxyz"
-    for letter in eog.getSaxString():
-        for letterIndex in range(aantal):
-            if letter == lst[letterIndex]:
-                waarde = (eog.getThresholds()[letterIndex] + eog.getThresholds()[letterIndex+1]) / 2
-                for i in range(aantal):
-                    saxToMatrix.append(waarde)
+    for letter in timeSeq.getSaxString():
+        '''waarde = (eog.getThresholds()[letterIndex] + eog.getThresholds()[letterIndex+1]) / 2'''
+        waarde = timeSeq.getLetterWaarden()[letter]
+        for i in range(waardesPerLetter):
+            saxToMatrix.append(waarde)
     
     fig = plt.figure()
     ax1 = fig.add_subplot(211)
-    ax1.plot(eog.getMatrix())
+    ax1.plot(timeSeq.getMatrix())
     ax1.plot(saxToMatrix, color = 'g')
-    
+    for threshold in timeSeq.getThresholds():
+        ax1.add_line(plt.axhline(y=threshold, color = 'r'))
+
     ax2 = fig.add_subplot(212)
     
     ax2.plot(saxToMatrix, color = 'g')
     plt.show()
 
-eog1 = Eog.Eog('Data2\\test26_B.csv',23)
-eog2 = Eog.Eog('Data2\\test27_B.csv',23)
+def readData(relativePath, nbr):
+        path = (os.getcwd()[:len(os.getcwd())])
 
-#eog1.filter()
-#eog2.filter()
+        with open(path + "\\" + relativePath) as csvfile:
+            spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+            for row in spamreader:
+                return [float(i) for i in row]
 
+if __name__ == '__main__':
+    aantalLetters = 8
+    waardesPerLetter = 15
 
-eog1.append(eog2)
+    data1 = readData('Data2\\test26_B.csv', 23)
+    data2 = readData('Data2\\test27_B.csv', 23)
+     
+    timeSeq1 = TimeSequence.TimeSequence(data1, aantalLetters, waardesPerLetter)
+    timeSeq2 = TimeSequence.TimeSequence(data2, aantalLetters, waardesPerLetter)
 
+    #timeSeq1.filter()
+    #timeSeq2.filter()
 
+    timeSeq1.extend(timeSeq2)
 
-aantal = 20
+    #timeSeq1.filter()
 
-plot_data_saxString(eog1,aantal)
+    plot_data_saxString(timeSeq1,aantalLetters,waardesPerLetter)

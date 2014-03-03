@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{41821def-efaa-45fe-b2c4-c0baf23648db}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>Natural User Interfaces\Visualize.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Compile Include="Dynamic\Calibration.py" />
+    <Compile Include="Dynamic\DynamicSax.py" />
+    <Compile Include="Dynamic\IOFunctions.py" />
+    <Compile Include="Dynamic\Program.py" />
+    <Compile Include="Dynamic\Recognition.py" />
+    <Compile Include="Dynamic\SeqChecker.py" />
+    <Compile Include="foute modules\Calibration.py" />
+    <Compile Include="foute modules\DynamicSax.py" />
+    <Compile Include="foute modules\IOFunctions.py" />
+    <Compile Include="foute modules\Program.py" />
+    <Compile Include="foute modules\Recognition.py" />
+    <Compile Include="foute modules\SeqChecker.py" />
+    <Compile Include="Natural User Interfaces\dataPlot.py" />
+    <Compile Include="Natural User Interfaces\TimeSequence.py" />
+    <Compile Include="Natural User Interfaces\Run.py" />
+    <Compile Include="Natural User Interfaces\Sax.py" />
+    <Compile Include="Natural User Interfaces\Sequence.py" />
+    <Compile Include="Natural User Interfaces\Threshold.py" />
+    <Compile Include="Natural User Interfaces\Visualize.py" />
+    <Compile Include="Testers\TestSax.py" />
+    <Compile Include="Testers\TestSequence.py" />
+    <Compile Include="Unused modules\CompositeSequence.py" />
+    <Compile Include="Unused modules\CompTimeSeq.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Dynamic" />
+    <Folder Include="foute modules" />
+    <Folder Include="Natural User Interfaces" />
+    <Folder Include="Testers" />
+    <Folder Include="Unused modules" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

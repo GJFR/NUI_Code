@@ -12,7 +12,6 @@ class Sequence(object):
     classdocs
     '''
     x = scipy.stats.norm(0,1)
-    lst = " abcdefghijklmnopqrstuvwxyz"
 
     def __init__(self,  timeSeq, start, length):
         '''
@@ -56,53 +55,10 @@ class Sequence(object):
         pass
     
     '''Returns the SAX-word of this sequence based on the woordLengte and alfabetGrootte'''
-#     def getWord(self, woordLengte, alfabetGrootte):
-#         word = ""
-#         for i in range(woordLengte):
-#             total = 0
-#             for j in range(int((self.getLength()/woordLengte) * (i - 1) + 1),int((self.getLength()/woordLengte) * i) + 1):
-#                 total += self.getPoint(j)
-#             value = (woordLengte/self.getLength()) * total
-#             word += self.getLetter(value, alfabetGrootte)
-#         return word
-    def getWord2(self, woordLengte, alfabetGrootte):
-        a = int(self.getLength()/woordLengte)
-        word = ""
-        for i in range(woordLengte):
-            positie = i * a
-            total = 0
-            while positie < self.getLength() and positie < (i+1) * a:
-                total += self.getPoint(positie)
-                positie += 1
-            value = (woordLengte/self.getLength()) * total
-            word += self.getLetter(value, alfabetGrootte)
-            
-        return word
+
     
     def getWord(self, woordLengte, alfabetGrootte):
-        if woordLengte > self.getLength():
-            raise AttributeError('De woordlengte is groter dan dan sequentielengte')
-        a = int(self.getLength()/woordLengte)
-        xtra = self.getLength() % woordLengte
-        word = ""
-        positie = 0
-        einde = 0
-        for i in range(woordLengte):
-            einde += a
-            if xtra > 0:
-                einde += 1
-                xtra += -1
-                b = 1
-            else:
-                b = 0
-            total = 0
-            while positie < self.getLength() and positie < einde:
-                total += self.getPoint(positie)
-                positie += 1
-
-            value = total / (a+b)
-            word += self.getLetter(value, alfabetGrootte)
-        
+        self.timeSeq.get
         return word
         
     '''Returns the letter appropriate for the value based on alfabetGrootte'''
@@ -110,7 +66,7 @@ class Sequence(object):
         letterWaarde = self.x.cdf(value) * alfabetGrootte
         for i in range(1,alfabetGrootte + 1):
             if letterWaarde < i :
-                return self.lst[i]
+                return self.allLetters[i]
         return ""
     
     '''Returns the distance between the starting position of this and other sequence'''
