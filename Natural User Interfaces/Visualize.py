@@ -112,13 +112,14 @@ if __name__ == '__main__':
     data2 = readData('Data2\\test27_B.csv', 23)
      
     timeSeq1 = TimeSequence.TimeSequence(data1, aantalLetters, waardesPerLetter)
+    
     timeSeq2 = TimeSequence.TimeSequence(data2, aantalLetters, waardesPerLetter)
 
     #timeSeq1.filter()
     #timeSeq2.filter()
 
-    timeSeq1.extend(timeSeq2)
+    timeSeq = timeSeq1.extend(timeSeq2)
 
     #timeSeq1.filter()
 
-    plot_data_saxString(timeSeq1,aantalLetters,waardesPerLetter)
+    plot_data_saxString(timeSeq,aantalLetters,waardesPerLetter)

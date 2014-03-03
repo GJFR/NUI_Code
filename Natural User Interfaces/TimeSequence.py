@@ -15,15 +15,16 @@ class TimeSequence(object):
     '''
     classdocs
     '''
-    thresholds = []
-    saxString = ""
-    letterWaarden = {}
     allLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     def __init__(self, matrix, aantalLetters, waardesPerLetter):
         '''
         Constructor
         '''
+        self.thresholds = []
+        self.saxString = ""
+        self.letterWaarden = {}
+
         self.aantalLetters = aantalLetters
         self.waardesPerLetter = waardesPerLetter
         self.setMatrix(matrix)

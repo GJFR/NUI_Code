@@ -25,15 +25,24 @@ global timeSeq2
 global timeSeq1_filt
 global timeSeq2_filt
 
+def readData(relativePath, nbr):
+        path = (os.getcwd()[:len(os.getcwd())])
+
+        with open(path + "\\" + relativePath) as csvfile:
+            spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+            for row in spamreader:
+                return [float(i) for i in row]
+
 aantalLetters = 8
 waardesPerLetter = 15
 
-path = 'Data2\\test33_B.csv'
+path = 'Data2\\test30_B.csv'
 
 
+matrix = readData(path, 23)
 
-timeSeq1 = TimeSequence.TimeSequence(path,23, aantalLetters, waardesPerLetter)
-timeSeq1f = TimeSequence.TimeSequence(path,23, aantalLetters, waardesPerLetter)
+timeSeq1 = TimeSequence.TimeSequence(matrix, aantalLetters, waardesPerLetter)
+timeSeq1f = TimeSequence.TimeSequence(matrix, aantalLetters, waardesPerLetter)
 
 #timeSeq1.normalize()
 #timeSeq1f.normalize()
