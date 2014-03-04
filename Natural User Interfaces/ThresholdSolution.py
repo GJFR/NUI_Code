@@ -1,12 +1,13 @@
 class ThresholdSolution(object):
     
-     def __init__(self, timeSeq, threshold_dict, minimumLength):
-         self.timeSeq = timeSeq
-         self.threshold_dict = threshold_dict
+     def __init__(self, directionThresholds, minimalThresholdHits):
+         self.threshold_dict = directionThresholds
          self.minimumLength = minimumLength
-         
+         self.counterLeft = 0
+         self.counterRight = 0
+         self.hasDirection = False
 
-     def processTimeSequence(self):
+     def processTimeSequenceCalibration(self, timeSeq):
         counterLeft = 0
         counterRight = 0
         hasDirection = False
@@ -26,3 +27,19 @@ class ThresholdSolution(object):
             if counterRight >= self.minimumLength and hasDirection == False:
                 print(str(index * self.timeSeq.waardesPerLetter) + ": Right")
                 hasDirection = True
+
+     def processTimeSequenceRecognition(self, letter):
+         if letter < self.threshold_dict["Left"]:
+            self.counterLeft = self.counterLeft + 1
+         elif letter > self.threshold_dict["Right"]:
+            self.counterRight = self.counterRight + 1
+         else:
+            self.counterLeft = 0
+            self.counterRight = 0
+            self.hasDirection = False
+         if self.counterLeft >= self.minimumLength and self.hasDirection == False:
+            print(": Left")
+            self.hasDirection = True
+         if self.counterRight >= self.minimumLength and self.hasDirection == False:
+            print(": Right")
+            self.hasDirection = True

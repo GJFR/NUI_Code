@@ -60,6 +60,7 @@ class TimeSequence(object):
         b1, a1 = butter(1, 0.0003, 'lowpass')
         eog_filt2 = filtfilt(b1, a1, self.matrix)
         self.setMatrix(self.getMatrix() - eog_filt2)
+        # Nog een lowpass filter
 
     def extend(self, other):
         appendedMatrix = self.getMatrix().copy()

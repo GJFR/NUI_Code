@@ -108,8 +108,8 @@ if __name__ == '__main__':
     aantalLetters = 8
     waardesPerLetter = 15
 
-    data1 = readData('Data2\\test7_B.csv', 23)
-    data2 = readData('Data2\\test29_B.csv', 23)
+    data1 = readData('Data2\\test21_A.csv', 23)
+    data2 = readData('Data2\\test27_B.csv', 23)
      
     timeSeq1 = TimeSequence.TimeSequence(data1, aantalLetters, waardesPerLetter)
     
@@ -118,7 +118,8 @@ if __name__ == '__main__':
     #timeSeq1.filter()
     #timeSeq2.filter()
 
-    timeSeq = timeSeq1.extend(timeSeq2)
+    #timeSeq = timeSeq1.extend(timeSeq2)
+    timeSeq = timeSeq1
 
     timeSeq.filter()
 

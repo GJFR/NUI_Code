@@ -35,10 +35,12 @@ def readData(relativePath, nbr):
 aantalLetters = 8
 waardesPerLetter = 15
 
-path = 'Data2\\test24_B.csv'
+path = 'Data2\\test32_A.csv'
+path2 = 'Data2\\test33_A.csv'
 
 
 matrix = readData(path, 23)
+matrix = matrix + readData(path2, 23)
 
 timeSeq1 = TimeSequence.TimeSequence(matrix, aantalLetters, waardesPerLetter)
 timeSeq1f = TimeSequence.TimeSequence(matrix, aantalLetters, waardesPerLetter)
