@@ -71,7 +71,7 @@ def align_data(ser):
     ser.read(80)
 
 
-def read_from_port(ser, runQueue, runLock):
+def read_from_port(ser):
     global connected
     global eog1
     global eog2
@@ -129,10 +129,6 @@ def read_from_port(ser, runQueue, runLock):
 
               eog1[990:1000] = val1
               eog2[990:1000] = val2
-              bool = runLock.acquire(False)
-              if (bool):
-                runQueue.put((val1,val2))
-                runLock.release()
             except ValueError as err:
               print("ValueError: {}".format(err))
               print(data1)
@@ -180,16 +176,10 @@ def plot_data():
 
   print("Plotting ended")
 
-global runQueue
-global runLock
-global accessLock
 
-def run(inputQueue, queueLock, queueAccessLock):
-    runQueue = inputQueue
-    runLock = queueLock
-    accessLock = queueAccessLock
-    thread = threading.Thread(target=read_from_port, args=(serial_port,runQueue,runLock))
-    thread.start()
-    plot_data()
+thread = threading.Thread(target=read_from_port, args=(serial_port,))
+thread.start()
+
+plot_data()
 
 

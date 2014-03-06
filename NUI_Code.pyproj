@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{41821def-efaa-45fe-b2c4-c0baf23648db}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>Natural User Interfaces\Visualize.py</StartupFile>
+    <StartupFile>Natural User Interfaces\EyeTracker.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -28,6 +28,10 @@
     <Compile Include="foute modules\Recognition.py" />
     <Compile Include="foute modules\SeqChecker.py" />
     <Compile Include="Natural User Interfaces\dataPlot.py" />
+    <Compile Include="Natural User Interfaces\DataWindow.py" />
+    <Compile Include="Natural User Interfaces\EyeTracker.py" />
+    <Compile Include="Natural User Interfaces\eyetracking.py" />
+    <Compile Include="Natural User Interfaces\eyetracking2.py" />
     <Compile Include="Natural User Interfaces\ThresholdSolution.py" />
     <Compile Include="Natural User Interfaces\TimeSequence.py" />
     <Compile Include="Natural User Interfaces\Run.py" />

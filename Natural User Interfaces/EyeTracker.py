@@ -3,36 +3,41 @@ import TimeSequence
 import ThresholdSolution
 import Visualize
 import DataWindow
+import numpy as np
 
 import queue
 import threading
 
 inputQueue = queue.Queue()
 queueLock = threading.Lock()
+queueAccessLock = threading.Lock()
 
-calibrationLength = 1000
+calibrationLength = 100
 aantalLetters = 8
-waardesPerLetters = 15
+waardesPerLetter = 15
 
 directionThresholds = {"Left" : "c", "Right" : "f"}
 minimalThresholdHits = 14
 
 def run():
     queueLock.acquire()
-    thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueLock,))
+    thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueLock,queueAccessLock))
     thread.start()
 
     thresholds = thresholdsCalibration()
 
 
+# TODO semaphore in plaats van lock
 def thresholdsCalibration():
     queueLock.release()
     data = []
     for i in range(int(calibrationLength / 10)):
-        dataPart = inputQueue.get(True)
-        data.extend(dataPart)
+        # queue van paren
+        dataPart_A, dataPart_B = inputQueue.get(True)
+        # extend eigenlijk
+        data.extend(dataPart_B)
     queueLock.acquire(True)
-    while not inputQueue.Empty:
+    while not inputQueue.empty():
         inputQueue.get()
     timeSeq = TimeSequence.TimeSequence(data, aantalLetters, waardesPerLetter)
     timeSeq.filter()
@@ -40,8 +45,8 @@ def thresholdsCalibration():
     timeSeq.makeThresholds(sortedMatrix)
     timeSeq.makeSaxString(sortedMatrix)
 
-    thresholdSol = ThresholdSolution.ThresholdSolution(timeSeq, directionThresholds, minimalThresholdHits)
-    thresholdSol.processTimeSequence()
+    thresholdSol = ThresholdSolution.ThresholdSolution(directionThresholds, minimalThresholdHits)
+    thresholdSol.processTimeSequenceCalibration(timeSeq)
 
     Visualize.plot_data_saxString(timeSeq,aantalLetters,waardesPerLetter)
 
@@ -51,12 +56,15 @@ def thresholdsCalibration():
     else:
         return thresholdsCalibration()
 
-    def thresholdsRecognition(thresholds):
-       thesholdSol = ThresholdSolution.ThresholdSolution(directionsThresholds, minimalThresholdHits)
-       dataWindow = DataWindow.DataWindow(thesholds)
-       queueLock.release()
-       while(True):
-           letterPart = inputQueue.get(True)
-           dataWindow.addData(letterPart)
-           lastLetter = dataWindow.getLastLetter()
-           thresholdSol.processTimeSequenceRecognition(lastLetter)
+def thresholdsRecognition(thresholds):
+    thesholdSol = ThresholdSolution.ThresholdSolution(directionsThresholds, minimalThresholdHits)
+    dataWindow = DataWindow.DataWindow(thesholds)
+    queueLock.release()
+    while(True):
+        letterPart = inputQueue.get(True)
+        dataWindow.addData(letterPart)
+        lastLetter = dataWindow.getLastLetter()
+        thresholdSol.processTimeSequenceRecognition(lastLetter)
+
+if __name__ == '__main__':
+    run()

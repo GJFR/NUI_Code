@@ -108,18 +108,17 @@ if __name__ == '__main__':
     aantalLetters = 8
     waardesPerLetter = 15
 
-    data1 = readData('Data2\\test21_A.csv', 23)
+    data1 = readData('Data2\\test26_B.csv', 23)
     data2 = readData('Data2\\test27_B.csv', 23)
      
     timeSeq1 = TimeSequence.TimeSequence(data1, aantalLetters, waardesPerLetter)
     
-    timeSeq2 = TimeSequence.TimeSequence(data1, aantalLetters, waardesPerLetter)
+    timeSeq2 = TimeSequence.TimeSequence(data2, aantalLetters, waardesPerLetter)
 
     #timeSeq1.filter()
     #timeSeq2.filter()
 
-    #timeSeq = timeSeq1.extend(timeSeq2)
-    timeSeq = timeSeq1
+    timeSeq = timeSeq1.extend(timeSeq2)
 
     timeSeq.filter()
 
@@ -127,7 +126,7 @@ if __name__ == '__main__':
     timeSeq.makeThresholds(sortedMatrix)
     timeSeq.makeSaxString(sortedMatrix)
 
-    thresholdSol = ThresholdSolution.ThresholdSolution(timeSeq, {"Left" : "c", "Right" : "f"}, 14)
-    thresholdSol.processTimeSequence()
+    thresholdSol = ThresholdSolution.ThresholdSolution({"Left" : "c", "Right" : "f"}, 14)
+    thresholdSol.processTimeSequenceCalibration(timeSeq)
 
     plot_data_saxString(timeSeq,aantalLetters,waardesPerLetter)

@@ -2,7 +2,7 @@ class ThresholdSolution(object):
     
      def __init__(self, directionThresholds, minimalThresholdHits):
          self.threshold_dict = directionThresholds
-         self.minimumLength = minimumLength
+         self.minimalThresholdHits = minimalThresholdHits
          self.counterLeft = 0
          self.counterRight = 0
          self.hasDirection = False
@@ -11,7 +11,7 @@ class ThresholdSolution(object):
         counterLeft = 0
         counterRight = 0
         hasDirection = False
-        saxString = self.timeSeq.getSaxString()
+        saxString = timeSeq.getSaxString()
         for index in range(len(saxString)):
             if saxString[index] < self.threshold_dict["Left"]:
                 counterLeft = counterLeft + 1
@@ -21,11 +21,11 @@ class ThresholdSolution(object):
                 counterLeft = 0
                 counterRight = 0
                 hasDirection = False
-            if counterLeft >= self.minimumLength and hasDirection == False:
-                print(str(index * self.timeSeq.waardesPerLetter) + ": Left")
+            if counterLeft >= self.minimalThresholdHits and hasDirection == False:
+                print(str(index * timeSeq.waardesPerLetter) + ": Left")
                 hasDirection = True
-            if counterRight >= self.minimumLength and hasDirection == False:
-                print(str(index * self.timeSeq.waardesPerLetter) + ": Right")
+            if counterRight >= self.minimalThresholdHits and hasDirection == False:
+                print(str(index * timeSeq.waardesPerLetter) + ": Right")
                 hasDirection = True
 
      def processTimeSequenceRecognition(self, letter):
@@ -37,9 +37,9 @@ class ThresholdSolution(object):
             self.counterLeft = 0
             self.counterRight = 0
             self.hasDirection = False
-         if self.counterLeft >= self.minimumLength and self.hasDirection == False:
+         if self.counterLeft >= self.minimalThresholdHits and self.hasDirection == False:
             print(": Left")
             self.hasDirection = True
-         if self.counterRight >= self.minimumLength and self.hasDirection == False:
+         if self.counterRight >= self.minimalThresholdHits and self.hasDirection == False:
             print(": Right")
             self.hasDirection = True
