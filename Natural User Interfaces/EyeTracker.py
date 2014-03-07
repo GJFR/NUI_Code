@@ -9,7 +9,7 @@ import queue
 import threading
 
 inputQueue = queue.Queue()
-queueLock = threading.Lock()
+queueSemaphore = threading.Semaphore(0)
 queueAccessLock = threading.Lock()
 
 calibrationLength = 100
@@ -20,8 +20,7 @@ directionThresholds = {"Left" : "c", "Right" : "f"}
 minimalThresholdHits = 14
 
 def run():
-    queueLock.acquire()
-    thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueLock,queueAccessLock))
+    thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock))
     thread.start()
 
     thresholds = thresholdsCalibration()
@@ -29,14 +28,14 @@ def run():
 
 # TODO semaphore in plaats van lock
 def thresholdsCalibration():
-    queueLock.release()
     data = []
+    for i in range(10):
+        queueSemaphore.release()
     for i in range(int(calibrationLength / 10)):
         # queue van paren
         dataPart_A, dataPart_B = inputQueue.get(True)
         # extend eigenlijk
         data.extend(dataPart_B)
-    queueLock.acquire(True)
     while not inputQueue.empty():
         inputQueue.get()
     timeSeq = TimeSequence.TimeSequence(data, aantalLetters, waardesPerLetter)
