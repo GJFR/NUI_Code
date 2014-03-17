@@ -14,7 +14,9 @@ import scipy as sp
 import matplotlib.pyplot as plt
 import TimeSequence
 import ThresholdSolution
+import PatternSolution
 import Sax
+import SaxWord
 from scipy.signal import filtfilt, butter
 from time import sleep
 from struct import *
@@ -85,15 +87,35 @@ def plot_data_saxString(timeSeq,aantal,waardesPerLetter):
             saxToMatrix.append(waarde)
     
     fig = plt.figure()
-    ax1 = fig.add_subplot(211)
-    ax1.plot(timeSeq.getMatrix())
-    ax1.plot(saxToMatrix, color = 'g')
-    for threshold in timeSeq.getThresholds():
-        ax1.add_line(plt.axhline(y=threshold, color = 'r'))
+    ax1 = fig.add_subplot(111)
+    #lines = ax1.plot(timeSeq.getMatrix())
+    ax1.tick_params(axis='both', labelsize=36)
+    #plt.setp(lines, linewidth=3)
+    plt.xlim(0, 4900)
+    plt.ylim(-40000,40000)
+    lines2 = ax1.plot(saxToMatrix, color = '#009900')
+    plt.setp(lines2, linewidth=2)
+    #for threshold in timeSeq.getThresholds():
+    #ax1.add_line(plt.axhline(y=timeSeq.getThresholds()[1], color = 'r'))
+    #ax1.add_line(plt.axhline(y=timeSeq.getThresholds()[7], color = 'r'))
+    #ax1.add_line(plt.axhline(y = -26200, xmin = 330/4900, xmax = 460/4900, linewidth = 3, color = 'b'))
+    #ax1.add_line(plt.axhline(y = -26200, xmin = 1514/4900, xmax = 1710/4900, linewidth = 3, color = 'b'))
+    #ax1.add_line(plt.axhline(y = -26200, xmin = 3160/4900, xmax = 3433/4900, linewidth = 3, color = 'b'))
+    #ax1.add_line(plt.axhline(y = 22300, xmin = 888/4900, xmax = 1069/4900, linewidth = 3, color = 'b'))
+    #ax1.add_line(plt.axhline(y = 22300, xmin = 2249/4900, xmax = 2563/4900, linewidth = 3, color = 'b'))
+    #ax1.add_line(plt.axhline(y = 22300, xmin = 3960/4900, xmax = 4063/4900, linewidth = 3, color = 'b'))
+    #ax1.plot(range(868,1030),saxToMatrix[868:1030], linewidth = 3, color = 'r')
+    #ax1.plot(range(2248,2374),saxToMatrix[2248:2374], linewidth = 3, color = 'b')
+    #ax1.plot(range(3944,4050),saxToMatrix[3944:4050], linewidth = 3, color = 'b')
 
-    ax2 = fig.add_subplot(212)
-    
-    ax2.plot(saxToMatrix, color = 'g')
+    #ax1.plot(range(285,400),saxToMatrix[285:400], linewidth = 3, color = 'r')
+    #ax1.plot(range(1486,1600),saxToMatrix[1486:1600], linewidth = 3, color = 'b')
+    #ax1.plot(range(3136,3300),saxToMatrix[3136:3300], linewidth = 3, color = 'b')
+
+    #ax2 = fig.add_subplot(212)
+    plt.xlim(0, 4900)
+    plt.ylim(-40000,40000)
+    #ax2.plot(saxToMatrix, color = 'g')
     plt.show()
 
 def readData(relativePath, nbr):
@@ -105,28 +127,43 @@ def readData(relativePath, nbr):
                 return [float(i) for i in row]
 
 if __name__ == '__main__':
-    aantalLetters = 8
-    waardesPerLetter = 15
+    maxMatchingDistance = 25
+    alphabetSize = 8
+    valuesPerLetter = 15
 
-    data1 = readData('Data2\\test26_B.csv', 23)
-    data2 = readData('Data2\\test27_B.csv', 23)
+    #data1 = readData('PosterData\\test006_B.csv', 23)
+    #data2 = readData('PosterData\\test006_B.csv', 23)
+    path = 'Data2\\test20_B.csv'
+    matrix = readData(path, 23)[:4900]
+    matrix2 = np.zeros(4900)
+
+    for i in range(len(matrix)):
+        matrix2[i] = matrix[i] - 8*i
      
-    timeSeq1 = TimeSequence.TimeSequence(data1, aantalLetters, waardesPerLetter)
+    timeSeq = TimeSequence.TimeSequence(matrix2, alphabetSize, valuesPerLetter)
     
-    timeSeq2 = TimeSequence.TimeSequence(data2, aantalLetters, waardesPerLetter)
-
-    #timeSeq1.filter()
-    #timeSeq2.filter()
-
-    timeSeq = timeSeq1.extend(timeSeq2)
+    #timeSeq2 = TimeSequence.TimeSequence(data2, aantalLetters, waardesPerLetter)
 
     timeSeq.filter()
+    #timeSeq2.filter()
+
+    #timeSeq = timeSeq1.extend(timeSeq2)
+
+    #timeSeq.filter()
 
     sortedMatrix = sorted(timeSeq.getMatrix())
     timeSeq.makeThresholds(sortedMatrix)
     timeSeq.makeSaxString(sortedMatrix)
+    thresholds = timeSeq.getThresholds()
 
-    thresholdSol = ThresholdSolution.ThresholdSolution({"Left" : "c", "Right" : "f"}, 14)
-    thresholdSol.processTimeSequenceCalibration(timeSeq)
+    #thresholdSol = ThresholdSolution.ThresholdSolution({"Left" : "c", "Right" : "f"}, 14)
+    #thresholdSol.processTimeSequenceCalibration(timeSeq)
 
-    plot_data_saxString(timeSeq,aantalLetters,waardesPerLetter)
+    saxWord1 = SaxWord.SaxWord(timeSeq.getMatrix()[265:865], alphabetSize, valuesPerLetter, thresholds)
+    saxWord2 = SaxWord.SaxWord(timeSeq.getMatrix()[2765:3365], alphabetSize, valuesPerLetter, thresholds)
+    calibrationDict = {"Left": [saxWord1, saxWord2]}
+
+    patternSol = PatternSolution.PatternSolution(maxMatchingDistance, alphabetSize, valuesPerLetter, thresholds)
+    patternSol.processTimeSequenceCalibration(calibrationDict)
+
+    plot_data_saxString(timeSeq,alphabetSize,valuesPerLetter)
