@@ -20,24 +20,18 @@ directionThresholds = {"Left" : "c", "Right" : "f"}
 minimalThresholdHits = 14
 
 def run():
-    thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock))
-    thread.start()
+    #thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock))
+    #thread.start()
 
     thresholds = thresholdsCalibration()
+
+    thresholdsRecognition(thresholds)
 
 
 # TODO semaphore in plaats van lock
 def thresholdsCalibration():
     data = []
-    for i in range(10):
-        queueSemaphore.release()
-    for i in range(int(calibrationLength / 10)):
-        # queue van paren
-        dataPart_A, dataPart_B = inputQueue.get(True)
-        # extend eigenlijk
-        data.extend(dataPart_B)
-    while not inputQueue.empty():
-        inputQueue.get()
+    data = eyetracking2.run2(data, 100)
     timeSeq = TimeSequence.TimeSequence(data, aantalLetters, waardesPerLetter)
     timeSeq.filter()
     sortedMatrix = sorted(timeSeq.getMatrix())
@@ -49,16 +43,19 @@ def thresholdsCalibration():
 
     Visualize.plot_data_saxString(timeSeq,aantalLetters,waardesPerLetter)
 
-    answer = raw_input("Ben je tevreden met de resultaten? (y/n)")
+    answer = input("Ben je tevreden met de resultaten? (y/n)")
     if answer == "y":
         return (timeSeq.getThresholds())
     else:
         return thresholdsCalibration()
 
 def thresholdsRecognition(thresholds):
-    thesholdSol = ThresholdSolution.ThresholdSolution(directionsThresholds, minimalThresholdHits)
-    dataWindow = DataWindow.DataWindow(thesholds)
-    queueLock.release()
+    thresholdSol = ThresholdSolution.ThresholdSolution(directionThresholds, minimalThresholdHits)
+    for i in range(1000):
+        queueSemaphore.release()
+    thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock))
+    thread.start()
+    dataWindow = DataWindow.DataWindow(thresholds)
     while(True):
         letterPart = inputQueue.get(True)
         dataWindow.addData(letterPart)

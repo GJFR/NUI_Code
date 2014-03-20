@@ -89,10 +89,7 @@ def plot_data_saxString(timeSeq,aantal,waardesPerLetter):
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
     #lines = ax1.plot(timeSeq.getMatrix())
-    ax1.tick_params(axis='both', labelsize=36)
     #plt.setp(lines, linewidth=3)
-    plt.xlim(0, 4900)
-    plt.ylim(-40000,40000)
     lines2 = ax1.plot(saxToMatrix, color = '#009900')
     plt.setp(lines2, linewidth=2)
     #for threshold in timeSeq.getThresholds():
@@ -113,8 +110,6 @@ def plot_data_saxString(timeSeq,aantal,waardesPerLetter):
     #ax1.plot(range(3136,3300),saxToMatrix[3136:3300], linewidth = 3, color = 'b')
 
     #ax2 = fig.add_subplot(212)
-    plt.xlim(0, 4900)
-    plt.ylim(-40000,40000)
     #ax2.plot(saxToMatrix, color = 'g')
     plt.show()
 

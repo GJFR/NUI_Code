@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{41821def-efaa-45fe-b2c4-c0baf23648db}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>Natural User Interfaces\Visualize.py</StartupFile>
+    <StartupFile>Natural User Interfaces\EyeTracker.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>

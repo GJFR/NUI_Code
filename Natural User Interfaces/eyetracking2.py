@@ -28,13 +28,7 @@ from struct import *
 #port = '/dev/cu.usbserial-AD024JA5'
 port = 'COM3'
 baud = 115200
-connected = False
 
-serial_port = serial.Serial(port,
-                            baud,
-                            timeout=None, # Wait for requested nb of bytes
-                            #timeout=1, # Wait for 1 sec for requested nb of bytes
-                            bytesize=serial.EIGHTBITS)
 
 #serial_port.setDTR()
 
@@ -71,7 +65,7 @@ def align_data(ser):
     ser.read(80)
 
 
-def read_from_port(ser, runQueue, runLock):
+def read_from_port(runQueue, runLock):
     global connected
     global eog1
     global eog2
@@ -79,6 +73,12 @@ def read_from_port(ser, runQueue, runLock):
     #ser.flushInput()
     #ser.flushOutput()
 
+    ser = serial.Serial(port,
+                            baud,
+                            timeout=None, # Wait for requested nb of bytes
+                            #timeout=1, # Wait for 1 sec for requested nb of bytes
+                            bytesize=serial.EIGHTBITS)
+    connected = False
     while not connected:
         #serin = ser.read()
         connected = True
@@ -94,7 +94,87 @@ def read_from_port(ser, runQueue, runLock):
         #eog2_full = np.zeros(30000)
 
         #while True:
-        for t in range(600):
+        for t in range(999999):
+          print("Loop: {}".format(t))
+
+          eog1[0:990] = eog1[10:1000]
+          eog2[0:990] = eog2[10:1000]
+          datas = ser.read(3)
+          #print("datas={}".format(datas))
+          if len(datas) > 0:
+            #status = np.frombuffer(datas, count=3, dtype=np.uint8) # 3*1 byte
+            status = ss.unpack(datas)
+            # Should be (127,0,0)
+            #print("Status: {}".format(status))
+
+          # Read 10 objects from each
+          data1 = ser.read(40)
+          #print("data1={}".format(data1))
+          data2 = ser.read(40)
+          #print("data2={}".format(data2))
+          if len(data1) > 0 and len(data2) > 0:
+            if len(data1) != 40 or len(data2) != 40:
+              print("Data is not of length 40, ignoring data")
+              continue
+            try:
+              #val1 = np.frombuffer(data1, count=10, dtype=np.int32) # 10*4 byte
+              val1 = s1.unpack(data1)
+              #print("val1:")
+              #print(val1)
+
+              #val2 = np.frombuffer(data2, count=10, dtype=np.int32) # 10*4 byte
+              val2 = s2.unpack(data2)
+              #print("val2:")
+              #print(val2)
+
+              eog1[990:1000] = val1
+              eog2[990:1000] = val2
+              bool = runLock.acquire(False)
+              if (bool):
+                runQueue.put(val2)
+            except ValueError as err:
+              print("ValueError: {}".format(err))
+              print(data1)
+              print(data2)
+          else:
+            print("Data was length {} and {}, ignoring data".format(len(data1), len(data2)))
+
+          sleep(0.0001)
+
+    print("Closing serial port ...")
+    ser.close()
+    print("... closed")
+
+def read_from_port2(runQueue, amount):
+    global connected
+    global eog1
+    global eog2
+
+    #ser.flushInput()
+    #ser.flushOutput()
+
+    ser = serial.Serial(port,
+                            baud,
+                            timeout=None, # Wait for requested nb of bytes
+                            #timeout=1, # Wait for 1 sec for requested nb of bytes
+                            bytesize=serial.EIGHTBITS)
+    connected = False
+    while not connected:
+        #serin = ser.read()
+        connected = True
+
+        align_data(ser)
+
+        ss = Struct('B'*3)
+        s1 = Struct('i'*10)
+        s2 = Struct('i'*10)
+        print("s1 size = {}, s2 size = {}".format(s1.size, s2.size))
+
+        #eog1_full = np.zeros(30000)
+        #eog2_full = np.zeros(30000)
+
+        #while True:
+        for t in range(amount):
           print("Loop: {}".format(t))
 
           eog1[0:990] = eog1[10:1000]
@@ -129,10 +209,7 @@ def read_from_port(ser, runQueue, runLock):
 
               eog1[990:1000] = val1
               eog2[990:1000] = val2
-              bool = runLock.acquire(False)
-              if (bool):
-                runQueue.put((val1,val2))
-                runLock.release()
+              runQueue.extend(val2)
             except ValueError as err:
               print("ValueError: {}".format(err))
               print(data1)
@@ -176,20 +253,29 @@ def plot_data():
     fig.canvas.draw()
     fig.show()
 
-    sleep(.25)
+    sleep(.5)
 
   print("Plotting ended")
+
+
 
 global runQueue
 global runLock
 global accessLock
+global amount
 
 def run(inputQueue, queueLock, queueAccessLock):
     runQueue = inputQueue
     runLock = queueLock
     accessLock = queueAccessLock
-    thread = threading.Thread(target=read_from_port, args=(serial_port,runQueue,runLock))
+    thread = threading.Thread(target=read_from_port, args=(runQueue,runLock))
     thread.start()
     plot_data()
 
 
+def run2(inputQueue, amountOfValues):
+    
+    runQueue = inputQueue
+    amount = amountOfValues
+    read_from_port2(runQueue, amount)
+    return runQueue

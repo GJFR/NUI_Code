@@ -22,7 +22,7 @@ class DataWindow(object):
         self.filt_data = self.data - filtered
         # Nog een lowpass filter
 
-    def getLastLetter():
+    def getLastLetter(self):
         letter = ""
         lastPart = self.data[990:1000]
         average = sum(lastPart) / len(lastPart)
