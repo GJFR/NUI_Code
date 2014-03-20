@@ -95,7 +95,7 @@ def read_from_port(runQueue, runLock):
 
         #while True:
         for t in range(999999):
-          print("Loop: {}".format(t))
+          #print("Loop: {}".format(t))
 
           eog1[0:990] = eog1[10:1000]
           eog2[0:990] = eog2[10:1000]
@@ -226,8 +226,8 @@ def read_from_port2(runQueue, amount):
 def plot_data():
 
   print("Init plotting")
-  #b, a = butter(2, 0.0001, 'high')
-  b, a = butter(2, 0.5, 'high')
+  b, a = butter(2, 0.0001, 'high')
+  #b, a = butter(2, 0.5, 'high')
 
   fig = plt.figure()
   ax1 = fig.add_subplot(211)
@@ -241,15 +241,17 @@ def plot_data():
   #while True:
   for t in range(5*12):
 
-    print("Filtering")
+    #print("Filtering")
     eog1_filt = filtfilt(b, a, eog1)
     eog2_filt = filtfilt(b, a, eog2)
 
-    print("Plotting")
+    #print("Plotting")
     line1.set_ydata(eog1_filt)
-    ax1.set_ylim((min(eog1_filt), max(eog1_filt)))
+    #ax1.set_ylim((min(eog1_filt), max(eog1_filt)))
+    ax1.set_ylim(-50000,50000)
     line2.set_ydata(eog2_filt)
-    ax2.set_ylim((min(eog2_filt), max(eog2_filt)))
+    #ax2.set_ylim((min(eog2_filt), max(eog2_filt)))
+    ax2.set_ylim(-50000,50000)
     fig.canvas.draw()
     fig.show()
 

@@ -24,7 +24,7 @@ def run():
     #thread.start()
 
     thresholds = thresholdsCalibration()
-
+    print(thresholds)
     thresholdsRecognition(thresholds)
 
 
@@ -51,7 +51,7 @@ def thresholdsCalibration():
 
 def thresholdsRecognition(thresholds):
     thresholdSol = ThresholdSolution.ThresholdSolution(directionThresholds, minimalThresholdHits)
-    for i in range(1000):
+    for i in range(10000):
         queueSemaphore.release()
     thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock))
     thread.start()
@@ -60,6 +60,7 @@ def thresholdsRecognition(thresholds):
         letterPart = inputQueue.get(True)
         dataWindow.addData(letterPart)
         lastLetter = dataWindow.getLastLetter()
+        #print(lastLetter)
         thresholdSol.processTimeSequenceRecognition(lastLetter)
 
 if __name__ == '__main__':

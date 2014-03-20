@@ -87,10 +87,12 @@ def plot_data_saxString(timeSeq,aantal,waardesPerLetter):
             saxToMatrix.append(waarde)
     
     fig = plt.figure()
-    ax1 = fig.add_subplot(111)
+    ax1 = fig.add_subplot(211)
+    ax1.plot(timeSeq.getMatrix())
+    ax2 = fig.add_subplot(212)
     #lines = ax1.plot(timeSeq.getMatrix())
     #plt.setp(lines, linewidth=3)
-    lines2 = ax1.plot(saxToMatrix, color = '#009900')
+    lines2 = ax2.plot(saxToMatrix, color = '#009900')
     plt.setp(lines2, linewidth=2)
     #for threshold in timeSeq.getThresholds():
     #ax1.add_line(plt.axhline(y=timeSeq.getThresholds()[1], color = 'r'))

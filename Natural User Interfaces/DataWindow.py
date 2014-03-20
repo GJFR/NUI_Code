@@ -24,7 +24,7 @@ class DataWindow(object):
 
     def getLastLetter(self):
         letter = ""
-        lastPart = self.data[990:1000]
+        lastPart = self.filt_data[990:1000]
         average = sum(lastPart) / len(lastPart)
         for j in range(1,len(self.thresholds)):
             if average < self.thresholds[j]:
