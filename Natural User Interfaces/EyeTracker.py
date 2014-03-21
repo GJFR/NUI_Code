@@ -51,8 +51,10 @@ def thresholdsCalibration():
 
 def thresholdsRecognition(thresholds):
     thresholdSol = ThresholdSolution.ThresholdSolution(directionThresholds, minimalThresholdHits)
-    for i in range(10000):
-        queueSemaphore.release()
+    """for i in range(10000):
+        queueSemaphore.release()"""
+    """werkt de volgende zin niet beter dan de for loop?"""
+    queueSemaphore = threading.Semaphore(10000)
     thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock))
     thread.start()
     dataWindow = DataWindow.DataWindow(thresholds)

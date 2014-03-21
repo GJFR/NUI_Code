@@ -33,3 +33,8 @@ class DataWindow(object):
         else:
             letter = self.allLetters[len(self.thresholds) - 1]
         return letter
+    
+    def vlakAf(self):
+        secondLastPart = self.data[980:990]
+        average = sum(secondLastPart) / len(secondLastPart)
+        self.data[990:1000] = [average] * 10

@@ -17,6 +17,7 @@ import ThresholdSolution
 import PatternSolution
 import Sax
 import SaxWord
+import DataWindow
 from scipy.signal import filtfilt, butter
 from time import sleep
 from struct import *
@@ -116,7 +117,7 @@ def plot_data_saxString(timeSeq,aantal,waardesPerLetter):
     plt.show()
 
 def readData(relativePath, nbr):
-        path = (os.getcwd()[:len(os.getcwd())])
+        path = (os.getcwd()[:len(os.getcwd())-nbr])
 
         with open(path + "\\" + relativePath) as csvfile:
             spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
@@ -130,14 +131,17 @@ if __name__ == '__main__':
 
     #data1 = readData('PosterData\\test006_B.csv', 23)
     #data2 = readData('PosterData\\test006_B.csv', 23)
-    path = 'Data2\\test20_B.csv'
+    
+    """Voorbereiden Calibration"""
+    
+    path = 'Data2\\test24_B.csv'
     matrix = readData(path, 23)[:4900]
-    matrix2 = np.zeros(4900)
+#     matrix2 = np.zeros(4900)
 
-    for i in range(len(matrix)):
-        matrix2[i] = matrix[i] - 8*i
+#     for i in range(len(matrix)):
+#         matrix2[i] = matrix[i] - 8*i
      
-    timeSeq = TimeSequence.TimeSequence(matrix2, alphabetSize, valuesPerLetter)
+    timeSeq = TimeSequence.TimeSequence(matrix, alphabetSize, valuesPerLetter)
     
     #timeSeq2 = TimeSequence.TimeSequence(data2, aantalLetters, waardesPerLetter)
 
@@ -151,16 +155,53 @@ if __name__ == '__main__':
     sortedMatrix = sorted(timeSeq.getMatrix())
     timeSeq.makeThresholds(sortedMatrix)
     timeSeq.makeSaxString(sortedMatrix)
-    thresholds = timeSeq.getThresholds()
+    #thresholds = timeSeq.getThresholds()
 
-    #thresholdSol = ThresholdSolution.ThresholdSolution({"Left" : "c", "Right" : "f"}, 14)
-    #thresholdSol.processTimeSequenceCalibration(timeSeq)
-
-    saxWord1 = SaxWord.SaxWord(timeSeq.getMatrix()[265:865], alphabetSize, valuesPerLetter, thresholds)
-    saxWord2 = SaxWord.SaxWord(timeSeq.getMatrix()[2765:3365], alphabetSize, valuesPerLetter, thresholds)
-    calibrationDict = {"Left": [saxWord1, saxWord2]}
-
-    patternSol = PatternSolution.PatternSolution(maxMatchingDistance, alphabetSize, valuesPerLetter, thresholds)
-    patternSol.processTimeSequenceCalibration(calibrationDict)
-
+    thresholdSol = ThresholdSolution.ThresholdSolution({"Left" : "c", "Right" : "f"}, 14)
+    
+    """Uitvoeren Calibration"""
+    thresholdSol.processTimeSequenceCalibration(timeSeq)
     plot_data_saxString(timeSeq,alphabetSize,valuesPerLetter)
+    
+    """Voorbereiden Recognition"""
+    pathR = 'Data2\\test27_B.csv'
+    matrixR = readData(pathR, 23)
+    
+    """TODO : Misschien beter de vorige ThresholdSolution hergebruiken?"""
+    thresholdSol = ThresholdSolution.ThresholdSolution({"Left" : "c", "Right" : "f"}, 14) 
+    dataWindow = DataWindow.DataWindow(timeSeq.getThresholds())
+    
+    """Uitvoeren Recognition"""
+    finalMatrix = np.zeros(5000)
+    for i in range(0,1000,10):
+        #dataWindow.addData(matrixR[i:i+10])
+        dataWindow.addData([0]*10)
+        finalMatrix[i:i+10] = dataWindow.data[990:1000]
+        
+    for i in range(1000,len(matrixR),10):
+        dataWindow.addData(matrixR[i:i+10])
+        letter = dataWindow.getLastLetter()
+        if(thresholdSol.processTimeSequenceRecognition2(letter)):
+            1==1#onbelangrijke lijn zodat je de volgende lijn in comment kan zetten zonder errors
+            dataWindow.vlakAf()
+        finalMatrix[i:i+10] = dataWindow.data[990:1000]
+    
+    """Plot informatie om te kunnen controleren"""
+    fig = plt.figure()
+    ax1 = fig.add_subplot(411)
+    ax1.plot(dataWindow.data)
+    ax2 = fig.add_subplot(412)
+    ax2.plot(dataWindow.filt_data)
+    ax3 = fig.add_subplot(413)
+    ax3.plot(matrixR)
+    ax4 = fig.add_subplot(414)
+    ax4.plot(finalMatrix)
+    plt.show()
+    #saxWord1 = SaxWord.SaxWord(timeSeq.getMatrix()[265:865], alphabetSize, valuesPerLetter, thresholds)
+    #saxWord2 = SaxWord.SaxWord(timeSeq.getMatrix()[2765:3365], alphabetSize, valuesPerLetter, thresholds)
+    #calibrationDict = {"Left": [saxWord1, saxWord2]}
+
+    #patternSol = PatternSolution.PatternSolution(maxMatchingDistance, alphabetSize, valuesPerLetter, thresholds)
+    #patternSol.processTimeSequenceCalibration(calibrationDict)
+
+    #plot_data_saxString(timeSeq,alphabetSize,valuesPerLetter)

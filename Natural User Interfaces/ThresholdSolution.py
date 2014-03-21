@@ -43,3 +43,22 @@ class ThresholdSolution(object):
          if self.counterRight >= self.minimalThresholdHits and self.hasDirection == False:
             print(": Right")
             self.hasDirection = True
+
+     """Returns boolean die zegt ofdat een threshold is gebroken of niet."""
+     def processTimeSequenceRecognition2(self, letter):
+         if letter < self.threshold_dict["Left"]:
+            self.counterLeft = self.counterLeft + 1
+         elif letter > self.threshold_dict["Right"]:
+            self.counterRight = self.counterRight + 1
+         else:
+            self.counterLeft = 0
+            self.counterRight = 0
+            self.hasDirection = False
+            return False
+         if self.counterLeft >= self.minimalThresholdHits and self.hasDirection == False:
+            print(": Left")
+            self.hasDirection = True
+         if self.counterRight >= self.minimalThresholdHits and self.hasDirection == False:
+            print(": Right")
+            self.hasDirection = True
+         return True
