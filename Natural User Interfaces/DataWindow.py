@@ -19,8 +19,9 @@ class DataWindow(object):
         filtered = np.zeros(len(self.data))
         b1, a1 = butter(1, 0.0003, 'lowpass')
         filtered = filtfilt(b1, a1, self.data)
-        self.filt_data = self.data - filtered
-        # Nog een lowpass filter
+        filtered = self.data - filtered
+        b2, a2 = butter(1, 0.05, 'lowpass')
+        self.filt_data = filtfilt(b2, a2, filtered)
 
     def getLastLetter(self):
         letter = ""

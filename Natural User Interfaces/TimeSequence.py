@@ -11,95 +11,76 @@ import os
 import csv
 import math
 
+import SaxWord
+
 class TimeSequence(object):
-    '''
-    classdocs
-    '''
-    allLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    """
+    TimeSequence objects hold data that is used to determine the viewing direction(s).
+    """
 
-    def __init__(self, matrix, aantalLetters, waardesPerLetter):
-        '''
-        Constructor
-        '''
-        self.thresholds = []
-        self.saxString = ""
-        self.letterWaarden = {}
+    alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-        self.aantalLetters = aantalLetters
-        self.waardesPerLetter = waardesPerLetter
-        self.setMatrix(matrix)
+    def __init__(self, vector):
+        # A TimeSequence instance doesn't necessarily have a saxWord.
+        self.saxWord = None
+        self.setVector(vector)
         
 
     def getThresholds(self):
-        return self.thresholds
+        return self.getSaxWord().getThresholds()
 
-    def getSaxString(self):
-        return self.saxString
+    def getSaxWord(self):
+        return self.saxWord
     
     def getLetterWaarden(self):
-        return self.letterWaarden
+        return self.getSaxWord().getLetterWaarden()
 
-    def setMatrix(self,matrix):
-        self.matrix = matrix
+    def setVector(self, vector):
+        self.vector = vector
         
-    def getMatrix(self):
-        return self.matrix
+    def getVector(self):
+        return self.vector
         
     def normalize(self):
-        mean = sum(self.matrix)/len(self.matrix)
-        nMatrix = self.matrix
-        nMatrix = [(x-mean) for x in nMatrix]
+        """
+        Normalizes this time sequence.
+        """
+        mean = sum(self.vector)/len(self.vector)
+        nVector = self.vector
+        nVector = [(x-mean) for x in nVector]
         '''nMatrix = self.__matrix - mean'''
-        nMatrix = [(x/np.absolute(nMatrix).max()) for x in nMatrix]
+        nVector = [(x/np.absolute(nVector).max()) for x in nVector]
         '''self.__matrix = nMatrix/abs(nMatrix).max()'''
-        self.matrix = nMatrix
+        self.vector = nVector
         
     def filter(self):
-        eog_filt1 = np.zeros(len(self.matrix))
-        '''4, 0.016'''
+        """
+        Filters this time sequence.
+        """
+        eog_filt1 = np.zeros(len(self.vector))
         b1, a1 = butter(1, 0.0003, 'lowpass')
-        eog_filt2 = filtfilt(b1, a1, self.matrix)
-        matrix2 = (self.getMatrix() - eog_filt2)
+        eog_filt1 = filtfilt(b1, a1, self.vector)
+        matrix2 = (self.getVector() - eog_filt1)
         b2, a2 = butter(1, 0.05, 'lowpass')
-        eogfilt3 = filtfilt(b2, a2, matrix2)
-        self.setMatrix(eogfilt3)
-        # Nog een lowpass filter
+        eogfilt2 = filtfilt(b2, a2, matrix2)
+        self.setVector(eogfilt2)
 
     def extend(self, other):
-        appendedMatrix = self.getMatrix().copy()
+        """
+        Extends this time sequence with another time sequence and returns the result as a new time sequence.
+        Parameters:
+            other   - the other time sequence
+        """
+        appendedMatrix = self.getVector().copy()
         otherMatrix = other.getMatrix().copy()
         appendedMatrix.extend(otherMatrix)
         return TimeSequence(appendedMatrix, self.aantalLetters, self.waardesPerLetter)
         
-    def makeSaxString(self, sortedMatrix):
-        positie = 0
-        thresholds = self.getThresholds()
-        for index in range(0,len(self.getMatrix()) - self.waardesPerLetter,self.waardesPerLetter):
-            totalOfTen = 0
-            for j in range(self.waardesPerLetter):
-                totalOfTen = totalOfTen + self.getMatrix()[index+j]
-            average = totalOfTen / self.waardesPerLetter
-            for j in range(1,self.aantalLetters+1):
-                if average < self.thresholds[j]:
-                    self.saxString = self.saxString + self.allLetters[j - 1]
-                    break
-            else:
-                self.saxString = self.saxString + self.allLetters[self.aantalLetters-1]
-        self.makeLetterwaarden(sortedMatrix)
-
-    def makeThresholds(self, sortedMatrix):
-        self.thresholds.append(sortedMatrix[0])
-        for index in range(1,self.aantalLetters + 1):
-            positie = math.floor(index * len(sortedMatrix)/self.aantalLetters)-1
-            self.thresholds.append(sortedMatrix[positie])
-        
-    def makeLetterwaarden(self, sortedMatrix):
-        posities = [0]
-        for index in range(1,self.aantalLetters+1):
-            posities.append(math.floor(index * len(sortedMatrix)/self.aantalLetters)-1)
-        for index in range(len(posities) - 1):
-            total = 0
-            for pos in range(posities[index], posities[index+1]):
-                total = total + sortedMatrix[pos]
-            mean = total / (posities[index+1] - posities[index])
-            self.letterWaarden[self.allLetters[index]] = mean
+    def makeSaxWord(self, alphabetSize, valuesPerLetter):
+        """
+        Makes a the sax word of this time sequence.
+        Parameters:
+            alphabetSize    - the number of letters that is used to construct the sax word
+            valuesPerLetter - the number of values that is given to a letter
+        """
+        self.saxWord = SaxWord.SaxWord(self.vector, alphabetSize, valuesPerLetter)

@@ -1,19 +1,40 @@
-class SaxWord(object):
-    """description of class"""
+import math
 
-    def __init__(self, vector, alphabetSize, valuesPerLetter, thresholds):
-        self.word = ""
+class SaxWord(object):
+    """Sax word"""
+
+    def __init__(self, vector, alphabetSize, valuesPerLetter):
+        
         self.vector = vector
         self.alphabetSize = alphabetSize
         self.valuesPerLetter = valuesPerLetter
-        self.thresholds = thresholds
-        self.alphabet = "abcdefghijklmnopqrstuvwxyz"
-        self.makeSaxWord()
+        self.alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        
+        sortedVector = sorted(vector)
+        self.thresholds = []
+        self.makeThresholds(sortedVector)
+        self.word = ""
+        self.makeWord()
+        self.letterWaarden = {}
+        self.makeLetterwaarden(sortedVector)
 
     def getWord(self):
         return self.word;
 
+    def getThresholds(self):
+        return self.thresholds
+
+    def getLetterWaarden(self):
+        return self.letterWaarden
+
     def getHammingDistance(self, other):
+        """
+        Calculates the hamming distance between this sax word and the other sax word.
+        Parameters:
+            other   - the other sax word
+        Returns:
+            the distance between this sax word and the other sax word
+        """
         distance = 0
         for i in range(len(self.word)):
             letter1 = self.getWord()[i]
@@ -22,12 +43,29 @@ class SaxWord(object):
         return distance
 
     def getHamming(self, letter1, letter2):
+        """
+        Returns 1 if the two given letters are different, otherwise false.
+        """
         if (letter1 != letter2):
             return 1
         else:
             return 0
 
-    def makeSaxWord(self):
+    def makeThresholds(self, sortedVector):
+        """
+        Assigns thresholds to letters. This is used to make the sax word.
+        Parameters:
+            sortedVector    - the sorted vector
+        """
+        self.thresholds.append(sortedVector[0])
+        for index in range(1,self.alphabetSize + 1):
+            positie = math.floor(index * len(sortedVector)/self.alphabetSize)-1
+            self.thresholds.append(sortedVector[positie])
+
+    def makeWord(self):
+        """
+        Makes the actual sax word.
+        """
         saxWord = ""
         for index in range(0,len(self.vector) - self.valuesPerLetter,self.valuesPerLetter):
             total = 0
@@ -41,3 +79,19 @@ class SaxWord(object):
             else:
                 saxWord = saxWord + self.alphabet[self.alphabetSize-1]
         self.word = saxWord
+
+    def makeLetterwaarden(self, sortedVector):
+        """
+        Assigns a value to each letter. This is used primarily to visualize the sax words.
+        Parameters:
+            sortedVector    - the sorted vector
+        """
+        posities = [0]
+        for index in range(1,self.alphabetSize+1):
+            posities.append(math.floor(index * len(sortedVector)/self.alphabetSize)-1)
+        for index in range(len(posities) - 1):
+            total = 0
+            for pos in range(posities[index], posities[index+1]):
+                total = total + sortedVector[pos]
+            mean = total / (posities[index+1] - posities[index])
+            self.letterWaarden[self.alphabet[index]] = mean

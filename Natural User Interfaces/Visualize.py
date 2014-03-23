@@ -81,7 +81,7 @@ def plot_data4(data2, motif, matches):
     
 def plot_data_saxString(timeSeq,aantal,waardesPerLetter):
     saxToMatrix = []
-    for letter in timeSeq.getSaxString():
+    for letter in timeSeq.getSaxWord().getWord():
         '''waarde = (eog.getThresholds()[letterIndex] + eog.getThresholds()[letterIndex+1]) / 2'''
         waarde = timeSeq.getLetterWaarden()[letter]
         for i in range(waardesPerLetter):
@@ -89,7 +89,7 @@ def plot_data_saxString(timeSeq,aantal,waardesPerLetter):
     
     fig = plt.figure()
     ax1 = fig.add_subplot(211)
-    ax1.plot(timeSeq.getMatrix())
+    ax1.plot(timeSeq.getVector())
     ax2 = fig.add_subplot(212)
     #lines = ax1.plot(timeSeq.getMatrix())
     #plt.setp(lines, linewidth=3)
@@ -117,8 +117,16 @@ def plot_data_saxString(timeSeq,aantal,waardesPerLetter):
     plt.show()
 
 def readData(relativePath, nbr):
+    try:
+        # Eclipse
         path = (os.getcwd()[:len(os.getcwd())-nbr])
-
+        with open(path + "\\" + relativePath) as csvfile:
+            spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+            for row in spamreader:
+                return [float(i) for i in row]
+    except FileNotFoundError:
+        # Visual Studio
+        path = (os.getcwd()[:len(os.getcwd())])
         with open(path + "\\" + relativePath) as csvfile:
             spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
             for row in spamreader:
@@ -135,13 +143,13 @@ if __name__ == '__main__':
     """Voorbereiden Calibration"""
     
     path = 'Data2\\test24_B.csv'
-    matrix = readData(path, 23)[:4900]
+    vector = readData(path, 23)[:4900]
 #     matrix2 = np.zeros(4900)
 
 #     for i in range(len(matrix)):
 #         matrix2[i] = matrix[i] - 8*i
      
-    timeSeq = TimeSequence.TimeSequence(matrix, alphabetSize, valuesPerLetter)
+    timeSeq = TimeSequence.TimeSequence(vector)
     
     #timeSeq2 = TimeSequence.TimeSequence(data2, aantalLetters, waardesPerLetter)
 
@@ -152,10 +160,8 @@ if __name__ == '__main__':
 
     #timeSeq.filter()
 
-    sortedMatrix = sorted(timeSeq.getMatrix())
-    timeSeq.makeThresholds(sortedMatrix)
-    timeSeq.makeSaxString(sortedMatrix)
-    #thresholds = timeSeq.getThresholds()
+    sortedMatrix = sorted(timeSeq.getVector())
+    timeSeq.makeSaxWord(alphabetSize, valuesPerLetter)
 
     thresholdSol = ThresholdSolution.ThresholdSolution({"Left" : "c", "Right" : "f"}, 14)
     

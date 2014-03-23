@@ -68,7 +68,7 @@ def plot_data():
     
     plt.ylim(-40000,40000)
     plt.xlim(0, 4900)
-    lines2 = ax2.plot(timeSeq1f.getMatrix())
+    lines2 = ax2.plot(timeSeq1f.getVector())
     plt.setp(lines2, linewidth=2)
     plt.xlim(0, 4900)
     plt.ylim(-40000,40000)
