@@ -96,8 +96,8 @@ def plot_data_saxString(timeSeq,aantal,waardesPerLetter):
     lines2 = ax2.plot(saxToMatrix, color = '#009900')
     plt.setp(lines2, linewidth=2)
     #for threshold in timeSeq.getThresholds():
-    #ax1.add_line(plt.axhline(y=timeSeq.getThresholds()[1], color = 'r'))
-    #ax1.add_line(plt.axhline(y=timeSeq.getThresholds()[7], color = 'r'))
+    for threshold in timeSeq.getThresholds():
+        ax2.add_line(plt.axhline(y=threshold, color = 'r'))
     #ax1.add_line(plt.axhline(y = -26200, xmin = 330/4900, xmax = 460/4900, linewidth = 3, color = 'b'))
     #ax1.add_line(plt.axhline(y = -26200, xmin = 1514/4900, xmax = 1710/4900, linewidth = 3, color = 'b'))
     #ax1.add_line(plt.axhline(y = -26200, xmin = 3160/4900, xmax = 3433/4900, linewidth = 3, color = 'b'))
@@ -187,7 +187,7 @@ if __name__ == '__main__':
     for i in range(1000,len(matrixR),10):
         dataWindow.addData(matrixR[i:i+10])
         letter = dataWindow.getLastLetter()
-        if(thresholdSol.processTimeSequenceRecognition2(letter)):
+        if(thresholdSol.processTimeSequenceRecognition(letter)):
             1==1#onbelangrijke lijn zodat je de volgende lijn in comment kan zetten zonder errors
             dataWindow.vlakAf()
         finalMatrix[i:i+10] = dataWindow.data[990:1000]

@@ -26,7 +26,7 @@ from time import sleep
 from struct import *
 
 #port = '/dev/cu.usbserial-AD024JA5'
-port = 'COM3'
+port = 'COM5'
 baud = 115200
 
 
@@ -131,7 +131,7 @@ def read_from_port(runQueue, runLock):
               eog2[990:1000] = val2
               bool = runLock.acquire(False)
               if (bool):
-                runQueue.put(val2)
+                runQueue.put(val1)
             except ValueError as err:
               print("ValueError: {}".format(err))
               print(data1)
@@ -209,7 +209,7 @@ def read_from_port2(runQueue, amount):
 
               eog1[990:1000] = val1
               eog2[990:1000] = val2
-              runQueue.extend(val2)
+              runQueue.extend(val1)
             except ValueError as err:
               print("ValueError: {}".format(err))
               print(data1)
@@ -223,7 +223,7 @@ def read_from_port2(runQueue, amount):
     ser.close()
     print("... closed")
 
-def plot_data():
+def plot_data(dataWindow):
 
   print("Init plotting")
   b, a = butter(2, 0.0001, 'high')
@@ -232,24 +232,24 @@ def plot_data():
   fig = plt.figure()
   ax1 = fig.add_subplot(211)
   ax2 = fig.add_subplot(212)
-  line1, = ax1.plot(eog1)
-  line2, = ax2.plot(eog2)
+  line1, = ax1.plot(dataWindow.filt_data)
+  line2, = ax2.plot(eog1)
   fig.show()
 
   print("Start plotting")
 
   #while True:
-  for t in range(5*12):
+  for t in range(40*12):
 
     #print("Filtering")
     eog1_filt = filtfilt(b, a, eog1)
     eog2_filt = filtfilt(b, a, eog2)
 
     #print("Plotting")
-    line1.set_ydata(eog1_filt)
+    line1.set_ydata(dataWindow.filt_data)
     #ax1.set_ylim((min(eog1_filt), max(eog1_filt)))
     ax1.set_ylim(-50000,50000)
-    line2.set_ydata(eog2_filt)
+    line2.set_ydata(eog1_filt)
     #ax2.set_ylim((min(eog2_filt), max(eog2_filt)))
     ax2.set_ylim(-50000,50000)
     fig.canvas.draw()
@@ -266,13 +266,13 @@ global runLock
 global accessLock
 global amount
 
-def run(inputQueue, queueLock, queueAccessLock):
+def run(inputQueue, queueLock, queueAccessLock,dataWindow):
     runQueue = inputQueue
     runLock = queueLock
     accessLock = queueAccessLock
     thread = threading.Thread(target=read_from_port, args=(runQueue,runLock))
     thread.start()
-    plot_data()
+    plot_data(dataWindow)
 
 
 def run2(inputQueue, amountOfValues):

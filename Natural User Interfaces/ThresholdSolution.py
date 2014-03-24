@@ -33,7 +33,7 @@ class ThresholdSolution(object):
                 print(str(index * timeSeq.getSaxWord().valuesPerLetter) + ": Right")
                 hasDirection = True
 
-     def processTimeSequenceRecognition(self, letter):
+     def processTimeSequenceRecognitionNoBoolean(self, letter):
          """
          Handles incoming letters by checking if a threshold is broken for a predefined number of times.
          Parameters:
@@ -55,12 +55,14 @@ class ThresholdSolution(object):
             self.hasDirection = True
 
      """Returns boolean die zegt ofdat een threshold is gebroken of niet."""
-     def processTimeSequenceRecognition2(self, letter):
+     def processTimeSequenceRecognition(self, letter):
          if letter < self.threshold_dict["Left"]:
             self.counterLeft = self.counterLeft + 1
          elif letter > self.threshold_dict["Right"]:
             self.counterRight = self.counterRight + 1
          else:
+            if self.hasDirection:
+                print(": End")
             self.counterLeft = 0
             self.counterRight = 0
             self.hasDirection = False

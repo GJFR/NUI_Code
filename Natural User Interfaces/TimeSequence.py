@@ -40,6 +40,12 @@ class TimeSequence(object):
         
     def getVector(self):
         return self.vector
+    
+    def getMinimalValue(self):
+        return min(self.getVector())
+    
+    def getMaximalValue(self):
+        return max(self.getVector())
         
     def normalize(self):
         """

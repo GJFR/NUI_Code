@@ -23,6 +23,11 @@ class DataWindow(object):
         b2, a2 = butter(1, 0.05, 'lowpass')
         self.filt_data = filtfilt(b2, a2, filtered)
 
+    def getLastValue(self):
+        letter = ""
+        lastPart = self.filt_data[990:1000]
+        return sum(lastPart) / len(lastPart)  
+          
     def getLastLetter(self):
         letter = ""
         lastPart = self.filt_data[990:1000]
@@ -36,6 +41,6 @@ class DataWindow(object):
         return letter
     
     def vlakAf(self):
-        secondLastPart = self.data[980:990]
+        secondLastPart = self.data[0:990]
         average = sum(secondLastPart) / len(secondLastPart)
         self.data[990:1000] = [average] * 10
