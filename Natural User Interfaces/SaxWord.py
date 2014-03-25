@@ -3,7 +3,7 @@ import math
 class SaxWord(object):
     """Sax word"""
 
-    def __init__(self, vector, alphabetSize, valuesPerLetter):
+    def __init__(self, vector, alphabetSize, valuesPerLetter, thresholds=None, letterWaarden=None):
         
         self.vector = vector
         self.alphabetSize = alphabetSize
@@ -11,12 +11,18 @@ class SaxWord(object):
         self.alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         
         sortedVector = sorted(vector)
-        self.thresholds = []
-        self.makeThresholds(sortedVector)
+        if thresholds == None:
+            self.thresholds = []
+            self.makeThresholds(sortedVector)
+        else:
+            self.thresholds = thresholds
         self.word = ""
         self.makeWord()
-        self.letterWaarden = {}
-        self.makeLetterwaarden(sortedVector)
+        if letterWaarden == None:
+            self.letterWaarden = {}
+            self.makeLetterwaarden(sortedVector)
+        else:
+            self.letterWaarden = letterWaarden
 
     def getWord(self):
         return self.word;

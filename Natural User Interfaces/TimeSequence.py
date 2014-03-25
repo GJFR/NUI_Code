@@ -82,11 +82,11 @@ class TimeSequence(object):
         appendedMatrix.extend(otherMatrix)
         return TimeSequence(appendedMatrix, self.aantalLetters, self.waardesPerLetter)
         
-    def makeSaxWord(self, alphabetSize, valuesPerLetter):
+    def makeSaxWord(self, alphabetSize, valuesPerLetter, thresholds=None, letterWaarden= None):
         """
         Makes a the sax word of this time sequence.
         Parameters:
             alphabetSize    - the number of letters that is used to construct the sax word
             valuesPerLetter - the number of values that is given to a letter
         """
-        self.saxWord = SaxWord.SaxWord(self.vector, alphabetSize, valuesPerLetter)
+        self.saxWord = SaxWord.SaxWord(self.vector, alphabetSize, valuesPerLetter, thresholds, letterWaarden)

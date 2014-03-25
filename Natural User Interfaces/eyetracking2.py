@@ -131,7 +131,7 @@ def read_from_port(runQueue, runLock):
               eog2[990:1000] = val2
               bool = runLock.acquire(False)
               if (bool):
-                runQueue.put(val1)
+                runQueue.put(val2)
             except ValueError as err:
               print("ValueError: {}".format(err))
               print(data1)
@@ -209,7 +209,7 @@ def read_from_port2(runQueue, amount):
 
               eog1[990:1000] = val1
               eog2[990:1000] = val2
-              runQueue.extend(val1)
+              runQueue.extend(val2)
             except ValueError as err:
               print("ValueError: {}".format(err))
               print(data1)
@@ -233,7 +233,7 @@ def plot_data(dataWindow):
   ax1 = fig.add_subplot(211)
   ax2 = fig.add_subplot(212)
   line1, = ax1.plot(dataWindow.filt_data)
-  line2, = ax2.plot(eog1)
+  line2, = ax2.plot(eog2)
   fig.show()
 
   print("Start plotting")
@@ -249,7 +249,7 @@ def plot_data(dataWindow):
     line1.set_ydata(dataWindow.filt_data)
     #ax1.set_ylim((min(eog1_filt), max(eog1_filt)))
     ax1.set_ylim(-50000,50000)
-    line2.set_ydata(eog1_filt)
+    line2.set_ydata(eog2_filt)
     #ax2.set_ylim((min(eog2_filt), max(eog2_filt)))
     ax2.set_ylim(-50000,50000)
     fig.canvas.draw()
@@ -275,9 +275,9 @@ def run(inputQueue, queueLock, queueAccessLock,dataWindow):
     plot_data(dataWindow)
 
 
-def run2(inputQueue, amountOfValues):
+def run2(amountOfValues):
     
-    runQueue = inputQueue
+    runQueue = []
     amount = amountOfValues
     read_from_port2(runQueue, amount)
     return runQueue

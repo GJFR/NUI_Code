@@ -1,25 +1,26 @@
 import eyetracking2
 import TimeSequence
 import ThresholdSolution
+import PatternSolution
 import Visualize
 import DataWindow
 import numpy as np
-
+from time import sleep
 import queue
 import threading
 
 inputQueue = queue.Queue()
-queueSemaphore = threading.Semaphore(0)
+queueSemaphore = threading.Semaphore(10000)
 queueAccessLock = threading.Lock()
 
-calibrationLength = 150
-aantalLetters = 8
-waardesPerLetter = 15
+THRESHOLD_CALIBRATION_LENGTH = 150
+AANTAL_LETTERS = 8
+WAARDES_PER_LETTER = 15
 
 directionThresholds = {"Left" : 0.5, "Right" : 0.5}
 minimalThresholdHits = 7
 
-def run():
+def runT():
     #thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock))
     #thread.start()
 
@@ -30,11 +31,10 @@ def run():
 
 # TODO semaphore in plaats van lock
 def thresholdsCalibration():
-    data = []
-    data = eyetracking2.run2(data, calibrationLength)
+    data = eyetracking2.run2(THRESHOLD_CALIBRATION_LENGTH)
     timeSeq = TimeSequence.TimeSequence(data)
     timeSeq.filter()
-    timeSeq.makeSaxWord(aantalLetters, waardesPerLetter)
+    timeSeq.makeSaxWord(AANTAL_LETTERS, WAARDES_PER_LETTER)
 
     directionThresholds["Left"] = timeSeq.getMinimalValue() * directionThresholds["Left"]
     directionThresholds["Right"] = timeSeq.getMaximalValue() * directionThresholds["Right"]
@@ -45,7 +45,7 @@ def thresholdsCalibration():
     thresholdSol = ThresholdSolution.ThresholdSolution(directionThresholds, minimalThresholdHits)
     #thresholdSol.processTimeSequenceCalibration(timeSeq)
 
-    Visualize.plot_data_saxString(timeSeq,aantalLetters,waardesPerLetter)
+    Visualize.plot_data_saxString(timeSeq,AANTAL_LETTERS,WAARDES_PER_LETTER)
 
     answer = input("Ben je tevreden met de resultaten? (y/n)")
     if answer == "y":
@@ -55,7 +55,6 @@ def thresholdsCalibration():
 
 def thresholdsRecognition(thresholds):
     thresholdSol = ThresholdSolution.ThresholdSolution(directionThresholds, minimalThresholdHits)
-    queueSemaphore = threading.Semaphore(10000)
     dataWindow = DataWindow.DataWindow(thresholds)
     thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock,dataWindow))
     thread.start()
@@ -74,5 +73,44 @@ def thresholdsRecognition(thresholds):
             1==1
             dataWindow.vlakAf()
 
+
+###########################################################################################
+###########################################################################################
+###########################################################################################
+PATTERN_CALIBRATION_LENGTH = 50
+P_AANTAL_LETTERS = 8
+P_WAARDES_PER_LETTER = 10
+P_MAX_MATCHING_DISTANCE = 3
+
+
+def runP():
+    patternCalibration()
+
+P_MAX_MATCHING_DISTANCE
+def patternCalibration():
+    dataDict = {"Left" : [],"Right" : []}
+    print("links")
+    sleep(0.5)
+    dataDict["Left"].append(eyetracking2.run2(PATTERN_CALIBRATION_LENGTH))
+    print("Right")
+    sleep(0.5)
+    dataDict["Right"].append(eyetracking2.run2(PATTERN_CALIBRATION_LENGTH))
+    print("links")
+    sleep(0.5)
+    dataDict["Left"].append(eyetracking2.run2(PATTERN_CALIBRATION_LENGTH))
+    print("Right")
+    sleep(0.5)
+    dataDict["Right"].append(eyetracking2.run2(PATTERN_CALIBRATION_LENGTH))
+    print("links")
+    sleep(0.5)
+    dataDict["Left"].append(eyetracking2.run2(PATTERN_CALIBRATION_LENGTH))
+    print("Right")
+    sleep(0.5)
+    dataDict["Right"].append(eyetracking2.run2(PATTERN_CALIBRATION_LENGTH))
+    
+    patternSol = PatternSolution.PatternSolution(P_MAX_MATCHING_DISTANCE,P_AANTAL_LETTERS,P_WAARDES_PER_LETTER)
+    patternSol.processTimeSequenceCalibration(dataDict)
+    
+
 if __name__ == '__main__':
-    run()
+    runP()
