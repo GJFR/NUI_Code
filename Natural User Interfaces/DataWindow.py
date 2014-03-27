@@ -4,8 +4,8 @@ from scipy.signal import filtfilt, butter
 class DataWindow(object):
     """description of class"""
 
-    def __init__(self, thresholds):
-        self.thresholds = thresholds
+    def __init__(self, distribution):
+        self.thresholds = distribution
         self.data = np.zeros(1000)
         self.filt_data = np.zeros(1000)
         self.allLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

@@ -3,7 +3,7 @@ import math
 class SaxWord(object):
     """Sax word"""
 
-    def __init__(self, vector, alphabetSize, valuesPerLetter, thresholds=None, letterWaarden=None):
+    def __init__(self, vector, alphabetSize, valuesPerLetter, distribution=None, letterWaarden=None):
         
         self.vector = vector
         self.alphabetSize = alphabetSize
@@ -11,11 +11,11 @@ class SaxWord(object):
         self.alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         
         sortedVector = sorted(vector)
-        if thresholds == None:
-            self.thresholds = []
-            self.makeThresholds(sortedVector)
+        if distribution == None:
+            self.distribution = []
+            self.makeDistribution(sortedVector)
         else:
-            self.thresholds = thresholds
+            self.distribution = distribution
         self.word = ""
         self.makeWord()
         if letterWaarden == None:
@@ -24,11 +24,14 @@ class SaxWord(object):
         else:
             self.letterWaarden = letterWaarden
 
+    def getVector(self):
+        return self.vector
+
     def getWord(self):
         return self.word;
 
-    def getThresholds(self):
-        return self.thresholds
+    def getDistribution(self):
+        return self.distribution
 
     def getLetterWaarden(self):
         return self.letterWaarden
@@ -57,16 +60,16 @@ class SaxWord(object):
         else:
             return 0
 
-    def makeThresholds(self, sortedVector):
+    def makeDistribution(self, sortedVector):
         """
         Assigns thresholds to letters. This is used to make the sax word.
         Parameters:
             sortedVector    - the sorted vector
         """
-        self.thresholds.append(sortedVector[0])
+        self.distribution.append(sortedVector[0])
         for index in range(1,self.alphabetSize + 1):
             positie = math.floor(index * len(sortedVector)/self.alphabetSize)-1
-            self.thresholds.append(sortedVector[positie])
+            self.distribution.append(sortedVector[positie])
 
     def makeWord(self):
         """
@@ -79,7 +82,7 @@ class SaxWord(object):
                 total = total + self.vector[index+j]
             average = total / self.valuesPerLetter
             for j in range(1,self.alphabetSize + 1):
-                if average < self.thresholds[j]:
+                if average < self.distribution[j]:
                     saxWord = saxWord + self.alphabet[j - 1]
                     break
             else:

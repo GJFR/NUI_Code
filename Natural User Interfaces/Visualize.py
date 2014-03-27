@@ -79,7 +79,7 @@ def plot_data4(data2, motif, matches):
         ax1.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.getOriginal().getAllPoints(), color = 'r')
     plt.show()
     
-def plot_data_saxString(timeSeq,aantal,waardesPerLetter, thresholds=None):
+def plot_data_saxString(timeSeq,aantal,waardesPerLetter, distribution=None):
     saxToMatrix = []
     for letter in timeSeq.getSaxWord().getWord():
         '''waarde = (eog.getThresholds()[letterIndex] + eog.getThresholds()[letterIndex+1]) / 2'''
@@ -96,9 +96,9 @@ def plot_data_saxString(timeSeq,aantal,waardesPerLetter, thresholds=None):
     lines2 = ax2.plot(saxToMatrix, color = '#009900')
     plt.setp(lines2, linewidth=2)
     #for threshold in timeSeq.getThresholds():
-    if thresholds==None:
-        thresholds= timeSeq.getThresholds()
-    for threshold in thresholds:
+    if distribution==None:
+        distribution= timeSeq.getDistribution()
+    for threshold in distribution:
         ax2.add_line(plt.axhline(y=threshold, color = 'r'))
     #ax1.add_line(plt.axhline(y = -26200, xmin = 330/4900, xmax = 460/4900, linewidth = 3, color = 'b'))
     #ax1.add_line(plt.axhline(y = -26200, xmin = 1514/4900, xmax = 1710/4900, linewidth = 3, color = 'b'))
@@ -116,6 +116,23 @@ def plot_data_saxString(timeSeq,aantal,waardesPerLetter, thresholds=None):
 
     #ax2 = fig.add_subplot(212)
     #ax2.plot(saxToMatrix, color = 'g')
+    plt.show()
+
+def plot_data_saxString2(saxWord):
+    saxToMatrix = []
+    for letter in saxWord.getWord():
+        waarde = saxWord.getLetterWaarden()[letter]
+        for i in range(waardesPerLetter):
+            saxToMatrix.append(waarde)
+    
+    fig = plt.figure()
+    ax1 = fig.add_subplot(211)
+    ax1.plot(saxWord.getVector())
+    ax2 = fig.add_subplot(212)
+    lines2 = ax2.plot(saxToMatrix, color = '#009900')
+    plt.setp(lines2, linewidth=2)
+    for threshold in saxWord.getDistribution():
+        ax2.add_line(plt.axhline(y=threshold, color = 'r'))
     plt.show()
 
 def readData(relativePath, nbr):
@@ -177,7 +194,7 @@ if __name__ == '__main__':
     
     """TODO : Misschien beter de vorige ThresholdSolution hergebruiken?"""
     thresholdSol = ThresholdSolution.ThresholdSolution({"Left" : "c", "Right" : "f"}, 14) 
-    dataWindow = DataWindow.DataWindow(timeSeq.getThresholds())
+    dataWindow = DataWindow.DataWindow(timeSeq.getDistribution())
     
     """Uitvoeren Recognition"""
     finalMatrix = np.zeros(5000)
