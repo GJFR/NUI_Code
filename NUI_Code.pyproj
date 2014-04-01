@@ -27,6 +27,7 @@
     <Compile Include="foute modules\Program.py" />
     <Compile Include="foute modules\Recognition.py" />
     <Compile Include="foute modules\SeqChecker.py" />
+    <Compile Include="Natural User Interfaces\Batcher.py" />
     <Compile Include="Natural User Interfaces\dataPlot.py" />
     <Compile Include="Natural User Interfaces\DataWindow.py" />
     <Compile Include="Natural User Interfaces\EyeTracker.py" />

@@ -4,8 +4,7 @@ from scipy.signal import filtfilt, butter
 class DataWindow(object):
     """description of class"""
 
-    def __init__(self, distribution):
-        self.thresholds = distribution
+    def __init__(self):
         self.data = np.zeros(1000)
         self.filt_data = np.zeros(1000)
         self.allLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -28,16 +27,16 @@ class DataWindow(object):
         lastPart = self.filt_data[990:1000]
         return sum(lastPart) / len(lastPart)  
           
-    def getLastLetter(self):
+    def getLastLetter(self, distribution):
         letter = ""
         lastPart = self.filt_data[990:1000]
         average = sum(lastPart) / len(lastPart)
-        for j in range(1,len(self.thresholds)):
+        for j in range(1,len(distribution)):
             if average < self.thresholds[j]:
                 letter = self.allLetters[j-1]
                 break
         else:
-            letter = self.allLetters[len(self.thresholds) - 1]
+            letter = self.allLetters[len(distribution) - 1]
         return letter
     
     def vlakAf(self):

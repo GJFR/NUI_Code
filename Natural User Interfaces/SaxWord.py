@@ -30,6 +30,13 @@ class SaxWord(object):
     def getWord(self):
         return self.word;
 
+    def getNthLetter(self, n):
+        return self.word[n]
+
+    def getNthLetterValue(self, n):
+        letter = self.word[n]
+        return self.letterWaarden[letter]
+
     def getDistribution(self):
         return self.distribution
 

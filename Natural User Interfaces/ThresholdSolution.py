@@ -16,11 +16,11 @@ class ThresholdSolution(object):
         counterLeft = 0
         counterRight = 0
         hasDirection = False
-        saxString = timeSeq.getSaxWord().getWord()
-        for index in range(len(saxString)):
-            if saxString[index] < self.threshold_dict["Left"]:
+        saxWord = timeSeq.getSaxWord()
+        for index in range(len(saxWord.getWord())):
+            if saxWord.getNthLetterValue(index) < self.threshold_dict["Left"]:
                 counterLeft = counterLeft + 1
-            elif saxString[index] > self.threshold_dict["Right"]:
+            elif saxWord.getNthLetterValue(index) > self.threshold_dict["Right"]:
                 counterRight = counterRight + 1
             else:
                 counterLeft = 0

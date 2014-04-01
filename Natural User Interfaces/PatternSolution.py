@@ -7,12 +7,12 @@ class PatternSolution(object):
 
     def __init__(self, calibrationDict, alphabetSize, valuesPerLetter, maxMatchingDistance):
         self.maxMatchingDistance = maxMatchingDistance
-        self.preprocess(calibrationDict, valuesPetLetter)
+        self.preprocess(calibrationDict, alphabetSize, valuesPerLetter)
 
         
     # calibrationDict: een mapping van kijkrichting naar intervallen gehaald uit de calibratie
     # distanceDict: een mapping van sequence naar distance totaal
-    def processTimeSequenceCalibration(self, calibrationDict):
+    def processTimeSequenceCalibration(self, calibrationWordDict):
         """
         Handles the calibration data by finding the best motif of each direction and putting it in a dictionary motifDict.
         Parameters:
@@ -62,7 +62,7 @@ class PatternSolution(object):
                 smallesDistanceSequence = sequence
         return smallestDistanceSequence
 
-    def preprocess(calibrationDict, alphabetSize, valuesPerLetter):
+    def preprocess(self, calibrationDict, alphabetSize, valuesPerLetter):
          """concatenate all the data"""
          data = []
          for i in range(len(calibrationDict["Left"])):
@@ -85,7 +85,7 @@ class PatternSolution(object):
 
          self.plotter(timeSeq, alphabetSize, valuesPerLetter)
 
-    def plotter(timeSeq, alphabetSize, valuesPerLetter):
+    def plotter(self, timeSeq, alphabetSize, valuesPerLetter):
         """Print all the sequences"""
         for direction in self.calibrationWordDict:
             for word in self.calibrationWordDict[direction]:

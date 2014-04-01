@@ -8,6 +8,8 @@ import numpy as np
 from time import sleep
 import queue
 import threading
+import Batcher
+import matplotlib.pyplot as plt
 
 inputQueue = queue.Queue()
 queueSemaphore = threading.Semaphore(10000)
@@ -24,14 +26,25 @@ def runT():
     #thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock))
     #thread.start()
 
-    distribution = thresholdsCalibration()
-    print(distribution)
-    thresholdsRecognition(distribution)
+    calibrationPath = 'Data2\\test24_B.csv'
+    calibrationIndex = 250
+    recognitionPath = 'Data2\\test24_B.csv'
+
+    batcher = Batcher.Batcher(ALPHABET_SIZE, VALUES_PER_LETTER)
+    batcher.setCalibrationData(calibrationIndex,calibrationPath)
+    batcher.setRecognitionData(recognitionPath)
+
+    thresholdSol = thresholdsCalibration(batcher)
+    print(thresholdSol)
+    thresholdsRecognition(thresholdSol, batcher)
 
 
 # TODO semaphore in plaats van lock
-def thresholdsCalibration():
-    data = eyetracking2.run2(THRESHOLD_CALIBRATION_LENGTH)
+def thresholdsCalibration(batcher = None):
+    if batcher == None:
+        data = getDataRealTime()
+    else:
+        data = getDataBatch(batcher)
     timeSeq = TimeSequence.TimeSequence(data)
     timeSeq.filter()
     timeSeq.makeSaxWord(ALPHABET_SIZE, VALUES_PER_LETTER)
@@ -43,35 +56,47 @@ def thresholdsCalibration():
     print("Right threshold: " + str(directionThresholds["Right"]))
     
     thresholdSol = ThresholdSolution.ThresholdSolution(directionThresholds, minimalThresholdHits)
-    #thresholdSol.processTimeSequenceCalibration(timeSeq)
+    thresholdSol.processTimeSequenceCalibration(timeSeq)
 
     Visualize.plot_data_saxString(timeSeq,ALPHABET_SIZE,VALUES_PER_LETTER)
 
     answer = input("Ben je tevreden met de resultaten? (y/n)")
     if answer == "y":
-        return (timeSeq.getDistribution())
+        return thresholdSol
     else:
         return thresholdsCalibration()
 
-def thresholdsRecognition(distribution):
-    thresholdSol = ThresholdSolution.ThresholdSolution(directionThresholds, minimalThresholdHits)
-    dataWindow = DataWindow.DataWindow(distribution)
-    thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock,dataWindow))
-    thread.start()
+def getDataRealTime():
+    return eyetracking2.run2(THRESHOLD_CALIBRATION_LENGTH)
+
+def getDataBatch(batcher):
+    return batcher.getCalibrationVector()
+
+def thresholdsRecognition(thresholdSol, batcher = None):
+    dataWindow = DataWindow.DataWindow()
+    if batcher == None:
+        thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock,dataWindow))
+        thread.start()
+    else:
+        thread = threading.Thread(target=batcher.fillQueue, args=(inputQueue, dataWindow))
+        thread.start()
     
     for i in range(100):
         letterPart = inputQueue.get(True)
         dataWindow.addData(letterPart)
-        lastLetter = dataWindow.getLastLetter()
     print("End of data window fill.")
-    while(True):
-        letterPart = inputQueue.get(True)
+    
+    letterPart = inputQueue.get(True)
+    while(letterPart != None):
+        
         dataWindow.addData(letterPart)
         lastLetter = dataWindow.getLastValue()
         #print(lastLetter)
         if(thresholdSol.processTimeSequenceRecognition(lastLetter)):
             1==1
             dataWindow.vlakAf()
+        letterPart = inputQueue.get(True)
+
 
 
 ###########################################################################################
@@ -84,24 +109,40 @@ P_MAX_MATCHING_DISTANCE = 3
 
 
 def runP():
-    patternCalibration()
+    calibrationPath = 'Data2\\test24_B.csv'
 
-def patternCalibration():
+    calibrationVector = Visualize.readData(calibrationPath, 23)
+
     dataDict = {"Left" : [],"Right" : []}
-    for i in range(3):
-        for direction in dataDict:
-            print(direction)
-            sleep(0.5)
-            dataDict[direction].append(eyetracking2.run2(PATTERN_CALIBRATION_LENGTH))
-    
-    patternSol = PatternSolution.PatternSolution(dataDict,P_ALPHABET_SIZE,P_VALUES_PER_LETTER, P_MAX_MATCHING_DISTANCE)
+    dataDict["Left"].append(calibrationVector[150:750])
+    dataDict["Left"].append(calibrationVector[1350:1950])
+    dataDict["Left"].append(calibrationVector[2450:3050])
+    dataDict["Right"].append(calibrationVector[750:1350])
+    dataDict["Right"].append(calibrationVector[1900:2500])
+    dataDict["Right"].append(calibrationVector[3000:3600])
+    patternCalibration(dataDict)
+
+def patternCalibration(dataDict = None):
+    if dataDict == None:
+        dataDict = {"Left" : [],"Right" : []}
+        for i in range(3):
+            for direction in dataDict:
+                print(direction)
+                sleep(0.5)
+                dataDict[direction].append(eyetracking2.run2(PATTERN_CALIBRATION_LENGTH))
+    else:
+        patternSol = PatternSolution.PatternSolution(dataDict,P_ALPHABET_SIZE,P_VALUES_PER_LETTER, P_MAX_MATCHING_DISTANCE)
    
-def patternRecognition(distribution):
+def patternRecognition(distribution, batcher = None):
    patternSol = PatternSolution.PatternSolution(P_MAX_MATCHING_DISTANCE, P_ALPHABET_SIZE, P_VALUES_PER_LETTER)
    dataWindow = DataWindow.DataWindow(distribution)
 
-   thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock,dataWindow))
-   thread.start()
+   if batcher == None:
+       thread = threading.  Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock,dataWindow))
+       thread.start()
+   else:
+       thread = threading.Thread(target=batcher.fillQueue, args=(inputQueue, dataWindow))
+       thread.start()
 
    for i in range(100):
         letterPart = inputQueue.get(True)
@@ -109,14 +150,21 @@ def patternRecognition(distribution):
         lastLetter = dataWindow.getLastLetter()
    print("End of data window fill.")
 
-   while(True):
-        letterPart = inputQueue.get(True)
+   while(letterPart != None):
+        
         dataWindow.addData(letterPart)
         lastLetter = dataWindow.getLastValue()
         #print(lastLetter)
         if(patternSol.processTimeSequenceRecognition(lastLetter)):
             1==1
             dataWindow.vlakAf()
+        letterPart = inputQueue.get(True)
+
+def plot(vector):
+    fig = plt.figure()
+    ax1 = fig.add_subplot(111)
+    ax1.plot(vector)
+    plt.show()
 
 if __name__ == '__main__':
     runP()
