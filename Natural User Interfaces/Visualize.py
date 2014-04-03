@@ -122,7 +122,7 @@ def plot_data_saxString2(saxWord):
     saxToMatrix = []
     for letter in saxWord.getWord():
         waarde = saxWord.getLetterWaarden()[letter]
-        for i in range(waardesPerLetter):
+        for i in range(saxWord.valuesPerLetter):
             saxToMatrix.append(waarde)
     
     fig = plt.figure()
@@ -208,7 +208,7 @@ if __name__ == '__main__':
         letter = dataWindow.getLastLetter()
         if(thresholdSol.processTimeSequenceRecognition(letter)):
             1==1#onbelangrijke lijn zodat je de volgende lijn in comment kan zetten zonder errors
-            dataWindow.vlakAf()
+            dataWindow.flatten()
         finalMatrix[i:i+10] = dataWindow.data[990:1000]
     
     """Plot informatie om te kunnen controleren"""

@@ -94,7 +94,7 @@ def thresholdsRecognition(thresholdSol, batcher = None):
         #print(lastLetter)
         if(thresholdSol.processTimeSequenceRecognition(lastLetter)):
             1==1
-            dataWindow.vlakAf()
+            dataWindow.flatten()
         letterPart = inputQueue.get(True)
 
 
@@ -110,6 +110,7 @@ P_MAX_MATCHING_DISTANCE = 3
 
 def runP():
     calibrationPath = 'Data2\\test24_B.csv'
+    recognitionPath = 'Data2\\test24_B.csv'
 
     calibrationVector = Visualize.readData(calibrationPath, 23)
 
@@ -120,7 +121,12 @@ def runP():
     dataDict["Right"].append(calibrationVector[750:1350])
     dataDict["Right"].append(calibrationVector[1900:2500])
     dataDict["Right"].append(calibrationVector[3000:3600])
-    patternCalibration(dataDict)
+    patternSol = patternCalibration(dataDict)
+    
+    batcher = Batcher.Batcher(ALPHABET_SIZE, VALUES_PER_LETTER)
+    batcher.setRecognitionData(recognitionPath)
+    
+    patternRecognition(patternSol, batcher)
 
 def patternCalibration(dataDict = None):
     if dataDict == None:
@@ -132,10 +138,11 @@ def patternCalibration(dataDict = None):
                 dataDict[direction].append(eyetracking2.run2(PATTERN_CALIBRATION_LENGTH))
     else:
         patternSol = PatternSolution.PatternSolution(dataDict,P_ALPHABET_SIZE,P_VALUES_PER_LETTER, P_MAX_MATCHING_DISTANCE)
+        patternSol.processTimeSequenceCalibration()
+        return patternSol
    
-def patternRecognition(distribution, batcher = None):
-   patternSol = PatternSolution.PatternSolution(P_MAX_MATCHING_DISTANCE, P_ALPHABET_SIZE, P_VALUES_PER_LETTER)
-   dataWindow = DataWindow.DataWindow(distribution)
+def patternRecognition(patternSol, batcher = None):
+   dataWindow = DataWindow.DataWindow()
 
    if batcher == None:
        thread = threading.  Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock,dataWindow))
@@ -147,17 +154,17 @@ def patternRecognition(distribution, batcher = None):
    for i in range(100):
         letterPart = inputQueue.get(True)
         dataWindow.addData(letterPart)
-        lastLetter = dataWindow.getLastLetter()
    print("End of data window fill.")
 
    while(letterPart != None):
-        
         dataWindow.addData(letterPart)
-        lastLetter = dataWindow.getLastValue()
+        lastSaxWord = dataWindow.getLastSaxWord(600, P_ALPHABET_SIZE, P_VALUES_PER_LETTER, patternSol.distribution)
         #print(lastLetter)
-        if(patternSol.processTimeSequenceRecognition(lastLetter)):
-            1==1
-            dataWindow.vlakAf()
+        ret = patternSol.processTimeSequenceRecognition(lastSaxWord)
+        if(ret != None):
+            print(ret)
+        #dataWindow.flatten()
+        
         letterPart = inputQueue.get(True)
 
 def plot(vector):

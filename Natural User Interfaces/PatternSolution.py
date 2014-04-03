@@ -12,7 +12,7 @@ class PatternSolution(object):
         
     # calibrationDict: een mapping van kijkrichting naar intervallen gehaald uit de calibratie
     # distanceDict: een mapping van sequence naar distance totaal
-    def processTimeSequenceCalibration(self, calibrationWordDict):
+    def processTimeSequenceCalibration(self):
         """
         Handles the calibration data by finding the best motif of each direction and putting it in a dictionary motifDict.
         Parameters:
@@ -22,11 +22,11 @@ class PatternSolution(object):
         
         """compare all the saxWords of the same direction with each other"""
         motifDict = {}
-        for direction in calibrationWordDict:
+        for direction in self.calibrationWordDict:
             distanceDict = {}
-            for sequence1 in calibrationWordDict[direction]:
+            for sequence1 in self.calibrationWordDict[direction]:
                 distanceDict[sequence1] = 0
-                for sequence2 in calibrationWordDict[direction]:
+                for sequence2 in self.calibrationWordDict[direction]:
                     if (sequence1 == sequence2):
                         continue
                     distanceDict[sequence1] += sequence1.getHammingDistance(sequence2)
@@ -36,7 +36,7 @@ class PatternSolution(object):
         print(motifDict["Left"].getWord())
         print(motifDict["Right"].getWord())
 
-    def processTimesequenceRecognition(self, saxWord):
+    def processTimeSequenceRecognition(self, saxWord):
         """
         Handles the recoognition by comparing de sax-string of the given vector to the sax-string of the motifs.
         Returns the direction if found, otherwise None.
@@ -69,19 +69,19 @@ class PatternSolution(object):
            for direction in calibrationDict:
                data.extend(calibrationDict[direction][i])
 
-         """find the thresholds"""
+         """find the distribution"""
          timeSeq = TimeSequence.TimeSequence(data)
          timeSeq.filter()
          timeSeq.makeSaxWord(alphabetSize, valuesPerLetter)
          saxWord = timeSeq.getSaxWord()
-         self.thresholds = saxWord.getDistribution()
+         self.distribution = saxWord.getDistribution()
         
          """make saxWords for each sequence"""
          self.calibrationWordDict = {}
          for direction in calibrationDict:
              self.calibrationWordDict[direction] = []
              for seq in calibrationDict[direction]:
-                 self.calibrationWordDict[direction].append(SaxWord.SaxWord(seq,alphabetSize,valuesPerLetter,thresholds, timeSeq.getLetterWaarden()))
+                 self.calibrationWordDict[direction].append(SaxWord.SaxWord(seq,alphabetSize,valuesPerLetter,self.distribution, timeSeq.getLetterWaarden()))
 
          self.plotter(timeSeq, alphabetSize, valuesPerLetter)
 

@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.signal import filtfilt, butter
+import SaxWord
 
 class DataWindow(object):
     """description of class"""
@@ -32,14 +33,18 @@ class DataWindow(object):
         lastPart = self.filt_data[990:1000]
         average = sum(lastPart) / len(lastPart)
         for j in range(1,len(distribution)):
-            if average < self.thresholds[j]:
+            if average < self.distribution[j]:
                 letter = self.allLetters[j-1]
                 break
         else:
             letter = self.allLetters[len(distribution) - 1]
         return letter
     
-    def vlakAf(self):
+    def getLastSaxWord(self, length, alphabetSize, valuesPerLetter, distribution=None, letterWaarden=None):
+        vector = self.filt_data[1000-length:1000]
+        return SaxWord.SaxWord(vector, alphabetSize, valuesPerLetter, distribution, letterWaarden)
+    
+    def flatten(self):
         secondLastPart = self.data[0:990]
         average = sum(secondLastPart) / len(secondLastPart)
         self.data[990:1000] = [average] * 10
