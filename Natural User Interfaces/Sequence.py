@@ -20,6 +20,7 @@ class Sequence(object):
         self.timeSeq = timeSeq
         self.start = start
         self.length = length
+        self.allLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         
     def getStart(self):
         return self.start
@@ -58,7 +59,29 @@ class Sequence(object):
 
     
     def getWord(self, woordLengte, alfabetGrootte):
-        self.timeSeq.get
+        if woordLengte > self.getLength():
+            raise AttributeError('De woordlengte is groter dan dan sequentielengte')
+        a = int(self.getLength()/woordLengte)
+        xtra = self.getLength() % woordLengte
+        word = ""
+        positie = 0
+        einde = 0
+        for i in range(woordLengte):
+            einde += a
+            if xtra > 0:
+                einde += 1
+                xtra += -1
+                b = 1
+            else:
+                b = 0
+                total = 0
+            while positie < self.getLength() and positie < einde:
+                total += self.getPoint(positie)
+                positie += 1
+             
+            value = total / (a+b)
+            word += self.getLetter(value, alfabetGrootte)
+     
         return word
         
     '''Returns the letter appropriate for the value based on alfabetGrootte'''
@@ -79,6 +102,20 @@ class Sequence(object):
         elif(seq.getStart() + seq.getLength() > self.getStart() and seq.getStart() <= self.getStart()):
             return True
         return False
+    
+    """"Calculate how much high the smallest Sequence is compared to the tallest Sequence."""
+    def compareHeightWith(self, other):
+        selfHD = self.getRealHeight()
+        otherHD = other.getRealHeight()
+        
+        if(selfHD < otherHD):
+            return other.compareHeightWith(self)
+        percent = otherHD/selfHD
+        return percent
+        
+    """Calculate what the difference is between highest and lowest point."""
+    def getRealHeight(self):
+        return max(self.getAllPoints()) - min(self.getAllPoints())
     
     '''override'''
     def __str__(self):
@@ -128,6 +165,8 @@ class NormSequence(Sequence):
         else:
             return other.compare(self)
     
+    def getRealHeight(self):
+        return self.getOriginal().getRealHeight()
     
 class ScaledSequence(Sequence):
     
@@ -160,3 +199,6 @@ class ScaledSequence(Sequence):
             j = math.floor(i * (self.getOriginal().getLength() / self.getLength()))
             scaledData.append(self.getOriginal().getPoint(j))
         return scaledData
+    
+    def getRealHeight(self):
+        return self.getOriginal().getRealHeight()

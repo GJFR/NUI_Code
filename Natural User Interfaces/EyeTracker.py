@@ -2,6 +2,7 @@ import eyetracking2
 import TimeSequence
 import ThresholdSolution
 import PatternSolution
+import PatternSolution2
 import Visualize
 import DataWindow
 import numpy as np
@@ -137,7 +138,8 @@ def patternCalibration(dataDict = None):
                 sleep(0.5)
                 dataDict[direction].append(eyetracking2.run2(PATTERN_CALIBRATION_LENGTH))
     else:
-        patternSol = PatternSolution.PatternSolution(dataDict,P_ALPHABET_SIZE,P_VALUES_PER_LETTER, P_MAX_MATCHING_DISTANCE)
+        #patternSol = PatternSolution.PatternSolution(dataDict,P_ALPHABET_SIZE,P_VALUES_PER_LETTER, P_MAX_MATCHING_DISTANCE)
+        patternSol = PatternSolution2.PatternSolution2(dataDict,10,P_ALPHABET_SIZE,P_VALUES_PER_LETTER,7,2,.5)
         patternSol.processTimeSequenceCalibration()
         return patternSol
    

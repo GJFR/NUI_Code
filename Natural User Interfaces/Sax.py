@@ -16,7 +16,7 @@ class TimeSequence(object):
     classdocs
     '''
     MIN_AFSTAND = 75
-    def __init__(self, data, verdeelPunten, minSeqLengte, maxSeqLengte, woordLengte, alfabetGrootte, collisionThreshold, r):
+    def __init__(self, data, verdeelPunten, minSeqLengte, maxSeqLengte, wordLength, alphabetSize, collisionThreshold, r):
         '''        Constructor        '''
         self.data = data
         self.verdeelPunten = verdeelPunten
@@ -24,10 +24,10 @@ class TimeSequence(object):
             raise AttributeError("verdeelpunten groter dan de lengte")
         self.minSeqLengte = minSeqLengte
         self.maxSeqLengte = maxSeqLengte
-        if woordLengte > minSeqLengte:
-            raise AttributeError("woordLengte groter dan minSeqLengte")
-        self.woordLengte = woordLengte
-        self.alfabetGrootte = alfabetGrootte
+        if wordLength > minSeqLengte:
+            raise AttributeError("wordLength groter dan minSeqLengte")
+        self.woordLengte = wordLength
+        self.alfabetGrootte = alphabetSize
         self.collisionThreshold = collisionThreshold
         self.r = r
         self.sequenceList = []

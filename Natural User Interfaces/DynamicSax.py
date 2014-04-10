@@ -16,12 +16,13 @@ class DynamicTimeSeq(object):
     classdocs
     '''
     MIN_AFSTAND = 75
-    def __init__(self, wordLength, alphabetSize, collisionThreshold, r):
+    def __init__(self, wordLength, alphabetSize, collisionThreshold, r, heightDifference):
         '''        Constructor        '''
         self.woordLengte = wordLength
         self.alfabetGrootte = alphabetSize
         self.collisionThreshold = collisionThreshold
         self.r = r
+        self.heightDifference = heightDifference
         '''motifs: Sequence -> Lijst van matches (sequenties) '''
         self.motifs = {}
         self.numberOfGroups = 0
@@ -64,7 +65,7 @@ class DynamicTimeSeq(object):
             saxArray.append(seq.getWord(self.woordLengte, self.alfabetGrootte))
         return saxArray
     
-    '''Returns the collission matrix of this timesequence, using makeMaks() to generate the needed masks.'''
+    '''Returns the collission matrix of this timesequence'''
     def getCollisionMatrix(self, masks, group):
         saxArray = self.getSaxArray(group)
         
@@ -154,7 +155,7 @@ class DynamicTimeSeq(object):
         cooMatrix = cMatrix.tocoo()
         thresholdList = []
         for i,j,v in itertools.zip_longest(cooMatrix.row, cooMatrix.col, cooMatrix.data):
-            if v >= self.collisionThreshold:
+            if v >= self.collisionThreshold and self.sequenceList[i].compareHeightWith(self.sequenceList[j]) >= self.heightDifference:
                 thresholdList.append((group[i],self.sequenceList[j]))
         return thresholdList
     
@@ -221,7 +222,7 @@ class DynamicTimeSeq(object):
         if self.sequenceHash[motif1] == self.sequenceHash[motif2] and motif1.overlap(motif2):
             return True
         for match2,comp in self.motifs[motif2]:
-             if self.sequenceHash[motif1] == self.sequenceHash[match2] and motif1.overlap(match2):
+            if self.sequenceHash[motif1] == self.sequenceHash[match2] and motif1.overlap(match2):
                 return True
         for match1,comp in self.motifs[motif1]:
             if self.sequenceHash[match1] == self.sequenceHash[motif2] and motif2.overlap(match1):

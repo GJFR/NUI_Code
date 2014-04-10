@@ -79,6 +79,19 @@ def plot_data4(data2, motif, matches):
         ax1.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.getOriginal().getAllPoints(), color = 'r')
     plt.show()
     
+def plot_data5(motif, matches):
+    fig = plt.figure()
+    a = (1 + len(matches)) * 100 + 11
+    ax1 = fig.add_subplot(a)
+    line1, = ax1.plot(motif.timeSeq)
+    ax1.plot(range(motif.getStart(), motif.getStart() + motif.getLength()), motif.getOriginal().getAllPoints(), color = 'g')
+    for sequence,dist in matches:
+        a += 1
+        ax = fig.add_subplot(a)
+        line1, = ax.plot(sequence.timeSeq)
+        ax.plot(range(sequence.getStart(), sequence.getStart() + sequence.getLength()), sequence.getOriginal().getAllPoints(), color = 'r')
+    plt.show()
+    
 def plot_data_saxString(timeSeq,aantal,waardesPerLetter, distribution=None):
     saxToMatrix = []
     for letter in timeSeq.getSaxWord().getWord():

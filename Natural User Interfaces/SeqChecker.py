@@ -11,7 +11,7 @@ class SeqChecker(object):
     '''
 
 
-    def __init__(self, labeling, wordLength, alphabetSize, collisionThreshold, r):
+    def __init__(self, labeling, woordLengte, alfabetGrootte, collisionThreshold, r, heightDifference):
         '''
         Constructor
         '''
@@ -20,10 +20,11 @@ class SeqChecker(object):
         self.states = {}
         for label in labeling:
             self.states[label] = 0
-        self.woordLengte = wordLength
-        self.alfabetGrootte = alphabetSize
+        self.woordLengte = woordLengte
+        self.alfabetGrootte = alfabetGrootte
         self.collisionThreshold = collisionThreshold
         self.r = r
+        self.heightDifference = heightDifference
         self.masks = self.getMasks()
         self.maskedLabeling = {}
         for label in labeling:
@@ -69,7 +70,8 @@ class SeqChecker(object):
         
         possibleLabels = []
         for label in self.labeling:    
-            if self.collisionThreshold <= counters[label]:
+            if ( self.collisionThreshold <= counters[label]
+                and sequence.compareHeightWith(self.labeling[label][self.states[label]]) >= self.heightDifference ) :                
                 possibleLabels.append(label)
         return possibleLabels
     

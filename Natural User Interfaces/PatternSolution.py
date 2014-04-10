@@ -59,7 +59,7 @@ class PatternSolution(object):
         smallestDistanceSequence = list(distanceDict.keys())[0]
         for sequence in distanceDict:
             if (distanceDict[sequence] < distanceDict[smallestDistanceSequence]):
-                smallesDistanceSequence = sequence
+                smallestDistanceSequence = sequence
         return smallestDistanceSequence
 
     def preprocess(self, calibrationDict, alphabetSize, valuesPerLetter):
