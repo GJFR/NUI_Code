@@ -10,6 +10,11 @@
 % The file ijcai11.sty is the style file for IJCAI-11 (same as ijcai07.sty).
 \usepackage{ijcai11}
 \usepackage{mathtools}
+% The language we want and appropriate hyphenation.
+\usepackage[dutch]{babel}
+
+% Hyphenation rules.
+\hyphenation{biopotentiaal-schommelingen}
 
 % Use the postscript times font!
 \usepackage{times}
@@ -17,25 +22,6 @@
 % the following package is optional:
 %\usepackage{latexsym} 
 
-% Following comment is from ijcai97-submit.tex:
-% The preparation of these files was supported by Schlumberger Palo Alto
-% Research, AT\&T Bell Laboratories, and Morgan Kaufmann Publishers.
-% Shirley Jowell, of Morgan Kaufmann Publishers, and Peter F.
-% Patel-Schneider, of AT\&T Bell Laboratories collaborated on their
-% preparation.
-
-% These instructions can be modified and used in other conferences as long
-% as credit to the authors and supporting agencies is retained, this notice
-% is not changed, and further modification or reuse is not restricted.
-% Neither Shirley Jowell nor Peter F. Patel-Schneider can be listed as
-% contacts for providing assistance without their prior permission.
-
-% To use for other conferences, change references to files and the
-% conference appropriate and use other authors, contacts, publishers, and
-% organizations.
-% Also change the deadline and address for returning papers and the length and
-% page charge instructions.
-% Put where the files are available in the appropriate places.
 
 \title{TODO Titel}
 \author{Kevin Boets \\ Katholieke Universiteit Leuven\\ Leuven, Belgium \\ kevin.boets@student.kuleuven.be
@@ -60,27 +46,29 @@ TODO
 
 \section{Preprocessing}
 
-De data die we krijgen doorgestuurd afkomstig van de sensoren is zeer ruw. Om hier kijkrichtingen uit af te kunnen leiden, gaan we de data eerst beter leesbaar maken. Dit is de preprocessing-stap. Deze stap voeren we op elke dataset uit alvorens we deze gaan analyseren.
+De data die we krijgen doorgestuurd, afkomstig van de sensoren, is zeer ruw. Om hier kijkrichtingen uit af te kunnen leiden, gaan we de data eerst beter leesbaar maken. Dit is de preprocessing-stap. Deze stap voeren we op elke dataset uit alvorens we deze gaan analyseren.
 
 Als eerste gaan we de ruis en knipperingen zo goed mogelijk proberen te verminderen. Dit gebeurt door middel van een low-pass filter. Deze filter verzacht alle signalen waarvan de frequentie hoger is dan onze cutoff frequentie. [TODO berekenen wat onze cutoff frequentie is].
 
-Daarna focussen we ons op de biopotentiaalschommelingen. Deze schommelingen kunnen we niet op voorhand voorspellingen en verschillend van persoon tot persoon. Als we deze schommelingen kunnen verminderen, kunnen we meer steunen op absolute waardes van het signaal. In deze tweede stap van de preprocessing gebruiken we opnieuw een low-pass filter. Deze keer gebruiken we een hoge cutoff frequentie [TODO weer cutoff berekenen]. Na deze filtering van de data, blijven enkel de signalen met een laga frequentie over. Het resultaat is ongeveer de biopotentiaal van de gebruiker die doorheen de tijd fluctueert. We kunnen nu de biopotentiaalschommelingen in onze originele data bij benadering verwijderen door de gevonden biopotentiaal hiervan af te trekken. De schommelingen verdwijnen niet, maar worden wel sterk verminderd.
+Daarna focussen we ons op de biopotentiaalschommelingen. Deze schommelingen kunnen we niet op voorhand voorspellen en verschillen van persoon tot persoon. Als we deze schommelingen kunnen verminderen, kunnen we meer steunen op absolute waardes van het signaal. In deze tweede stap van de preprocessing gebruiken we opnieuw een low-pass filter. Deze keer gebruiken we een lage cutoff frequentie [TODO weer cutoff berekenen]. Na deze filtering van de data, blijven enkel de signalen met een lage frequentie over. Het resultaat is ongeveer de biopotentiaal van de gebruiker die doorheen de tijd fluctueert. We kunnen nu de biopotentiaalschommelingen uit onze originele data verwijderen door de gevonden biopotentiaal hiervan af te trekken. De schommelingen verdwijnen niet, maar worden wel sterk verminderd.
 
-Na toepassing van de vorige filteringen, discretiseren we de data. Hierdoor hoeven we minder berekeningen uit te voeren, wat de uitvoeringstijd van het programma ten goede komt. Hiervoor gebruiken we de SAX (Symbolic Aggregate approXimation) \cite{sax}. 
+Na toepassing van de vorige filteringen, discretiseren we de data. Hierdoor moeten we later minder berekeningen doen, wat de uitvoeringstijd van het programma ten goede komt. Hiervoor gebruiken we de SAX (Symbolic Aggregate approXimation) \cite{sax}. [TODO rest SAX]
 
 [TODO slot?]
 
-\section{Gebruike methoden}
+\section{Gebruikte methoden}
 
-In ons onderzoek hebben we gebruik gemaakt van twee verschillende methoden om kijkrichtingen te herkennen. Deze methoden steunen respectievelijk op thresholds en patronen. In elk van deze twee methoden hebben we een calibratie-fase en een herkennings-fase.
+In ons onderzoek hebben we gebruik gemaakt van twee verschillende methoden om kijkrichtingen te herkennen. Deze methoden steunen respectievelijk op thresholds en patronen. Beide methode beginnen met een calibratie-fase, gevolgd door de herkennings-fase. Tijdens de calibratie-fase krijgen we onze eerste data en proberen daaruit informatie te halen. In de herkennings-fase gaan we deze gevonden informatie gebruiken om kijkrichtingen te detecteren.
 
 \subsection{Thresholds}
 
-Deze methode steunt enkel op de absolute waarden van de data. Er wordt een bovengrens gedefinieerd voor elke kijkrichting in de calibratie-fase. Als deze overschreden wordt in de herkennings-fase, gaan we uit van die bepaalde kijkrichting.
+Deze methode steunt op de absolute waarden van de data. Er wordt een bovengrens gedefinieerd voor elke kijkrichting in de calibratie-fase. Als deze overschreden wordt in de herkennings-fase, gaan we uit van die bepaalde kijkrichting.
 
-In de calibratie-fase wordt aan de gebruiker gevraagd om een bepaalde sequentie van kijkrichtingen uit te voeren. Uit deze dataset halen we de kleinste en grootste waarde. Deze twee waarden horen elk bij een andere kijkrichting. Per kijkrichting hebben we ook een constante $\alpha$ waarvoor geldt: $0 < \alpha \leq 1$. We vermenigvuldigen $\alpha$ met dit minimun en maximum en beschouwen de uitkomt als de uiteindelijke bovengrens van de kijkrichting. In ons programma hebben we $\alpha$ voor beide kijkrichtingen de waarde $0.5$ gegeven, maar deze kan veranderd worden naar behoefte. Zo kunnen we de methode bijvoorbeeld strenger maken door $\alpha$ te verhogen.
+In de calibratie-fase wordt aan de gebruiker gevraagd om een bepaalde sequentie van kijkrichtingen uit te voeren. Uit deze dataset halen we de kleinste en grootste waarde. Deze twee waarden horen elk bij een andere kijkrichting. Per kijkrichting hebben we ook een constante $\alpha$ waarvoor geldt: $0 < \alpha \leq 1$. We vermenigvuldigen $\alpha$ met dit minimum en maximum en beschouwen de uitkomten als de uiteindelijke bovengrens van de respectievelijke kijkrichtingen. In ons programma hebben we $\alpha$ voor beide kijkrichtingen de waarde $0.5$ gegeven, maar deze kan veranderd worden naar behoefte. Zo kunnen we de methode bijvoorbeeld strenger maken door $\alpha$ te verhogen.
 
-In de herkennings-fase wordt telkens een 
+In de herkennings-fase gaan we met behulp van deze bovengrenzen kijkrichtingen proberen te detecteren. We nemen telkens het gemiddelde van tien nieuwe punten. Dit gemiddelde gaan we dan vergelijken met alle bovengrenzen. Wanneer een bovengrens overschreden wordt, toont dit aan dat er mogelijk een kijkrichting bezig is. We zouden dit kunnen signaleren als een kijkrichting, maar er is nog onzekerheid. Om voor meer zekerheid te zorgen, wachten we tot de grens meerdere keren is overschreden. Dit aantal is een afweging tussen hoge zekerheid of hoge detectiekans. Bij een klein aantal is de kans op detectie hoog, maar we zijn minder zeker ofdat het geen knippering is. Een groot aantal zal anderzijds veel zekerheid verschaffen, waarbij er wel een grotere kans is dat korte kijkrichtingen niet worden gedetecteerd. We moeten dus een goede balans proberen te vinden.
+
+Bij veelvuldige herhaling van dezelfde kijkrichting, wordt een nieuw probleem zichtbaar.
 
 \subsection{Patronen}
 TODO
@@ -88,7 +76,7 @@ TODO
 \section{Implementatie}
 TODO
 
-\section{Resulaten}
+\section{Resultaten}
 TODO
 
 \section{Conclusie}
