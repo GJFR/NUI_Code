@@ -4,6 +4,7 @@ import ThresholdSolution
 import PatternSolution
 import PatternSolution2
 import Visualize
+import Sequence2
 import DataWindow
 import numpy as np
 from time import sleep
@@ -144,27 +145,27 @@ def patternCalibration(dataDict = None):
         return patternSol
    
 def patternRecognition(patternSol, batcher = None):
-   dataWindow = DataWindow.DataWindow()
 
-   if batcher == None:
+    dataWindow = DataWindow.DataWindow()
+
+    if batcher == None:
        thread = threading.  Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock,dataWindow))
        thread.start()
-   else:
+    else:
        thread = threading.Thread(target=batcher.fillQueue, args=(inputQueue, dataWindow))
        thread.start()
 
-   for i in range(100):
+    for i in range(100):
         letterPart = inputQueue.get(True)
         dataWindow.addData(letterPart)
-   print("End of data window fill.")
+    print("End of data window fill.")
 
-   while(letterPart != None):
+    while(letterPart != None):
         dataWindow.addData(letterPart)
-        lastSaxWord = dataWindow.getLastSaxWord(600, P_ALPHABET_SIZE, P_VALUES_PER_LETTER, patternSol.distribution)
-        #print(lastLetter)
-        ret = patternSol.processTimeSequenceRecognition(lastSaxWord)
-        if(ret != None):
-            print(ret)
+        newSequence = Sequence2.Sequence2(dataWindow.getLastSequence(100))
+        direction = patternSol.processTimeSequenceRecognition(newSequence)
+        if (direction != None):
+            print(direction)
         #dataWindow.flatten()
         
         letterPart = inputQueue.get(True)

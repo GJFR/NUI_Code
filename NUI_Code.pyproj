@@ -35,6 +35,7 @@
     <Compile Include="Natural User Interfaces\eyetracking2.py" />
     <Compile Include="Natural User Interfaces\PatternSolution.py" />
     <Compile Include="Natural User Interfaces\SaxWord.py" />
+    <Compile Include="Natural User Interfaces\Sequence2.py" />
     <Compile Include="Natural User Interfaces\ThresholdSolution.py" />
     <Compile Include="Natural User Interfaces\TimeSequence.py" />
     <Compile Include="Natural User Interfaces\Run.py" />

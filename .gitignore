@@ -185,3 +185,7 @@ NUI_Code.pyproj
 Paper/ijcai11.bib
 Paper/ijcai11.pdf
 Paper/ijcai11.tex
+Natural User Interfaces/__pycache__/Sax.cpython-33.pyc
+*.pyc
+Natural User Interfaces/__pycache__/Visualize.cpython-33.pyc
+NUI_Code.pyproj

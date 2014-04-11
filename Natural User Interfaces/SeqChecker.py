@@ -11,7 +11,7 @@ class SeqChecker(object):
     '''
 
 
-    def __init__(self, labeling, woordLengte, alfabetGrootte, collisionThreshold, r, heightDifference):
+    def __init__(self, labeling, wordLength, alphabetSize, collisionThreshold, r, heightDifference, distribution = None, letterWaarden = None):
         '''
         Constructor
         '''
@@ -20,8 +20,8 @@ class SeqChecker(object):
         self.states = {}
         for label in labeling:
             self.states[label] = 0
-        self.woordLengte = woordLengte
-        self.alfabetGrootte = alfabetGrootte
+        self.wordLength = wordLength
+        self.alphabetSize = alphabetSize
         self.collisionThreshold = collisionThreshold
         self.r = r
         self.heightDifference = heightDifference
@@ -32,10 +32,14 @@ class SeqChecker(object):
             saxArray = self.getSaxArray(self.labeling[label])
             for masker in self.masks:
                 self.maskedLabeling[label].append(self.mask(saxArray,masker))
+
+        self.distribution = distribution
+        self.letterWaarden = letterWaarden
                 
     def checkSequence(self, sequence):
-        if sequence.getStart() < self.wait:
-            return None
+        #if sequence.getStart() < self.wait:
+        #    return None
+        #TODO
         possibleLabels = self.saxCheck(sequence)
         matchLabels = self.rangeCheck(possibleLabels, sequence)
         for label in matchLabels:
@@ -58,7 +62,7 @@ class SeqChecker(object):
             self.states[label] = 0
         
     def saxCheck(self, sequence):
-        word = [sequence.getWord(self.woordLengte, self.alfabetGrootte)]
+        word = [sequence.getWord(self.wordLength, self.alphabetSize, self.distribution, self.letterWaarden).getWord()]
         counters = {}
         for label in self.labeling:
             counters[label] = 0
@@ -86,17 +90,17 @@ class SeqChecker(object):
     def getSaxArray(self, group):
         saxArray = []
         for seq in group:
-            saxArray.append(seq.getWord(self.woordLengte, self.alfabetGrootte))
+            saxArray.append(seq.getWord(self.wordLength, self.alphabetSize))
         return saxArray
     
     '''Returns a random generated list of masks (who satisfy our conditions)'''
     def getMasks(self):
         masks = []
-        maskLengte = self.woordLengte * 1 / 4
-        while len(masks) < self.woordLengte:
+        maskLengte = self.wordLength * 1 / 4
+        while len(masks) < self.wordLength:
             mask = []
             while len(mask) < maskLengte:
-                punt = random.randrange(self.woordLengte)
+                punt = random.randrange(self.wordLength)
                 if not(punt in mask):
                     mask.append(punt)
             for m in masks:
@@ -116,7 +120,7 @@ class SeqChecker(object):
         maskedSaxArray = []
         for word in saxArray:
             maskWord = ""
-            for i in range(self.woordLengte):
+            for i in range(self.wordLength):
                 if not(i in mask):
                     maskWord += word[i]
             maskedSaxArray.append(maskWord)

@@ -6,6 +6,7 @@ Created on 10-apr.-2014
 import DynamicSax
 import SeqChecker
 import Sequence
+import Sequence2
 import Visualize
 import TimeSequence
 import time
@@ -59,8 +60,10 @@ class PatternSolution2(object):
             for motif in bestMotifs:
                 self.dataPlot(motif, dynamicTS.getMotifs()[motif], direction)
             
-    def processTimeSequenceRecognition(self, saxWord):
-        pass
+    def processTimeSequenceRecognition(self, newSequence):
+        seqChecker = SeqChecker.SeqChecker(self.labeling, self.wordLength, self.alphabetSize, self.collisionThreshold, self.r, self.heightDifference)
+        return seqChecker.checkSequence(newSequence.getNormalized())
+        
     
     def preprocess(self, calibrationDict, alphabetSize):
         """concatenate all the data"""
@@ -69,12 +72,16 @@ class PatternSolution2(object):
             for direction in calibrationDict:
                 data.extend(calibrationDict[direction][i])
 
-        """find the distribution"""
+        """filter seperate sequences and append to one big time sequence"""
         timeSeq = TimeSequence.TimeSequence(data)
         timeSeq.filter()
         self.plotter(timeSeq)
         self.data = timeSeq.getVector()
         dataF = timeSeq.getVector()
+
+        """Make sax-word and save the distribution for the recognition-fase"""
+        timeSeq.makeSaxWord(self.alphabetSize, self.valuesPerLetter)
+        self.distribution = timeSeq.getDistribution()
         
         for i in range(len(calibrationDict["Left"])):
             for direction in calibrationDict:

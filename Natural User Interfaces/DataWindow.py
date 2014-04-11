@@ -6,13 +6,14 @@ class DataWindow(object):
     """description of class"""
 
     def __init__(self):
-        self.data = np.zeros(1000)
-        self.filt_data = np.zeros(1000)
+        self.bufferSize = 1000;
+        self.data = np.zeros(self.bufferSize)
+        self.filt_data = np.zeros(self.bufferSize)
         self.allLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     def addData(self, dataPart):
-        self.data[0:990] = self.data[10:1000]
-        self.data[990:1000] = dataPart
+        self.data[0 : self.bufferSize - 10] = self.data[10 : self.bufferSize]
+        self.data[self.bufferSize - 10 : self.bufferSize] = dataPart
         self.makeFiltered()
 
     def makeFiltered(self):
@@ -23,14 +24,19 @@ class DataWindow(object):
         b2, a2 = butter(1, 0.05, 'lowpass')
         self.filt_data = filtfilt(b2, a2, filtered)
 
+    def getLastSequence(self, size):
+        if (size > self.bufferSize):
+            raise AttributeError('The size is too large')
+        return self.filt_data[self.bufferSize - size : self.bufferSize]
+
     def getLastValue(self):
         letter = ""
-        lastPart = self.filt_data[990:1000]
+        lastPart = self.filt_data[self.bufferSize - 10 : self.bufferSize]
         return sum(lastPart) / len(lastPart)  
           
     def getLastLetter(self, distribution):
         letter = ""
-        lastPart = self.filt_data[990:1000]
+        lastPart = self.filt_data[self.bufferSize - 10 : self.bufferSize]
         average = sum(lastPart) / len(lastPart)
         for j in range(1,len(distribution)):
             if average < self.distribution[j]:
@@ -41,10 +47,10 @@ class DataWindow(object):
         return letter
     
     def getLastSaxWord(self, length, alphabetSize, valuesPerLetter, distribution=None, letterWaarden=None):
-        vector = self.filt_data[1000-length:1000]
+        vector = self.filt_data[self.bufferSize - length: self.bufferSize]
         return SaxWord.SaxWord(vector, alphabetSize, valuesPerLetter, distribution, letterWaarden)
     
     def flatten(self):
-        secondLastPart = self.data[0:990]
+        secondLastPart = self.data[0 : self.bufferSize - 10]
         average = sum(secondLastPart) / len(secondLastPart)
-        self.data[990:1000] = [average] * 10
+        self.data[self.bufferSize - 10 : self.bufferSize] = [average] * 10
