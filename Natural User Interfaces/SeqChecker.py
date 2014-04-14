@@ -25,6 +25,9 @@ class SeqChecker(object):
         self.collisionThreshold = collisionThreshold
         self.r = r
         self.heightDifference = heightDifference
+        self.distribution = distribution
+        self.letterWaarden = letterWaarden
+        self.countDown = -1
         self.masks = self.getMasks()
         self.maskedLabeling = {}
         for label in labeling:
@@ -33,15 +36,23 @@ class SeqChecker(object):
             for masker in self.masks:
                 self.maskedLabeling[label].append(self.mask(saxArray,masker))
 
-        self.distribution = distribution
-        self.letterWaarden = letterWaarden
+        
                 
     def checkSequence(self, sequence):
         #if sequence.getStart() < self.wait:
         #    return None
         #TODO
+        
+        if self.countDown != 0:
+            self.countDown = self.countDown - 1
+        else:
+            print("countDown is zero")
+            self.resetStates()
+        
         possibleLabels = self.saxCheck(sequence)
         matchLabels = self.rangeCheck(possibleLabels, sequence)
+        if len(matchLabels) > 0:
+            self.countDown = 200
         for label in matchLabels:
             if self.incrementState(label):
                 self.resetStates()
@@ -51,6 +62,7 @@ class SeqChecker(object):
         return None
             
     def incrementState(self, label):
+        print('label hit : ' + label)
         self.states[label] += 1
         if self.states[label] >= len(self.labeling[label]):
             return True
@@ -58,12 +70,15 @@ class SeqChecker(object):
             return False
     
     def resetStates(self):
+        self.countDown = -1
         for label in self.labeling:
             self.states[label] = 0
         
     def saxCheck(self, sequence):
         word = [sequence.getWord(self.wordLength, self.alphabetSize, self.distribution, self.letterWaarden).getWord()]
+        #word = [sequence.getOldWord(self.wordLength, self.alphabetSize)]
         counters = {}
+        
         for label in self.labeling:
             counters[label] = 0
         for i in range(len(self.masks)):
@@ -75,11 +90,12 @@ class SeqChecker(object):
         possibleLabels = []
         for label in self.labeling:    
             if ( self.collisionThreshold <= counters[label]
-                and sequence.compareHeightWith(self.labeling[label][self.states[label]]) >= self.heightDifference ) :                
+                and sequence.getRealHeight() ) :                
                 possibleLabels.append(label)
         return possibleLabels
     
     def rangeCheck(self, possibleLabels, sequence):
+        
         matchLabels = []
         for label in possibleLabels:
             if self.r >= self.labeling[label][self.states[label]].compare(sequence):
@@ -90,7 +106,8 @@ class SeqChecker(object):
     def getSaxArray(self, group):
         saxArray = []
         for seq in group:
-            saxArray.append(seq.getWord(self.wordLength, self.alphabetSize))
+#             saxArray.append(seq.getWord(self.wordLength, self.alphabetSize))
+            saxArray.append(seq.makeSequence2().getWord(self.wordLength, self.alphabetSize, self.distribution, self.letterWaarden).getWord())
         return saxArray
     
     '''Returns a random generated list of masks (who satisfy our conditions)'''

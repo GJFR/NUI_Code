@@ -123,6 +123,7 @@ def runP():
     dataDict["Right"].append(calibrationVector[750:1350])
     dataDict["Right"].append(calibrationVector[1900:2500])
     dataDict["Right"].append(calibrationVector[3000:3600])
+
     patternSol = patternCalibration(dataDict)
     
     batcher = Batcher.Batcher(ALPHABET_SIZE, VALUES_PER_LETTER)
@@ -140,7 +141,7 @@ def patternCalibration(dataDict = None):
                 dataDict[direction].append(eyetracking2.run2(PATTERN_CALIBRATION_LENGTH))
     else:
         #patternSol = PatternSolution.PatternSolution(dataDict,P_ALPHABET_SIZE,P_VALUES_PER_LETTER, P_MAX_MATCHING_DISTANCE)
-        patternSol = PatternSolution2.PatternSolution2(dataDict,10,P_ALPHABET_SIZE,P_VALUES_PER_LETTER,7,2,.5)
+        patternSol = PatternSolution2.PatternSolution2(dataDict,10,P_ALPHABET_SIZE,P_VALUES_PER_LETTER,7,2,5000)
         patternSol.processTimeSequenceCalibration()
         return patternSol
    
@@ -156,7 +157,7 @@ def patternRecognition(patternSol, batcher = None):
        thread.start()
 
     for i in range(100):
-        letterPart = inputQueue.get(True)
+        letterPart = [10000] * 10
         dataWindow.addData(letterPart)
     print("End of data window fill.")
 
@@ -166,7 +167,7 @@ def patternRecognition(patternSol, batcher = None):
         direction = patternSol.processTimeSequenceRecognition(newSequence)
         if (direction != None):
             print(direction)
-        #dataWindow.flatten()
+        #dataWindow.flattenFirst()
         
         letterPart = inputQueue.get(True)
 
