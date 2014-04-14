@@ -10,6 +10,11 @@
 % The file ijcai11.sty is the style file for IJCAI-11 (same as ijcai07.sty).
 \usepackage{ijcai11}
 \usepackage{mathtools}
+\usepackage[utf8]{inputenc}
+
+% For importing images.
+\usepackage{graphicx}
+
 % The language we want and appropriate hyphenation.
 \usepackage[dutch]{babel}
 
@@ -46,35 +51,70 @@ TODO
 
 \section{Preprocessing}
 
-De data die we krijgen doorgestuurd, afkomstig van de sensoren, is zeer ruw. Om hier kijkrichtingen uit af te kunnen leiden, gaan we de data eerst beter leesbaar maken. Dit is de preprocessing-stap. Deze stap voeren we uit op elke dataset,  alvorens we deze gaan analyseren.
+De data die we krijgen doorgestuurd, afkomstig van de sensoren, is zeer ruw. Om hier kijkrichtingen uit af te kunnen leiden, gaan we de data eerst beter leesbaar maken. Dit is de preprocessing-stap. Deze stap voeren we uit op elke dataset,  alvorens we deze gaan analyseren. Beschouw de data in figuur 1 als de originele data.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{images/original_data}
+\caption{Originele data rechtstreeks afkomstige van de hardware.}
+\end{figure}
 
 Als eerste gaan we de ruis en knipperingen zo goed mogelijk proberen te verminderen. Dit gebeurt door middel van een low-pass filter. Deze filter verzacht alle signalen waarvan de frequentie hoger is dan onze cutoff frequentie. [TODO berekenen wat onze cutoff frequentie is].
 
 Daarna focussen we ons op de biopotentiaalschommelingen. Deze schommelingen kunnen we niet op voorhand voorspellen en verschillen van persoon tot persoon. Als we deze schommelingen kunnen verminderen, kunnen we meer steunen op absolute waardes van het signaal. In dit tweede deel van de preprocessing-stap gebruiken we opnieuw een low-pass filter. Deze keer gebruiken we een lage cutoff frequentie [TODO weer cutoff berekenen]. Na deze filtering van de data, blijven enkel de signalen met een lage frequentie over. Het resultaat is ongeveer de biopotentiaal van de gebruiker die doorheen de tijd fluctueert. We kunnen nu de biopotentiaalschommelingen uit onze originele data verminderen door de gevonden biopotentiaal hiervan af te trekken. De schommelingen verdwijnen niet volledig, maar worden wel sterk verminderd.
 
-Na toepassing van de vorige filteringen, discretiseren we de data. Hierdoor moeten we later minder berekeningen doen, wat de uitvoeringstijd van het programma ten goede komt. Hiervoor gebruiken we SAX (Symbolic Aggregate approXimation) \cite{sax}. De verdeling van de letters die het SAX-woord opmaken, bepalen we op de volgende manier. Eerst worden alle punten van de dataset gesorteerd op waarde. We verkrijgen hierdoor dus een stijgende grafiek. Afhankelijk van de alfabetgrootte $a$ (het aantal letters dat we gebruiken), verdelen we deze grafiek in even veel verrschillende partities van dezelfde grootte. Daarna wordt elke letter uit ons alfabet aan een van die partities gekoppeld. We definiëren ook op voorhand hoeveel waarden een letter voor moet stellen. Dit is de constante $w$. De data die we willen discretiseren, verdelen we op een partities van lengte $w$. Voor elke partitie berekenen we het gemiddelde en kennen we een letter toe.[TODO beter verwoorden en rest SAX]
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{images/filtered_data}
+\caption{Het resultaat van de twee filteringen op de originele data. De ruis is sterk verminderd en de sterkte van de knipperingen is afgenomen. De biopotentiaalschommeling is niet helemaal weg, maar wel voldoende verminderd.}
+\end{figure}
 
+Na toepassing van de vorige filteringen, discretiseren we de data. Hierdoor moeten we later minder berekeningen doen, wat de uitvoeringstijd van het programma ten goede komt. Hiervoor gebruiken we SAX (Symbolic Aggregate approXimation) \cite{sax}. De verdeling van de letters die het SAX-woord opmaken, bepalen we op de volgende manier. Om een goede verdeling te hebben, moeten de letters ongeveer even veel voorkomen. Eerst worden alle punten van de dataset gesorteerd op waarde, van klein naar groot. We verkrijgen hierdoor dus een stijgende grafiek. Afhankelijk van de alfabetgrootte $a$ (het aantal letters dat we gebruiken), verdelen we deze grafiek in even veel verrschillende partities die elk dezelfde grootte hebben. Daarna wordt elke letter uit ons alfabet aan een van die partities gekoppeld. Eigenlijk heeft elke letter nu een interval. We definiëren ook op voorhand hoeveel waarden een letter voor moet stellen. Dit is de constante $w$. De data die we willen discretiseren, verdelen we op een partities van lengte $w$. Voor elke partitie berekenen we het gemiddelde. We kennen een letter toe aan zo een partitie afhankelijk van dit gemiddelde.[TODO beter verwoorden en rest SAX (zoals letterwaarden)]
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{images/discretized_data}
+\caption{De groene lijn stelt de discretisatie voor van de gefilterde data die in het blauw staat. De rode horizontale lijnen geven de distributie weer van de SAX-letters.}
+\end{figure}
+
+[TODO nog een afbeelding met enkel de groene lijn?]
 [TODO slot?]
 
 \section{Gebruikte methoden}
 
-In ons onderzoek hebben we gebruik gemaakt van twee verschillende methoden om kijkrichtingen te herkennen. Deze methoden steunen respectievelijk op thresholds en patronen. Beide methoden beginnen met een calibratie-fase, gevolgd door een herkenning-fase. In de calibratie-fase laten we de gebruiker naar een aantal richtingen kijken, waarna we deze data analyseren. De gevonden informatie koppelen we aan de juiste kijkrichting. In de herkennings-fase wordt deze informatie gebruikt om in de nieuwe data kijkrichtingen te detecteren.
+In ons onderzoek hebben we gebruik gemaakt van twee verschillende methoden om kijkrichtingen te herkennen. Deze methoden steunen respectievelijk op thresholds en patronen. Beide methoden beginnen met een calibratie-fase, gevolgd door een herkennings-fase. In de calibratie-fase laten we de gebruiker naar een aantal richtingen kijken, waarna we deze data analyseren. De gevonden informatie koppelen we aan de juiste kijkrichting. In de herkennings-fase wordt deze informatie gebruikt om in de nieuwe data kijkrichtingen te detecteren.
 
 \subsection{Thresholds}
 
-Deze methode steunt op de absolute waarden van de data. Er wordt een bovengrens gedefinieerd voor elke kijkrichting in de calibratie-fase. Als deze overschreden wordt in de herkenning-fase, gaan we uit van die bepaalde kijkrichting.
+Deze methode steunt op de absolute waarden van de data. Er wordt een bovengrens gedefinieerd voor elke kijkrichting in de calibratie-fase. Als deze overschreden wordt in de herkennings-fase, gaan we uit van die bepaalde kijkrichting.
 
 In de calibratie-fase wordt aan de gebruiker gevraagd om een bepaalde sequentie van kijkrichtingen uit te voeren. Uit deze dataset halen we de kleinste en grootste waarde. Deze twee waarden horen elk bij een andere kijkrichting. Per kijkrichting hebben we ook een constante $\alpha$ waarvoor geldt: $0 < \alpha \leq 1$. We vermenigvuldigen $\alpha$ met dit minimum en maximum en beschouwen de uitkomsten als de uiteindelijke bovengrens van de respectievelijke kijkrichtingen. In ons programma hebben we $\alpha$ voor beide kijkrichtingen de waarde $0.5$ gegeven, maar deze kan veranderd worden naar behoefte. Zo kunnen we de methode bijvoorbeeld strenger maken door $\alpha$ te verhogen.
 
 In de herkennings-fase gaan we met behulp van deze bovengrenzen kijkrichtingen proberen te detecteren. We nemen telkens het gemiddelde van tien nieuwe punten. Dit gemiddelde gaan we dan vergelijken met alle bovengrenzen. Wanneer een bovengrens overschreden wordt, toont dit aan dat de gebruiker mogelijk in een van de richtingen aan het kijken is. Dit is echter niet altijd zo. Een paar opeenvolgende pieken in de data (zoals knipperingen) kunnen al snel dit gemiddelde omhoog trekken. Om voor meer zekerheid te zorgen, wachten we tot de grens meerdere keren is overschreden. Dit aantal definiëren we op voorhand door een afweging te maken. Bij een klein aantal is de kans op detectie hoog, maar zijn we minder zeker over de geldigheid van de detectie. Een groot aantal zal anderzijds veel zekerheid verschaffen, waarbij er wel een grotere kans is dat korte kijkrichtingen niet worden gedetecteerd. Hierbij is een goede balans belangrijk.
 
 [TODO deeltje beter bij preprocessing? of toch niet?]
-Bij veelvuldige herhaling van dezelfde kijkrichting, wordt een nieuw probleem zichtbaar. In de preprocessing-stap gebruiken we namelijk een low-pass filter met lage cut-off frequentie om de biopentiaalschommelingen te verminderen. Als er zeer veel en kort op elkaar naar éénzelfde richting gekeken wordt, zullen de waarden in de data algemeen lager of hoger zijn. [TODO verduidelijken met afbeelding]. De gefilterde data zal hierdoor dus ook algemeen lager of hoger liggen, wat beschouwd wordt als de biopotentiaal. Omdat we de biopotentiaal aftrekken van de oorspronkelijke data, zal de data verschuiven volgens de y-as. Omdat thresholds zeer veel steunt op absolute waarden, kunnen we dit natuurlijk best vermijden. In onze oplossing voor dit probleem, vlakken we het signaal af. Elke keer als er een threshold overschreden wordt, wordt het gemiddelde van de vorige datapunten berekend. Dit gemiddelde kennen we dan toe aan alle datapunten waarbij de threshold overschreden wordt. We detecteren dus een kijkrichting, maar veranderen de data alsof er nooit iets is gebeurd [TODO wiskundiger].
+Bij veelvuldige herhaling van dezelfde kijkrichting, wordt een nieuw probleem zichtbaar. In de preprocessing-stap gebruiken we namelijk een low-pass filter met lage cut-off frequentie om de biopentiaalschommelingen te verminderen. Als er veel en opeenvolgend naar éénzelfde richting gekeken wordt, zullen de waarden in de data algemeen lager of hoger zijn. [TODO verduidelijken met afbeelding]. De gefilterde data zal hierdoor dus ook algemeen lager of hoger liggen. Deze data wordt beschouwd als de biopotentiaal. Omdat we de biopotentiaal aftrekken van de oorspronkelijke data, zal de data verschuiven volgens de y-as. Omdat thresholds zeer veel steunt op absolute waarden, kunnen we dit natuurlijk best vermijden. In onze oplossing voor dit probleem, vlakken we het signaal af. Elke keer als er een threshold overschreden wordt, wordt het gemiddelde van de vorige datapunten berekend. Dit gemiddelde kennen we dan toe aan alle datapunten waarbij de threshold overschreden wordt. We detecteren dus een kijkrichting, maar veranderen de data alsof er nooit iets is gebeurd [TODO wiskundiger].
 
 \subsection{Patronen}
+
+In tegenstelling tot de thresholds-methode, steunt de deze methode weinig op absolute waarden en eerder op relatieve waarden. Er wordt naar motieven gezocht in de calibratie-fase, die dan gezocht worden in de herkennings-fase. \cite{motifs}
+
+Ook hier wordt in de calibratie-fase aan de gebruiker gevraagd om in een aantal kijkrichtingen te kijken. Voor elke kijkrichting hebben we nu een aantal datasets van signalen die we met elkaar gaan vergelijken. Voor elke kijkrichting zoeken we het meest succesvolle motief [TODO uitleg wat motief is?]. Dit is het motief dat het meest aantal matches heeft [TODO uitleg wat match is?]. [TODO collision matrix en dergelijke].
+
+De gevonden motieven, gekoppeld aan de bijhorende kijkrichtingen, worden doorgegeven aan de herkennings-fase. 
+
 TODO
 
 \section{Implementatie}
+
+Bij het implementeren van ons programma, hebben we ons gebaseerd op de twee eerder uitgelegde methoden. In deze sectie leggen we uit hoe we bepaalde problemen hebben kunnen oplossen. [TODO]
+
+\subsection{Thresholds}
+
+TODO
+
+\subsection{Patronen}
+
 TODO
 
 \section{Resultaten}
@@ -83,7 +123,7 @@ TODO
 \section{Conclusie}
 TODO
 
-\section*{Acknowledgments}
+\section*{Acknowledgements}
 
 The preparation of these instructions and the \LaTeX{} and Bib\TeX{}
 files that implement them was supported by Schlumberger Palo Alto
