@@ -112,7 +112,7 @@ P_MAX_MATCHING_DISTANCE = 3
 
 def runP():
     calibrationPath = 'Data2\\test24_B.csv'
-    recognitionPath = 'Data2\\test24_B.csv'
+    recognitionPath = 'Data3\\test001_B.csv'
 
     calibrationVector = Visualize.readData(calibrationPath, 23)
 
@@ -157,16 +157,22 @@ def patternRecognition(patternSol, batcher = None):
        thread.start()
 
     for i in range(100):
-        letterPart = [10000] * 10
+        letterPart = inputQueue.get(True)
+        #letterPart = [10000] * 10
+#         for i in range(len(letterPart)):
+#             letterPart[i] = letterPart[i]/2.5
         dataWindow.addData(letterPart)
     print("End of data window fill.")
 
+    letterPart = inputQueue.get(True)
     while(letterPart != None):
+#         for i in range(len(letterPart)):
+#             letterPart[i] = letterPart[i]/2.5
         dataWindow.addData(letterPart)
         newSequence = Sequence2.Sequence2(dataWindow.getLastSequence(100))
         direction = patternSol.processTimeSequenceRecognition(newSequence)
         if (direction != None):
-            print(direction)
+            print("You look in direction : " + direction)
         #dataWindow.flattenFirst()
         
         letterPart = inputQueue.get(True)

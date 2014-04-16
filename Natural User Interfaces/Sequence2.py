@@ -55,8 +55,8 @@ class Sequence2(object):
     '''Returns the SAX-word of this sequence based on the woordLengte and alfabetGrootte'''
 
     
-    def getWord(self, wordLength, alphabetSize, distribution, letterWaarden):
-        saxWord = SaxWord.SaxWord(self.getAllPoints(), wordLength, alphabetSize, distribution, letterWaarden)
+    def getWord(self, alphabetSize, valuesPerLetter, distribution, letterWaarden):
+        saxWord = SaxWord.SaxWord(self.getAllPoints(), alphabetSize, valuesPerLetter, distribution, letterWaarden)
         return saxWord
         
     def getOldWord(self, woordLengte, alfabetGrootte):

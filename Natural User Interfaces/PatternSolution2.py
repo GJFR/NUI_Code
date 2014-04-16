@@ -65,9 +65,12 @@ class PatternSolution2(object):
             
     def processTimeSequenceRecognition(self, newSequence):
         if self.seqChecker == None:
-            self.seqChecker = SeqChecker.SeqChecker(self.labeling, self.wordLength, self.alphabetSize, self.collisionThreshold, self.r, self.heightDifference, self.distribution, self.letterWaarden)
+            for label in self.labeling:
+                for i in range(len(self.labeling[label])):
+                    self.labeling[label][i] = self.labeling[label][i].getOriginal()
+            self.seqChecker = SeqChecker.SeqChecker(self.labeling, self.wordLength, self.alphabetSize, self.valuesPerLetter, self.collisionThreshold, self.r, self.heightDifference, self.distribution, self.letterWaarden)
         
-        return self.seqChecker.checkSequence(newSequence.getNormalized())
+        return self.seqChecker.checkSequence(newSequence)
         
     
     def preprocess(self, calibrationDict, alphabetSize):

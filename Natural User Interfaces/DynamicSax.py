@@ -48,10 +48,10 @@ class DynamicTimeSeq(object):
             self.numberOfGroups += 1
             self.sequenceList = self.sequenceList + newSequences
             self.sequenceHash.update(newSequenceHash)
-            self.fillMaskDict(self.masks, newSequenceHash)
+            self.fillMaskDict(self.masks, newSequences)
             return
             
-        cMatrix = self.getCollisionMatrix(self.masks, newSequenceHash)
+        cMatrix = self.getCollisionMatrix(self.masks, newSequences)
         self.pairs = self.pairs + self.makeMatchDistancePair(cMatrix, newSequences)
         self.pairs = sorted(self.pairs, key=lambda a:self.takeDist(a))
         print(str(self.pairs[:10]))
