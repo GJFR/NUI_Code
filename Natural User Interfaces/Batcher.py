@@ -83,7 +83,7 @@ class Batcher(object):
         print("Start plotting")
 
         #while True:
-        for t in range(40*12):
+        for t in range(int(len(self.recognitionVector)/10) + 1):
 
             #print("Filtering")
             eog_filt = filtfilt(b, a, self.eog)

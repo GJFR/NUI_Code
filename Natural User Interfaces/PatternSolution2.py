@@ -31,6 +31,7 @@ class PatternSolution2(object):
         self.r = r
         self.heightDifference = heightDifference
         self.labeling = {}
+        self.seqChecker = None
         
     def processTimeSequenceCalibration(self):
         calibrationDict = self.calibrationDict
@@ -44,6 +45,7 @@ class PatternSolution2(object):
             for i in range(len(calibrationDict[direction])):
                 data = calibrationDict[direction][i]
                 sequenceGroup = self.makeGroup(data,i)
+                tijd = self.checkpoint("Group is made: ", tijd)
                 dynamicTS.addSequenceGroup(sequenceGroup)
                 tijd = self.checkpoint("Group is done: ", tijd)
             dynamicTS.calculateMotifs()
@@ -52,17 +54,23 @@ class PatternSolution2(object):
             tijd = self.checkpoint("Remove close matches: ", tijd)
             #bestMotifs = dynamicTS.getBestMotifs(2)
             #orderedBestMotifs = dynamicTS.orderMotifs(bestMotifs)
-            bestMotifs = dynamicTS.getBestMotifs(1)
+            bestMotifs = dynamicTS.getBestMotifs(2)
+            orderedBestMotifs = dynamicTS.orderMotifs(bestMotifs)
             tijd = self.checkpoint("Get best motifs: ", tijd)
             
-            self.labeling[direction] = bestMotifs
+            self.labeling[direction] = orderedBestMotifs
             
-            for motif in bestMotifs:
+            for motif in orderedBestMotifs:
                 self.dataPlot(motif, dynamicTS.getMotifs()[motif], direction)
             
     def processTimeSequenceRecognition(self, newSequence):
-        seqChecker = SeqChecker.SeqChecker(self.labeling, self.wordLength, self.alphabetSize, self.collisionThreshold, self.r, self.heightDifference)
-        return seqChecker.checkSequence(newSequence.getNormalized())
+        if self.seqChecker == None:
+            for label in self.labeling:
+                for i in range(len(self.labeling[label])):
+                    self.labeling[label][i] = self.labeling[label][i].getOriginal()
+            self.seqChecker = SeqChecker.SeqChecker(self.labeling, self.wordLength, self.alphabetSize, self.valuesPerLetter, self.collisionThreshold, self.r, self.heightDifference, self.distribution, self.letterWaarden)
+        
+        return self.seqChecker.checkSequence(newSequence)
         
     
     def preprocess(self, calibrationDict, alphabetSize):
@@ -78,10 +86,12 @@ class PatternSolution2(object):
         self.plotter(timeSeq)
         self.data = timeSeq.getVector()
         dataF = timeSeq.getVector()
-
+    
+        
         """Make sax-word and save the distribution for the recognition-fase"""
         timeSeq.makeSaxWord(self.alphabetSize, self.valuesPerLetter)
         self.distribution = timeSeq.getDistribution()
+        self.letterWaarden = timeSeq.getLetterWaarden()
         
         for i in range(len(calibrationDict["Left"])):
             for direction in calibrationDict:

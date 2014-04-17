@@ -5,6 +5,7 @@ Created on 14-nov.-2013
 '''
 import math
 import numpy as np
+import Sequence2
 import scipy.stats
 
 class Sequence(object):
@@ -47,8 +48,6 @@ class Sequence(object):
     def compareEuclDist(self, other):
         som = 0
         for i in range(self.getLength()):
-            p1 = self.getPoint(i)
-            p2 = other.getPoint(i)
             som += (self.getPoint(i) - other.getPoint(i))**2
         return math.sqrt(som)
             
@@ -116,6 +115,9 @@ class Sequence(object):
     """Calculate what the difference is between highest and lowest point."""
     def getRealHeight(self):
         return max(self.getAllPoints()) - min(self.getAllPoints())
+    
+    def makeSequence2(self):
+        return Sequence2.Sequence2(self.getAllPoints())
     
     '''override'''
     def __str__(self):

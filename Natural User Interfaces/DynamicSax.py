@@ -28,6 +28,7 @@ class DynamicTimeSeq(object):
         self.numberOfGroups = 0
         self.pairs = []
         self.masks = self.getMasks()
+        print("masks : " + str(self.masks))
         '''sequenceHash: Sequence -> Groepnummer '''
         self.sequenceHash = {}
         '''maskDict: mask-key -> met dat masker gemaskerde sax-woorden'''
@@ -47,14 +48,21 @@ class DynamicTimeSeq(object):
             self.numberOfGroups += 1
             self.sequenceList = self.sequenceList + newSequences
             self.sequenceHash.update(newSequenceHash)
+            self.fillMaskDict(self.masks, newSequences)
             return
             
-        cMatrix = self.getCollisionMatrix(self.masks, newSequenceHash)
+        cMatrix = self.getCollisionMatrix(self.masks, newSequences)
         self.pairs = self.pairs + self.makeMatchDistancePair(cMatrix, newSequences)
+        self.pairs = sorted(self.pairs, key=lambda a:self.takeDist(a))
+        print(str(self.pairs[:10]))
         self.numberOfGroups += 1
         self.sequenceList = self.sequenceList + newSequences
         self.sequenceHash.update(newSequenceHash)
-        
+    
+    def takeDist(self,a):
+        seq1,seq2,dist = a
+        return dist
+    
     def getNumberOfGroups(self):
         return self.numberOfGroups
     
@@ -64,6 +72,14 @@ class DynamicTimeSeq(object):
         for seq in group:
             saxArray.append(seq.getWord(self.woordLengte, self.alfabetGrootte))
         return saxArray
+    
+    def fillMaskDict(self,masks,group):
+        saxArray = self.getSaxArray(group)
+        
+        for maskKey in self.maskKeys:
+            mask = self.maskKeys[maskKey]
+            array = self.mask(saxArray, mask)
+            self.maskDict[maskKey] = self.maskDict[maskKey] + array
     
     '''Returns the collission matrix of this timesequence'''
     def getCollisionMatrix(self, masks, group):
@@ -80,6 +96,7 @@ class DynamicTimeSeq(object):
 
     '''Returns a random generated list of masks (who satisfy our conditions)'''
     def getMasks(self):
+        random.seed(0)
         masks = []
         maskLengte = self.woordLengte * 1 / 4
         while len(masks) < self.woordLengte:
@@ -103,13 +120,10 @@ class DynamicTimeSeq(object):
     def orderMotifs(self, motifs):
         matches = {}
         for motif in motifs:
-            if self.sequenceHash[motif] == 0:
-                matches[motif] = motif
-                continue
+            matches[motif] = motif
             for match,afstand in self.getMotifs()[motif]:
-                if self.sequenceHash[match] == 0:
+                if self.sequenceHash[match] < self.sequenceHash[matches[motif]]:
                     matches[motif] = match
-                    break
         return sorted(motifs, key=lambda motif: matches[motif].getStart())
     
     def calculateKey(self, mask):
@@ -155,7 +169,7 @@ class DynamicTimeSeq(object):
         cooMatrix = cMatrix.tocoo()
         thresholdList = []
         for i,j,v in itertools.zip_longest(cooMatrix.row, cooMatrix.col, cooMatrix.data):
-            if v >= self.collisionThreshold and self.sequenceList[i].compareHeightWith(self.sequenceList[j]) >= self.heightDifference:
+            if v >= self.collisionThreshold and group[i].getRealHeight() >= self.heightDifference and self.sequenceList[j].getRealHeight() >= self.heightDifference:
                 thresholdList.append((group[i],self.sequenceList[j]))
         return thresholdList
     

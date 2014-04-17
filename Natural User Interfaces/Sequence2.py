@@ -55,10 +55,35 @@ class Sequence2(object):
     '''Returns the SAX-word of this sequence based on the woordLengte and alfabetGrootte'''
 
     
-    def getWord(self, wordLength, alphabetSize, distribution, letterWaarden):
-        saxWord = SaxWord.SaxWord(self.getAllPoints(), wordLength, alphabetSize, distribution, letterWaarden)
+    def getWord(self, alphabetSize, valuesPerLetter, distribution, letterWaarden):
+        saxWord = SaxWord.SaxWord(self.getAllPoints(), alphabetSize, valuesPerLetter, distribution, letterWaarden)
         return saxWord
         
+    def getOldWord(self, woordLengte, alfabetGrootte):
+        if woordLengte > self.getLength():
+            raise AttributeError('De woordlengte is groter dan dan sequentielengte')
+        a = int(self.getLength()/woordLengte)
+        xtra = self.getLength() % woordLengte
+        word = ""
+        positie = 0
+        einde = 0
+        for i in range(woordLengte):
+            einde += a
+            if xtra > 0:
+                einde += 1
+                xtra += -1
+                b = 1
+            else:
+                b = 0
+                total = 0
+            while positie < self.getLength() and positie < einde:
+                total += self.getPoint(positie)
+                positie += 1
+             
+            value = total / (a+b)
+            word += self.getLetter(value, alfabetGrootte)
+     
+        return word
     '''Returns the letter appropriate for the value based on alfabetGrootte'''
     def getLetter(self, value, alfabetGrootte):
         letterWaarde = self.x.cdf(value) * alfabetGrootte
@@ -94,7 +119,7 @@ class Sequence2(object):
     
     '''override'''
     def __str__(self):
-        return str(self.getStart()) + " (" + str(self.getLength()) + ")"
+        return self.getOldWord(10, 10)
     
     '''override'''
     def __repr__(self):

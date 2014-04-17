@@ -54,3 +54,8 @@ class DataWindow(object):
         secondLastPart = self.data[0 : self.bufferSize - 10]
         average = sum(secondLastPart) / len(secondLastPart)
         self.data[self.bufferSize - 10 : self.bufferSize] = [average] * 10
+        
+    def flattenFirst(self):
+        firstPart = self.data[0 : self.bufferSize - 100]
+        average = sum(firstPart) / len(firstPart)
+        self.data[0 : self.bufferSize - 100] = [average] * (self.bufferSize - 100)
