@@ -88,7 +88,13 @@ In ons onderzoek hebben we gebruik gemaakt van twee verschillende methoden om ki
 
 Deze methode steunt op de absolute waarden van de data. Er wordt een bovengrens gedefinieerd voor elke kijkrichting in de calibratie-fase. Als deze overschreden wordt in de herkennings-fase, gaan we uit van die bepaalde kijkrichting.
 
-In de calibratie-fase wordt aan de gebruiker gevraagd om een bepaalde sequentie van kijkrichtingen uit te voeren. Uit deze dataset halen we de kleinste en grootste waarde. Deze twee waarden horen elk bij een andere kijkrichting. Per kijkrichting hebben we ook een constante $\alpha$ waarvoor geldt: $0 < \alpha \leq 1$. We vermenigvuldigen $\alpha$ met dit minimum en maximum en beschouwen de uitkomsten als de uiteindelijke bovengrens van de respectievelijke kijkrichtingen. In ons programma hebben we $\alpha$ voor beide kijkrichtingen de waarde $0.5$ gegeven, maar deze kan veranderd worden naar behoefte. Zo kunnen we de methode bijvoorbeeld strenger maken door $\alpha$ te verhogen.
+In de calibratie-fase wordt aan de gebruiker gevraagd om een bepaalde sequentie van kijkrichtingen uit te voeren. Uit deze dataset halen we de kleinste en grootste waarde. Deze twee waarden horen elk bij een andere kijkrichting. Per kijkrichting hebben we ook een constante $\alpha$ waarvoor geldt: $0 < \alpha \leq 1$. We vermenigvuldigen $\alpha$ met dit minimum en maximum en beschouwen de uitkomsten als de uiteindelijke bovengrens van de respectievelijke kijkrichtingen. In ons programma hebben we $\alpha$ voor beide kijkrichtingen de waarde $0.5$ gegeven, maar deze kan veranderd worden naar behoefte. Zo kunnen we de methode bijvoorbeeld strenger maken door $\alpha$ te verhogen. [TODO vemelden welke $\alpha$ wij gebruiken]
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{images/thresholds_distribution}
+\caption{In deze afbeelding stellen de rode lijnen het minimum en maximum voor. De groene lijnen zijn het minimum en maximum vermenigvuldigd met $\alpha$.}
+\end{figure}
 
 In de herkennings-fase gaan we met behulp van deze bovengrenzen kijkrichtingen proberen te detecteren. We nemen telkens het gemiddelde van tien nieuwe punten. Dit gemiddelde gaan we dan vergelijken met alle bovengrenzen. Wanneer een bovengrens overschreden wordt, toont dit aan dat de gebruiker mogelijk in een van de richtingen aan het kijken is. Dit is echter niet altijd zo. Een paar opeenvolgende pieken in de data (zoals knipperingen) kunnen al snel dit gemiddelde omhoog trekken. Om voor meer zekerheid te zorgen, wachten we tot de grens meerdere keren is overschreden. Dit aantal definiëren we op voorhand door een afweging te maken. Bij een klein aantal is de kans op detectie hoog, maar zijn we minder zeker over de geldigheid van de detectie. Een groot aantal zal anderzijds veel zekerheid verschaffen, waarbij er wel een grotere kans is dat korte kijkrichtingen niet worden gedetecteerd. Hierbij is een goede balans belangrijk.
 
@@ -97,11 +103,11 @@ Bij veelvuldige herhaling van dezelfde kijkrichting, wordt een nieuw probleem zi
 
 \subsection{Patronen}
 
-In tegenstelling tot de thresholds-methode, steunt de deze methode weinig op absolute waarden en eerder op relatieve waarden. Er wordt naar motieven gezocht in de calibratie-fase, die dan gezocht worden in de herkennings-fase. \cite{motifs}
+In tegenstelling tot de thresholds-methode, steunt deze methode weinig op absolute waarden en eerder op relatieve waarden. Er wordt naar motieven gezocht in de calibratie-fase, die dan gezocht worden in de herkennings-fase. \cite{motifs}
 
 Ook hier wordt in de calibratie-fase aan de gebruiker gevraagd om in een aantal kijkrichtingen te kijken. Voor elke kijkrichting hebben we nu een aantal datasets van signalen die we met elkaar gaan vergelijken. Voor elke kijkrichting zoeken we het meest succesvolle motief [TODO uitleg wat motief is?]. Dit is het motief dat het meest aantal matches heeft [TODO uitleg wat match is?]. [TODO collision matrix en dergelijke].
 
-De gevonden motieven, gekoppeld aan de bijhorende kijkrichtingen, worden doorgegeven aan de herkennings-fase. 
+De gevonden motieven, gekoppeld aan de bijhorende kijkrichtingen, worden doorgegeven aan de herkennings-fase. Alle binnenkomende data wordt eerst omgezet in SAX-woorden. Pas als er een match is tussen een binnengekomen SAX-woord en een SAX-woord van een motief, vergelijken we deze sequenties op preciezer niveau. Het matchen gebeurt door middel van maskers. Een masker dekt enkele letters van beide te vergelijken SAX-woorden af, zodat er slechts een paar letters meetellen in de vergelijking. We gebruiken verschillende van deze maskers [TODO op welke manier worden die maskers gemaakt]. Per masker wordt er een collision-matrix opgesteld. Deze matrix houdt bij welke gemaskeerde SAX-woorden met elkaar matchen. Al deze collision matrices worden hierna opgeteld. Elk paar met een waarde van meer dan ...
 
 TODO
 
