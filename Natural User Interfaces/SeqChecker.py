@@ -27,30 +27,29 @@ class SeqChecker(object):
         self.r = r
         self.heightDifference = heightDifference
         self.distribution = distribution
+        print(distribution);
         self.letterWaarden = letterWaarden
         self.countDown = -1
         self.masks = self.getMasks()
+        print("SeqChecker masks : " + str(self.masks))
         self.maskedLabeling = {}
         
         for label in labeling:
             self.maskedLabeling[label] = []
             saxArray = self.getSaxArray(self.labeling[label])
-            print(self.labeling[label][0].getAllPoints())
+            #print(self.labeling[label][0].getAllPoints())
             print(saxArray)
             for masker in self.masks:
                 self.maskedLabeling[label].append(self.mask(saxArray,masker))
 
         
-        self.number = 0
+
                 
     def checkSequence(self, sequence):
         #if sequence.getStart() < self.wait:
         #    return None
         #TODO
-        self.number += 1
-        print(self.number)
-        if self.number == 40:
-            1==1
+
         if self.countDown > 0:
             self.countDown = self.countDown - 1
             return None
@@ -58,15 +57,19 @@ class SeqChecker(object):
             print("wait is done")
             self.countDown = -1
         possibleLabels = self.saxCheck(sequence)
-        matchLabels = self.rangeCheck(possibleLabels, sequence)
+        if len(possibleLabels) > 0:
+            print("rangeCheck : " + sequence.getOldWord(self.wordLength, self.alphabetSize))
+#         matchLabels = self.rangeCheck(possibleLabels, sequence)
+        matchLabels = possibleLabels
         #if len(matchLabels) > 0:
         for label in matchLabels:
             if self.incrementState(label):
                 self.resetStates()
-                self.countDown = 5
+                self.countDown = 10
                 #self.wait = sequence.getStart() + sequence.getLength()
-                print(str(sequence.getAllPoints()))
-                print(sequence.getWord(self.alphabetSize, self.valuesPerLetter, self.distribution, self.letterWaarden).getWord())
+#                 print(str(sequence.getAllPoints()))
+                #print(sequence.getWord(self.alphabetSize, self.valuesPerLetter, self.distribution, self.letterWaarden).getWord())
+#                 print(sequence.getOldWord(self.wordLength, self.alphabetSize))
                 return label
         return None
             
@@ -83,10 +86,9 @@ class SeqChecker(object):
             self.states[label] = 0
         
     def saxCheck(self, sequence):
-        word = [sequence.getWord(self.alphabetSize, self.valuesPerLetter, self.distribution, self.letterWaarden).getWord()]
-        #word = [sequence.getOldWord(self.wordLength, self.alphabetSize)]
+#         word = [sequence.getWord(self.alphabetSize, self.valuesPerLetter, self.distribution, self.letterWaarden).getWord()]
+        word = [sequence.getOldWord(self.wordLength, self.alphabetSize)]
         counters = {}
-        
         for label in self.labeling:
             counters[label] = 0
         for i in range(len(self.masks)):
@@ -106,7 +108,7 @@ class SeqChecker(object):
         
         matchLabels = []
         for label in possibleLabels:
-            if sequence.getRealHeight() >= self.heightDifference and self.r >= self.labeling[label][self.states[label]].compare(sequence):
+            if sequence.getRealHeight() >= self.heightDifference and self.r >= self.labeling[label][self.states[label]].getNormalized().compare(sequence.getNormalized()):
                 matchLabels.append(label)
         return matchLabels
     
@@ -114,14 +116,14 @@ class SeqChecker(object):
     def getSaxArray(self, group):
         saxArray = []
         for seq in group:
-#             saxArray.append(seq.getWord(self.wordLength, self.alphabetSize))
-            saxArray.append(seq.makeSequence2().getWord(self.alphabetSize, self.valuesPerLetter, self.distribution, self.letterWaarden).getWord())
+            saxArray.append(seq.getWord(self.wordLength, self.alphabetSize))
+#             saxArray.append(seq.makeSequence2().getWord(self.alphabetSize, self.valuesPerLetter, self.distribution, self.letterWaarden).getWord())
         return saxArray
     
     '''Returns a random generated list of masks (who satisfy our conditions)'''
     def getMasks(self):
         masks = []
-        maskLengte = self.wordLength * 1 / 4
+        maskLengte = self.wordLength * 1 / 2
         while len(masks) < self.wordLength:
             mask = []
             while len(mask) < maskLengte:

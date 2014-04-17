@@ -83,7 +83,7 @@ class SaxWord(object):
         Makes the actual sax word.
         """
         saxWord = ""
-        for index in range(0,len(self.vector) - self.valuesPerLetter,self.valuesPerLetter):
+        for index in range(0,len(self.vector) - self.valuesPerLetter+1,self.valuesPerLetter):
             total = 0
             for j in range(self.valuesPerLetter):
                 total = total + self.vector[index+j]

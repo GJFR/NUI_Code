@@ -98,7 +98,7 @@ class DynamicTimeSeq(object):
     def getMasks(self):
         random.seed(0)
         masks = []
-        maskLengte = self.woordLengte * 1 / 4
+        maskLengte = self.woordLengte * 1 / 2
         while len(masks) < self.woordLengte:
             mask = []
             while len(mask) < maskLengte:

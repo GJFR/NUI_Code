@@ -112,7 +112,7 @@ P_MAX_MATCHING_DISTANCE = 3
 
 def runP():
     calibrationPath = 'Data2\\test24_B.csv'
-    recognitionPath = 'Data3\\test001_B.csv'
+    recognitionPath = 'Data2\\test24_B.csv'
 
     calibrationVector = Visualize.readData(calibrationPath, 23)
 

@@ -67,10 +67,10 @@ class PatternSolution2(object):
         if self.seqChecker == None:
             for label in self.labeling:
                 for i in range(len(self.labeling[label])):
-                    self.labeling[label][i] = self.labeling[label][i].getOriginal()
+                    self.labeling[label][i] = self.labeling[label][i]
             self.seqChecker = SeqChecker.SeqChecker(self.labeling, self.wordLength, self.alphabetSize, self.valuesPerLetter, self.collisionThreshold, self.r, self.heightDifference, self.distribution, self.letterWaarden)
         
-        return self.seqChecker.checkSequence(newSequence)
+        return self.seqChecker.checkSequence(newSequence.getNormalized())
         
     
     def preprocess(self, calibrationDict, alphabetSize):
