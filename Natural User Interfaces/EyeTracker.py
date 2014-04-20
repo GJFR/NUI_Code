@@ -24,17 +24,19 @@ VALUES_PER_LETTER = 15
 directionThresholds = {"Left" : 0.5, "Right" : 0.5}
 minimalThresholdHits = 7
 
-def runT():
+def runT(calibrationComp, recognitionComp):
     #thread = threading.Thread(target=eyetracking2.run, args=(inputQueue,queueSemaphore,queueAccessLock))
     #thread.start()
 
-    calibrationPath = 'Data2\\test24_B.csv'
-    calibrationIndex = 250
-    recognitionPath = 'Data2\\test24_B.csv'
-
+    #calibrationPath = 'Data2\\test24_B.csv'
+    #calibrationIndex = 250
+    #recognitionPath = 'Data2\\test24_B.csv'
+    calibrationPath, vanC, totC= calibrationComp
+    recognitionPath, vanR, totR = recognitionComp
+    
     batcher = Batcher.Batcher(ALPHABET_SIZE, VALUES_PER_LETTER)
-    batcher.setCalibrationData(calibrationIndex,calibrationPath)
-    batcher.setRecognitionData(recognitionPath)
+    batcher.setCalibrationData(vanC, totC, calibrationPath)
+    batcher.setRecognitionData(vanR, totR, recognitionPath)
 
     thresholdSol = thresholdsCalibration(batcher)
     print(thresholdSol)

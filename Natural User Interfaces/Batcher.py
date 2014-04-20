@@ -33,11 +33,12 @@ class Batcher(object):
             sleep(0.08)
         inputQueue.put(None)
 
-    def setCalibrationData(self, index, path):
-        self.calibrationVector = self.readData(path, 23)[index:index + 2200]
+    def setCalibrationData(self, van, tot, path):
+        self.calibrationVector = self.readData(path, 23)[van:tot]
 
-    def setRecognitionData(self, path):
-        self.recognitionVector = self.readData(path, 23)
+    def setRecognitionData(self, van, tot, path):
+        data = self.readData(path, 23)[van:tot]
+        self.recognitionVector = ([data[0]] * 1000) + data
 
     def runThresholds(self):
         calibrationTS = TimeSequence.TimeSequence(self.calibrationVector)

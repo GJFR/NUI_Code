@@ -35,25 +35,25 @@ def readData(relativePath, nbr):
 aantalLetters = 8
 waardesPerLetter = 15
 
-path = 'Data3\\test004_B.csv'
+path = 'Data3\\test006_B.csv'
 path2 = 'PosterData\\test006_B.csv'
 
 
-matrix = readData(path, 23)[:4900]
+matrix = readData(path, 23)
 #matrix.extend(readData(path2, 23))
 matrix2 = np.zeros(4900)
+# 
+# for i in range(len(matrix)):
+#     matrix2[i] = matrix[i] - 6*i
 
-for i in range(len(matrix)):
-    matrix2[i] = matrix[i] - 6*i
-
-timeSeq1 = TimeSequence.TimeSequence(matrix2)
-timeSeq1f = TimeSequence.TimeSequence(matrix2)
+timeSeq1 = TimeSequence.TimeSequence(matrix)
+timeSeq1f = TimeSequence.TimeSequence(matrix)
 
 #timeSeq1.normalize()
 #timeSeq1f.normalize()
 
 timeSeq1f.filter()
-timeSeq1f.movingAverage()
+#timeSeq1f.movingAverage()
 
 
 def plot_data():
