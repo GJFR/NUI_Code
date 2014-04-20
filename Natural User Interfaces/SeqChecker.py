@@ -56,6 +56,10 @@ class SeqChecker(object):
         if self.countDown == 0:
             print("wait is done")
             self.countDown = -1
+            
+            
+        if sequence.getRealHeight() < self.heightDifference:
+            return None
         possibleLabels = self.saxCheck(sequence)
         if len(possibleLabels) > 0:
             print("rangeCheck : " + sequence.getOldWord(self.wordLength, self.alphabetSize))

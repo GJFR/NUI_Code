@@ -71,6 +71,19 @@ class TimeSequence(object):
         eogfilt2 = filtfilt(b2, a2, matrix2)
         self.setVector(eogfilt2)
 
+    def movingAverage(self):
+        halfMovingSize = 10
+        eogAverage = np.zeros(len(self.vector))
+        window = self.vector[:halfMovingSize]
+        for i in range(halfMovingSize,len(self.vector)+halfMovingSize):
+            if(len(window) == halfMovingSize*2 or i >= len(self.vector)):
+                window = window[1:]
+            if(i < len(self.vector)):
+                window = np.append(window, [self.vector[i]])
+            eogAverage[i-halfMovingSize] = sum(window)/len(window)
+        self.setVector(eogAverage)
+        
+
     def extend(self, other):
         """
         Extends this time sequence with another time sequence and returns the result as a new time sequence.

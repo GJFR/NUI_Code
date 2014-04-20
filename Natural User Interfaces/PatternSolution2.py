@@ -83,6 +83,7 @@ class PatternSolution2(object):
         """filter seperate sequences and append to one big time sequence"""
         timeSeq = TimeSequence.TimeSequence(data)
         timeSeq.filter()
+        timeSeq.movingAverage()
         self.plotter(timeSeq)
         self.data = timeSeq.getVector()
         dataF = timeSeq.getVector()
