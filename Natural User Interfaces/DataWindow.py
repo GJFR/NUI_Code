@@ -22,7 +22,7 @@ class DataWindow(object):
         b1, a1 = butter(1, 0.0003, 'lowpass')
         filtered = filtfilt(b1, a1, self.data)
         filtered = self.data - filtered
-        b2, a2 = butter(1, 0.05, 'lowpass')
+        b2, a2 = butter(1, 0.025, 'lowpass')
         self.filt_data = filtfilt(b2, a2, filtered)
     
     def movingAverage(self):

@@ -48,6 +48,9 @@ class Sequence2(object):
             p2 = other.getPoint(i)
             som += (self.getPoint(i) - other.getPoint(i))**2
         return math.sqrt(som)
+    
+    def compare(self, other):
+        return self.getNormalized().compare(other.getNormalized())
             
     def isNonTrivial(self, other):
         pass
@@ -56,8 +59,8 @@ class Sequence2(object):
 
     
     def getWord(self, alphabetSize, valuesPerLetter, distribution, letterWaarden):
-        saxWord = SaxWord.SaxWord(self.getAllPoints(), alphabetSize, valuesPerLetter, distribution, letterWaarden)
-        return saxWord
+        self.saxWord = SaxWord.SaxWord(self.getAllPoints(), alphabetSize, valuesPerLetter, distribution, letterWaarden)
+        return self.saxWord
         
     def getOldWord(self, woordLengte, alfabetGrootte):
         if woordLengte > self.getLength():
@@ -119,11 +122,11 @@ class Sequence2(object):
     
     '''override'''
     def __str__(self):
-        return self.getOldWord(10, 10)
+        return self.saxWord.getWord()
     
     '''override'''
     def __repr__(self):
-        return str(self.getStart()) + " (" + str(self.getLength()) + ")"
+        return self.saxWord.getWord()
     
 class NormSequence(Sequence2):
     

@@ -30,7 +30,17 @@ class SeqChecker(object):
         print(distribution);
         self.letterWaarden = letterWaarden
         self.countDown = -1
-        self.masks = self.getMasks()
+        self.masks = [[1,3,5,7,9],
+                        [0,2,4,6,8],
+                        [0,1,2,3,4],
+                        [5,6,7,8,9],
+                        [0,1,4,5,8],
+                        [2,3,6,7,9],
+                        [0,2,3,6,7],
+                        [1,4,5,8,9],
+                        [0,1,5,8,9],
+                        [2,3,4,6,7]]
+#         self.masks = self.getMasks()
         print("SeqChecker masks : " + str(self.masks))
         self.maskedLabeling = {}
         
@@ -63,8 +73,8 @@ class SeqChecker(object):
         possibleLabels = self.saxCheck(sequence)
         if len(possibleLabels) > 0:
             print("rangeCheck : " + sequence.getOldWord(self.wordLength, self.alphabetSize))
-#         matchLabels = self.rangeCheck(possibleLabels, sequence)
-        matchLabels = possibleLabels
+        matchLabels = self.rangeCheck(possibleLabels, sequence)
+#         matchLabels = possibleLabels
         #if len(matchLabels) > 0:
         for label in matchLabels:
             if self.incrementState(label):

@@ -76,9 +76,11 @@ class PatternSolution2(object):
     def preprocess(self, calibrationDict, alphabetSize):
         """concatenate all the data"""
         data = []
+        directions = ["Left","Right"]
         for i in range(len(calibrationDict["Left"])):
-            for direction in calibrationDict:
-                data.extend(calibrationDict[direction][i])
+            for direction in directions:
+                if(len(calibrationDict[direction]) > i):
+                    data.extend(calibrationDict[direction][i])
 
         """filter seperate sequences and append to one big time sequence"""
         timeSeq = TimeSequence.TimeSequence(data)
@@ -95,10 +97,11 @@ class PatternSolution2(object):
         self.letterWaarden = timeSeq.getLetterWaarden()
         
         for i in range(len(calibrationDict["Left"])):
-            for direction in calibrationDict:
-                length = len(calibrationDict[direction][i])
-                calibrationDict[direction][i] = dataF[:length]
-                dataF = dataF[length:]
+            for direction in directions:
+                if(len(calibrationDict[direction]) > i):
+                    length = len(calibrationDict[direction][i])
+                    calibrationDict[direction][i] = dataF[:length]
+                    dataF = dataF[length:]
                
     def makeGroup(self, data, groupNbr):
         sequenceList = []
@@ -121,6 +124,7 @@ class PatternSolution2(object):
     def dataPlot(self, motif, matches, direction):
         print(str(motif) + "  :  " + str(matches))
         Visualize.plot_data5(motif, matches)
+    
     
     def plotter(self, timeSeq):
         timeSeq.makeSaxWord(self.alphabetSize, self.valuesPerLetter)
