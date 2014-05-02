@@ -11,6 +11,7 @@
 \usepackage{ijcai11}
 \usepackage{mathtools}
 \usepackage[utf8]{inputenc}
+\usepackage{amsmath}
 
 % For importing images.
 \usepackage{graphicx}
@@ -43,7 +44,7 @@ In de zoektocht naar natuurlijke user interfaces gebeurt er onderzoek naar bestu
 
 \section{Introductie}
 
-Reeds verschillende manieren om oogbewegingen te detecteren zijn bedacht. Zo kan men al door middel van camera's de ogen volgen. Hierbij gaat men op zoek naar de positie van de iris om de stand van het oog te achterhalen. Deze technieken zijn al ver ontwikkeld, maar toch gaan we nu een andere techniek onderzoeken. We gebruiken sensoren die rond de ogen zijn aangebracht, om EMG signalen te meten. Aan de hand van deze signalen proberen we te achterhalen in welke richting de gebruiker kijkt. Als invoer krijgen we twee elektrooculogrammen die respectievelijk de kijkrichtingen links-rechts en boven-onder voorstellen. Figuur~\ref{fig:originaldata} geeft een mooi voorbeeld weer van het elektrooculogram betreffende de kijkrichtingen links en rechts. Hierbij stellen de dalen de kijkrichting links voor en stellen de bergen de kijkrichting rechts voor.
+Reeds verschillende manieren om oogbewegingen te detecteren zijn bedacht. Zo kan men al door middel van camera's de ogen volgen. Hierbij gaat men op zoek naar de positie van de iris om de stand van het oog te achterhalen. Deze technieken zijn al ver ontwikkeld, maar bieden ze nog geen oplossing voor alle problemen. Daarom onderzoeken wij een andere manier. We maken gebruik van sensoren die rond de ogen zijn aangebracht, om elektromyografie (EMG) signalen te meten. Aan de hand van deze signalen proberen we te achterhalen in welke richting de gebruiker kijkt. Als invoer krijgen we twee elektrooculogrammen die respectievelijk de kijkrichtingen links-rechts en boven-onder voorstellen. Figuur~\ref{fig:originaldata} geeft een mooi voorbeeld weer van het elektrooculogram betreffende de kijkrichtingen links en rechts. Hierbij stellen de dalen de kijkrichting links voor en stellen de bergen de kijkrichting rechts voor.
 
 \section{Preprocessing}
 
@@ -56,11 +57,21 @@ De signalen die we krijgen doorgestuurd, afkomstig van de sensoren, zijn zeer ru
 \label{fig:originaldata}
 \end{figure}
 
-Als eerste gaan we de ruis en knipperingen zo goed mogelijk proberen te verminderen. Dit gebeurt door middel van een low-pass filter. Deze filter verzacht alle signalen waarvan de frequentie hoger is dan een gekozen cutoff frequentie.
+Als eerste gaan we de ruis en knipperingen zo goed mogelijk proberen te verminderen. Dit gebeurt door middel van een low-pass filter. Deze filter verzacht het signaal door de hoogfrequentie te verminderen. Dit gebeurt in vergelijking~\ref{eq:ruisfiltering}, waarbij $s$ het originele signaal is. Hierbij geven we ook een andere variabele, de cutoff frequentie $cf_1$, mee zodat alle frequenties hoger dan deze variabele worden afgezwakt. Wij geven $cf_1$ de waarde [TODO].
 
-Daarna focussen we ons op de biopotentiaalschommelingen. Deze schommelingen kunnen we niet op voorhand voorspellen en verschillen van persoon tot persoon. Als we deze schommelingen kunnen verminderen, kunnen we meer steunen op absolute waarden van het signaal. In dit tweede deel van de preprocessing-stap gebruiken we opnieuw een low-pass filter. Deze keer gebruiken we een lage cutoff frequentie. Na deze filtering van de data, blijven enkel de signalen met een lage frequentie over. Het resultaat is de benadering van de biopotentiaal van de gebruiker die doorheen de tijd fluctueert. We kunnen nu de biopotentiaalschommelingen uit onze originele data verminderen door de gevonden benadering hiervan af te trekken. De schommelingen verdwijnen niet volledig, maar worden wel sterk verminderd. Figuur~\ref{fig:filtereddata} stelt het resultaat van de besproken filtereringen voor.
+\begin{equation}
+\label{eq:ruisfiltering}
+s' = lowpass(s, cf_1)
+\end{equation}
 
-Bij veelvuldige herhaling van dezelfde kijkrichting, wordt een probleem in verband met deze methode zichtbaar. Als er veel en opeenvolgend naar éénzelfde richting gekeken wordt, zullen de waarden in de data algemeen lager of hoger zijn. De gefilterde data zal hierdoor ook algemeen lager of hoger liggen. Dit is een probleem aangezien het de benadering van de biopotentiaal moet voorstellen. Doordat de gevonden benadering foutief is, zullen ook alle volgende bewerkingen een incorrecte uitkomst hebben. Wanneer we dus deze benadering aftrekken van de oorspronkelijke data, zal de data ongewenst verschuiven volgens de y-as. Hierdoor zal het werken met absolute waarden slechte resultaten leveren. Om dit te verkomen, zullen we er voor zorgen dat er wordt gewisseld van kijkrichting, waar mogelijk.
+Daarna focussen we ons op de biopotentiaalschommelingen. Deze schommelingen kunnen we niet op voorhand voorspellen en verschillen van persoon tot persoon. Als we deze schommelingen kunnen verminderen, kunnen we meer steunen op absolute waarden van het signaal. In dit tweede deel van de preprocessing-stap gebruiken we opnieuw een low-pass filter. Deze keer gebruiken we een lage cutoff frequentie $cf_2$ met de waarde [TODO]. Na deze filtering van de data, blijven enkel de signalen met een lage frequentie over. Het resultaat is de benadering van de biopotentiaal van de gebruiker die doorheen de tijd fluctueert. We kunnen nu de biopotentiaalschommelingen uit onze originele data verminderen door de gevonden benadering hiervan af te trekken, zoals in vergelijking~\ref{eq:aftrekkingbiopotentiaal}. De schommelingen verdwijnen niet volledig, maar worden wel sterk verminderd. Figuur~\ref{fig:filtereddata} stelt het resultaat van de besproken filtereringen voor.
+
+\begin{equation}
+\label{eq:aftrekkingbiopotentiaal}
+s'' = s' - lowpass(s', cf_2)
+\end{equation}
+
+Bij veelvuldige herhaling van dezelfde kijkrichting, wordt een probleem in verband met deze methode zichtbaar. Als er veel en opeenvolgend naar éénzelfde richting gekeken wordt, zullen de waarden in de data algemeen lager of hoger zijn. De gefilterde data zal hierdoor ook algemeen lager of hoger liggen. Dit is een probleem aangezien het de benadering van de biopotentiaal moet voorstellen. Doordat de gevonden benadering foutief is, zullen ook alle volgende bewerkingen een incorrecte uitkomst hebben. Wanneer we dus deze benadering aftrekken van de oorspronkelijke data, zal de data ongewenst verschuiven volgens de y-as. Hierdoor zal het werken met absolute waarden slechte resultaten leveren. Omdat de gebruiker zelf kiest welke reeks van kijkrichtingen hij uitvoert, moeten we hier een oplossing voor vinden voor de gevallen waarbij we deze absolute waarden nodig hebben.
 
 \begin{figure}[h]
 \centering
@@ -100,7 +111,7 @@ Om kijkrichtingen te detecteren, gaan we de bovengrenzen vergelijken met de waar
 
 \subsection{Patronen}
 
-In tegenstelling tot de thresholds-methode, steunt deze methode weinig op absolute waarden en eerder op relatieve waarden. Er wordt naar motieven gezocht in de calibratie-fase, die dan in de herkennings-fase met de nieuwe data vergeleken worden \cite{motifs}. In deze methode maken we gebruik van de SAX-discretisatie om de efficiëntie te verhogen.
+In tegenstelling tot de thresholds-methode, steunt deze methode weinig op absolute waarden en eerder op relatieve waarden. Er wordt naar veel voorkomende patronen gezocht in de calibratie-fase, die dan in de herkennings-fase met de nieuwe data vergeleken worden \cite{motifs}. Deze patronen worden motieven genoemd. In deze methode maken we gebruik van de SAX-discretisatie om de efficiëntie te verhogen.
 
 Ook hier wordt in de calibratie-fase aan de gebruiker gevraagd om in een aantal kijkrichtingen te kijken. Voor elke kijkrichting hebben we nu een aantal datasets van signalen die we met elkaar gaan vergelijken. Voor elke kijkrichting zoeken we de meest succesvolle motieven. Dit zijn de motieven die het meest aantal matches hebben. We zeggen dat twee sequenties met elkaar matchen indien deze voldoende hard op elkaar lijken. Hiervoor moeten specifieke voorwaarden gedefinieerd worden, dit doen we voor ons programma in de implementatie-sectie.
 
@@ -168,7 +179,23 @@ Pas wanneer achtereenvolgens het beginmotief en het eindmotief herkend worden, g
 
 
 \section{Resultaten}
-TODO
+Bij het uitvoeren van experimenten hebben we ons vooral geconcentreerd op the thresholds-methode. Omdat de methode gebruik makend van patronen zoveel afhangt van verschillende parameters, hebben we dit nog niet kunnen optimaliseren.
+
+De opstelling van de experimenten zag er als volgt uit. De sensoren zijn bevestigd op de het gezicht van de gebruiker door middel van stevige plakkers. Deze moeten blijven plakken zonder tussenkomst van de handen. De sensoren die verantwoordelijk zijn voor het meten van de kijkrichtingen links en rechts zijn bevestigd op de slapen, tegen de ooghoeken. [TODO ook zeggen boven en onder?]. De gebruiker zit op een stoel en kijkt voor zich uit. Hierbij is het ook belangrijk dat de gebruiker niet afgeleid kan worden door bewegende voorwerpen. Het gebruiken van andere gezichtsspieren dan de oogspieren moet zo veel mogelijk vermeden worden. De sensoren vangen de signalen van deze spieren namelijk ook op.
+
+We duiden reeksen van kijkrichtingen aan volgens de definitie van reeks ~\ref{seq:definitie}. Tijd $t_i$ staat voor het aantal seconden dat ongeveer in de bijhorende kijkrichting gekeken wordt. $h$ geeft aan hoeveel keer de reeks binnen de accolades herhaalt wordt. [TODO beter ding vinden dan \"equation"]
+
+\begin{equation}
+\label{seq:definitie}
+\{ links (t_1), rechts (t_2) \} \times h
+\end{equation}
+
+In de calibratie-fase werd er telkens volgens reeks~\ref{seq:calibratie} gekeken.
+
+\begin{equation}
+\label{seq:calibratie}
+\{links(TODO), rechts(TODO)\} \times 2
+\end{equation}
 
 \section{Conclusie}
 TODO

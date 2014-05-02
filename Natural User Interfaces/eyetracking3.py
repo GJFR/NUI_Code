@@ -13,10 +13,7 @@ import threading
 HOST = 'localhost'
 PORT = 42001
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((HOST, PORT))
-
-def read_from_port1(amount):
+def read_from_port1(s, amount):
     runQueue1 = []
     
     for i in range(amount):
@@ -42,7 +39,7 @@ def read_from_port1(amount):
             print(data)
     return runQueue1
 
-def read_from_port2(runQueue1, runLock1):
+def read_from_port2(s, runQueue1, runLock1):
     global eog
     
     eog = 1000 * [500]
@@ -114,9 +111,16 @@ def plot_data(dataWindow):
 
 
 def run(amount):
-    return read_from_port1(amount)
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((HOST, PORT))
+    reading = read_from_port1(s, amount)
+    s.close()
+    return reading
 
 def run2(runQueue1, runLock1, dataWindow):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((HOST, PORT))
     thread = threading.Thread(target=plot_data, args= (dataWindow,))
     thread.start()
-    read_from_port2(runQueue1, runLock1)
+    read_from_port2(s, runQueue1, runLock1)
+    s.close()

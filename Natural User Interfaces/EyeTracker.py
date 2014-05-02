@@ -24,7 +24,7 @@ THRESHOLD_CALIBRATION_LENGTH = 500
 ALPHABET_SIZE = 8
 VALUES_PER_LETTER = 15
 
-directionThresholds = {"Left" : 0.45, "Right" : 0.45}
+directionThresholdPercentages = {"Left" : 0.45, "Right" : 0.45}
 minimalThresholdHits = 3
 
 def runT():
@@ -56,8 +56,10 @@ def thresholdsCalibration(batcher = None):
     timeSeq.filter()
     timeSeq.makeSaxWord(ALPHABET_SIZE, VALUES_PER_LETTER)
 
-    directionThresholds["Left"] = timeSeq.getMinimalValue() * directionThresholds["Left"]
-    directionThresholds["Right"] = timeSeq.getMaximalValue() * directionThresholds["Right"]
+    directionThresholds = {}
+
+    directionThresholds["Left"] = timeSeq.getMinimalValue() * directionThresholdPercentages["Left"]
+    directionThresholds["Right"] = timeSeq.getMaximalValue() * directionThresholdPercentages["Right"]
     
     print("Left threshold: " + str(directionThresholds["Left"]))
     print("Right threshold: " + str(directionThresholds["Right"]))
