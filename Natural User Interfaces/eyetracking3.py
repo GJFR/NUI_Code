@@ -22,12 +22,18 @@ def read_from_port1(amount):
     for i in range(amount):
         
         data = ""
-        while (not "eogDongle" in data):
-            data = str(s.recv(35), encoding="UTF-8")
+        size = int.from_bytes(s.recv(4), byteorder = "big")
+        
+        data = str(s.recv(size), encoding = "UTF-8")
+        if ("eogDongle" in data):
+            value = int(data[28:])
+        else:
+            continue
+        
         
         try:
-            channel = int(data[30:31])
-            waarde = int(data[32:])
+            channel = int(data[26:27])
+            waarde = value
         
             if channel == 1:
                 print(waarde)
@@ -43,12 +49,18 @@ def read_from_port2(runQueue1, runLock1):
     
     while True:
         data = ""
-        while (not "eogDongle" in data):
-            data = str(s.recv(35), encoding="UTF-8")
+        size = int.from_bytes(s.recv(4), byteorder = "big")
+        
+        data = str(s.recv(size), encoding = "UTF-8")
+        if ("eogDongle" in data):
+            value = int(data[28:])
+        else:
+            continue
+        
         
         try:
-            channel = int(data[30:31])
-            waarde = int(data[32:])
+            channel = int(data[26:27])
+            waarde = value
             
             if channel == 1:
                 #print("add")

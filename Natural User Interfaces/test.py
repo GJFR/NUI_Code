@@ -25,5 +25,9 @@ def sendCMD(cmd):
     s.send(bytes(b+cmd,'UTF-8'))
 
 while True:
-    data = s.recv(50)[30:31]
+    size = int.from_bytes(s.recv(4), byteorder = "big")
+    print(str(size))
+    data = s.recv(size)
+    print(str(data))
+    data = data[26:27]
     print(int(str(data, encoding = "UTF-8")))

@@ -6,7 +6,7 @@ class DataWindow(object):
     """description of class"""
 
     def __init__(self):
-        self.bufferSize = 1000;
+        self.bufferSize = 500;
         self.data = np.zeros(self.bufferSize)
         self.filt_data = np.zeros(self.bufferSize)
         self.allLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

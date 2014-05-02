@@ -78,7 +78,7 @@ class Sequence2(object):
                 b = 1
             else:
                 b = 0
-                total = 0
+            total = 0
             while positie < self.getLength() and positie < einde:
                 total += self.getPoint(positie)
                 positie += 1

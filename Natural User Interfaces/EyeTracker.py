@@ -13,6 +13,7 @@ from time import sleep
 import queue
 import threading
 import Batcher
+import DataSaver
 import matplotlib.pyplot as plt
 
 inputQueue = queue.Queue()
@@ -66,8 +67,8 @@ def thresholdsCalibration(batcher = None):
 
     Visualize.plot_data_saxString(timeSeq,ALPHABET_SIZE,VALUES_PER_LETTER)
 
-    #answer = input("Ben je tevreden met de resultaten? (y/n)")
-    answer = "y"
+    answer = input("Ben je tevreden met de resultaten? (y/n)")
+    
     if answer == "y":
         return thresholdSol
     else:
@@ -88,7 +89,7 @@ def thresholdsRecognition(thresholdSol, batcher = None):
         thread = threading.Thread(target=batcher.fillQueue, args=(inputQueue, dataWindow))
         thread.start()
     
-    for i in range(100):
+    for i in range(50):
         letterPart = []
         for t in range(10):
             letterPart.append(inputQueue.get(True))
@@ -213,4 +214,6 @@ def plot(vector):
     plt.show()
 
 if __name__ == '__main__':
+    thread = threading.  Thread(target=DataSaver.run)
+    thread.start()
     runT()
