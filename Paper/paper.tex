@@ -209,7 +209,11 @@ In de calibratie-fase werd er telkens volgens reeks~\ref{seq:calibratie} gekeken
 
 \begin{equation}
 \label{seq:calibratie}
-rechtdoor(TODO), \{links(TODO), rechtdoor(TODO), rechts(TODO)\} \times 2, rechtdoor(TODO)
+\begin{aligned}
+&\{rechtdoor(TODO), links(TODO), &\\
+&rechtdoor(TODO), rechts(TODO)\} \times 2, &\\
+& rechtdoor(TODO)&
+\end{aligned}
 \end{equation}
 
 Resultaten verwerken we door middel van een confusion matrix. Elke rij en kolom stelt een kijkrichting voor. Op de diagonaal staan alle succesvolle voorspellingen [TODO meer uitleg?]. Aan de hand van deze matrix berekenen we de $accuracy$ (\ref{eq:accuracy}), $recall_k$ (\ref{eq:recall}) en $precision_k$ (\ref{eq:precision}). Hierbij staat $k$ voor de relevante kijkrichting. De kijkrichting $rechtdoor$ geven we een zeer klein gewicht van $1/10$ mee, omdat deze kijkrichting veel gebruikt wordt in de experimenten en een vertekend beeld kan scheppen.
@@ -252,12 +256,37 @@ precision_{rechts} = \frac{e}{b + e + h}
 
 \subsection{Experiment 1}
 
-In dit experiment werd reeks~\ref{seq:exp1} gebruikt.
-
 \begin{equation}
+\begin{aligned}
 \label{seq:exp1}
-\{links(2), rechts(TODO)\} \times 2
+& \{rechtdoor(TODO), links(TODO)\} \times 5,& \\
+& \{rechtdoor(TODO), rechts(TODO)\} \times 5,& \\
+& rechtdoor(TODO) &
+\end{aligned}
 \end{equation}
+
+In dit experiment laten we een gebruiker reeks~\ref{seq:exp1} volgen. Figuur~\ref{fig:experiment1} toont een voorbeeld van hoe het singaal er uitzag.  
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{images/experiment1}
+\caption{Een voorbeeld signaal bij uitvoering van experiment 1. [TODO meer uitleg?]}
+\label{fig:experiment1}
+\end{figure}
+
+\begin{table}[h]
+\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp1}.}
+\centering
+\begin{tabular}{ l || c | c | c }
+\backslashbox{Voorspelling~}{Echt~~}
+& $links$ & $rechts$ & $rechtdoor$ \\ \hline
+\hline
+$links$ & a & 0 & 0 \\ \hline
+$rechts$ & 0 & e & 0 \\ \hline
+$rechtdoor$ & g & h & 55 \\
+\hline
+\end{tabular}\par
+\end{table}
 
 \section{Conclusie}
 TODO
