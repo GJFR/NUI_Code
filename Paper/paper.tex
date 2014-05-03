@@ -12,6 +12,7 @@
 \usepackage{mathtools}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
+\usepackage{slashbox}
 
 % For importing images.
 \usepackage{graphicx}
@@ -140,7 +141,21 @@ In ons programma hebben we $\alpha$ voor beide kijkrichtingen de waarde $0.5$ ge
 
 Nu we de bovengrenzen hebben gevonden, moeten we kijkrichtingen gaan zoeken in de nieuwe data. We vragen telkens de 10 recentste datapunten op van de buffer. Om de invloed van een enkele uitschieter in de data te beperken, nemen we telkens het gemiddelde van deze 10 punten. Dit gemiddelde gaan we dan vergelijken met alle bovengrenzen. Slechts wanneer de grenzen 7 opeenvolgende keren overschreden worden, zullen we beslissen dat er een kijkrichting is gevonden.
 
-Omdat we telkens opnieuw de preprocessing-fase uitvoeren op de bufferdata, moeten we oppassen voor het probleem bij veelvuldige herhaling van dezelfde kijkrichting. Zoals eerder vermeld in de thresholds-sectie van gebruikte methoden, zorgt dit voor een verschuiving van het signaal ten opzichte van de y-as. Aangezien we in de herkennings-fase weinig controle hebben over de volgorde van kijkrichtingen, zullen we dit probleem op een andere manier moeten oplossen. Hiervoor gebruiken we afvlakking van het signaal. Telkens als er een threshold overschreden wordt, gaan we het gemiddelde van de vorige 990 datapunten berekenen. Vervolgens vervangen we de originele grensoverschrijdende waardes door dit gemiddelde. Door deze afvlakking, zal de benadering van de biopotentiaal eerder stabiel zijn. Het nadeel van deze techniek is dat de data destructief wordt aangepast en zo mogelijk data verloren gaat. Dit heeft echter geen invloed op dit systeem, aangezien we enkel geïnteresseerd zijn in de nieuwste data.
+Omdat we telkens opnieuw de preprocessing-fase uitvoeren op de bufferdata, moeten we oppassen voor het probleem bij veelvuldige herhaling van dezelfde kijkrichting. Zoals eerder vermeld in de thresholds-sectie van gebruikte methoden, zorgt dit voor een verschuiving van het signaal ten opzichte van de y-as. Aangezien we in de herkennings-fase weinig controle hebben over de volgorde van kijkrichtingen, zullen we dit probleem op een andere manier moeten oplossen. Hiervoor gebruiken we afvlakking van het signaal. Telkens als er een threshold overschreden wordt, gaan we het gemiddelde van de vorige 990 datapunten berekenen. Vervolgens vervangen we de originele grensoverschrijdende waardes door dit gemiddelde. Door deze afvlakking, zal de benadering van de biopotentiaal eerder stabiel zijn. Het nadeel van deze techniek is dat de data destructief wordt aangepast en zo mogelijk data verloren gaat. Dit heeft echter geen invloed op dit systeem, aangezien we enkel geïnteresseerd zijn in de nieuwste data. In de figuren~\ref{fig:afvlakking_original} en~\ref{fig:afvlakking} is te zien hoe het signaal veranderd onder afvlakking.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{images/afvlakking_original}
+\caption{Dit is een voorbeeld van een gefilterd signaal waarbij geen afvlakking op uitgevoerd is.}
+\label{fig:afvlakking_original}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{images/afvlakking}
+\caption{Dit is hetzelfde gefilterde signaal uit figuur~\ref{fig:afvlakking_original} waarbij wel een afvlakking op is uitgevoerd. De afvlakking wordt }
+\label{fig:afvlakking}
+\end{figure}
 
 \subsection{Patronen}
 
@@ -183,18 +198,65 @@ Bij het uitvoeren van experimenten hebben we ons vooral geconcentreerd op the th
 
 De opstelling van de experimenten zag er als volgt uit. De sensoren zijn bevestigd op de het gezicht van de gebruiker door middel van stevige plakkers. Deze moeten blijven plakken zonder tussenkomst van de handen. De sensoren die verantwoordelijk zijn voor het meten van de kijkrichtingen links en rechts zijn bevestigd op de slapen, tegen de ooghoeken. [TODO ook zeggen boven en onder?]. De gebruiker zit op een stoel en kijkt voor zich uit. Hierbij is het ook belangrijk dat de gebruiker niet afgeleid kan worden door bewegende voorwerpen. Het gebruiken van andere gezichtsspieren dan de oogspieren moet zo veel mogelijk vermeden worden. De sensoren vangen de signalen van deze spieren namelijk ook op.
 
-We duiden reeksen van kijkrichtingen aan volgens de definitie van reeks ~\ref{seq:definitie}. Tijd $t_i$ staat voor het aantal seconden dat ongeveer in de bijhorende kijkrichting gekeken wordt. $h$ geeft aan hoeveel keer de reeks binnen de accolades herhaalt wordt. [TODO beter ding vinden dan \"equation"]
+We duiden reeksen van kijkrichtingen aan volgens de definitie van reeks~\ref{seq:definitie}. Tijd $t_i$ staat voor het aantal seconden dat ongeveer in de bijhorende kijkrichting gekeken wordt. $h$ geeft aan hoeveel keer de reeks binnen de accolades herhaalt wordt. [TODO beter ding vinden dan \"equation"] [TODO rechtdoor goed?]
 
 \begin{equation}
 \label{seq:definitie}
-\{ links (t_1), rechts (t_2) \} \times h
+rechtdoor(t_1), \{ links (t_1), rechts (t_2) \} \times h
 \end{equation}
 
 In de calibratie-fase werd er telkens volgens reeks~\ref{seq:calibratie} gekeken.
 
 \begin{equation}
 \label{seq:calibratie}
-\{links(TODO), rechts(TODO)\} \times 2
+rechtdoor(TODO), \{links(TODO), rechtdoor(TODO), rechts(TODO)\} \times 2, rechtdoor(TODO)
+\end{equation}
+
+Resultaten verwerken we door middel van een confusion matrix. Elke rij en kolom stelt een kijkrichting voor. Op de diagonaal staan alle succesvolle voorspellingen [TODO meer uitleg?]. Aan de hand van deze matrix berekenen we de $accuracy$ (\ref{eq:accuracy}), $recall_k$ (\ref{eq:recall}) en $precision_k$ (\ref{eq:precision}). Hierbij staat $k$ voor de relevante kijkrichting. De kijkrichting $rechtdoor$ geven we een zeer klein gewicht van $1/10$ mee, omdat deze kijkrichting veel gebruikt wordt in de experimenten en een vertekend beeld kan scheppen.
+
+\begin{table}[h]
+\caption{Deze tabel stelt de confusion matrix voor.}
+\centering
+\begin{tabular}{ l || c | c | c }
+\backslashbox{Voorspelling~}{Echt~~}
+& $links$ & $rechts$ & $rechtdoor$ \\ \hline
+\hline
+$links$ & a & b & c \\ \hline
+$rechts$ & d & e & f \\ \hline
+$rechtdoor$ & g & h & i \\
+\hline
+\end{tabular}\par
+\end{table}
+
+[TODO] gewicht van rechtdoor erin verwerken
+\begin{equation}
+\label{eq:accuracy}
+accuracy = \frac{a + e + i}{a + b + c + d + e + f + g + h + i}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+\label{eq:recall}
+recall_{links} = \frac{a}{a + b + c} \\
+recall_{rechts} = \frac{e}{d + e + f}
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+\label{eq:precision}
+precision_{links} = \frac{a}{a + d + g} \\
+precision_{rechts} = \frac{e}{b + e + h}
+\end{aligned}
+\end{equation}
+
+\subsection{Experiment 1}
+
+In dit experiment werd reeks~\ref{seq:exp1} gebruikt.
+
+\begin{equation}
+\label{seq:exp1}
+\{links(2), rechts(TODO)\} \times 2
 \end{equation}
 
 \section{Conclusie}
