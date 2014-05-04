@@ -40,7 +40,7 @@ def readData(socket):
 def run():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((HOST, PORT))
-    saveData(s,'Data5.csv')
+    saveData(s,'Data.csv')
 
 if __name__ == '__main__':
     run()
