@@ -76,8 +76,8 @@ Bij veelvuldige herhaling van dezelfde kijkrichting, wordt een probleem in verba
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\linewidth]{images/bio_fout}
-\caption{Na aftrek van de foutieve benadering van de biopotentiaal zien we dat de waardes ongewenst naar onder zijn gegaan. Hierdoor is rechtdoor kijken niet meer rond de $y = 0$ lijn (groen), maar wel veel lager rond de $y = -10000$ lijn (rood). [TODO betere tekening? deze is gwn van de powerpoint][TODO duidelijke tekening?]}
+\includegraphics[width=\linewidth]{images/biofout}
+\caption{Na aftrek van de foutieve benadering van de biopotentiaal, zien we dat de waardes ongewenst naar onder zijn gegaan. Hierdoor is rechtdoor kijken niet meer rond de $y = 0$ lijn, maar wel veel lager rond de $y = -10000$ lijn.}
 \label{fig:bio_fout}
 \end{figure}
 
@@ -134,7 +134,7 @@ De gevonden motieven, gekoppeld aan de bijhorende kijkrichtingen, worden doorgeg
 
 Bij het implementeren van ons programma, hebben we ons gebaseerd op de twee eerder uitgelegde methoden. In deze sectie leggen we uit hoe we de implementatie hebben verwezelijkt. Hierbij geven we ook weer hoe we bepaalde problemen hebben opgelost.
 
-In beide methodes gebruiken we een buffer die de 500 recentste datapunten bijhoudt. Om de 10 datapunten die we ontvangen van de sensoren, wordt deze buffer geupdate. De 10 oudste puntent worden verwijderd en de 10 recentste punten worden vooraan toegevoegd. Elke keer als dit gebeurt, voeren we ook de preprocessing-stap uit op de data in de buffer. Deze buffer wordt ook getoond aan de gebruiker tijdens de uitvoering van het programma. In het begin van het programma wordt ook altijd een buffer fill uitgevoerd. Hierbij laten we de gebruiker voor zich uit kijken tot dat de buffer helemaal gevuld is.
+In beide methodes gebruiken we een buffer die de 500 recentste datapunten bijhoudt. Om de 10 datapunten die we ontvangen van de sensoren, wordt deze buffer geupdate. De 10 oudste puntent worden verwijderd en de 10 recentste punten worden vooraan toegevoegd. Elke keer als dit gebeurt, voeren we ook de preprocessing-stap uit op de data in de buffer. Deze buffer wordt ook getoond aan de gebruiker tijdens de uitvoering van het programma. In het begin van het programma wordt ook altijd een buffer fill uitgevoerd. Hierbij laten we de gebruiker voor zich uit kijken tot dat de buffer helemaal gevuld is. Dit duurt 21 seconden.
 
 \subsection{Thresholds}
 
@@ -151,7 +151,7 @@ In ons programma hebben we $\alpha$ voor beide kijkrichtingen de waarde $0.5$ ge
 
 Nu we de bovengrenzen hebben gevonden, moeten we kijkrichtingen gaan zoeken in de nieuwe data. We vragen telkens de 10 recentste datapunten op van de buffer. Om de invloed van een enkele uitschieter in de data te beperken, nemen we telkens het gemiddelde van deze 10 punten. Dit gemiddelde gaan we dan vergelijken met alle bovengrenzen. Slechts wanneer de grenzen 3 opeenvolgende keren overschreden worden, zullen we beslissen dat er een kijkrichting is gevonden.
 
-Omdat we telkens opnieuw de preprocessing-fase uitvoeren op de bufferdata, moeten we oppassen voor het probleem bij veelvuldige herhaling van dezelfde kijkrichting. Zoals eerder vermeld in de thresholds-sectie van gebruikte methoden, zorgt dit voor een verschuiving van het signaal ten opzichte van de y-as. Aangezien we in de herkennings-fase weinig controle hebben over de volgorde van kijkrichtingen, zullen we dit probleem op een andere manier moeten oplossen. Hiervoor gebruiken we afvlakking van het signaal. Telkens als er een threshold overschreden wordt, gaan we het gemiddelde van de vorige 990 datapunten berekenen. Vervolgens vervangen we de originele grensoverschrijdende waardes door dit gemiddelde. Door deze afvlakking, zal de benadering van de biopotentiaal eerder stabiel zijn. Het nadeel van deze techniek is dat de data destructief wordt aangepast en zo mogelijk data verloren gaat. Dit heeft echter geen invloed op dit systeem, aangezien we enkel geïnteresseerd zijn in de nieuwste data. In de figuren~\ref{fig:afvlakking_original} en~\ref{fig:afvlakking} is te zien hoe het signaal veranderd onder afvlakking.
+Omdat we telkens opnieuw de preprocessing-fase uitvoeren op de bufferdata, moeten we oppassen voor het probleem bij veelvuldige herhaling van dezelfde kijkrichting. Zoals eerder vermeld in de thresholds-sectie van gebruikte methoden, zorgt dit voor een verschuiving van het signaal ten opzichte van de y-as. Aangezien we in de herkennings-fase weinig controle hebben over de volgorde van kijkrichtingen, zullen we dit probleem op een andere manier moeten oplossen. Hiervoor gebruiken we afvlakking van het signaal. Telkens als er een threshold overschreden wordt, gaan we het gemiddelde van de vorige 490 datapunten berekenen. Vervolgens vervangen we de originele grensoverschrijdende waardes door dit gemiddelde. Door deze afvlakking, zal de benadering van de biopotentiaal eerder stabiel zijn. Het nadeel van deze techniek is dat de data destructief wordt aangepast en zo mogelijk data verloren gaat. Dit heeft echter geen invloed op dit systeem, aangezien we enkel geïnteresseerd zijn in de nieuwste data. In de figuren~\ref{fig:afvlakking_original} en~\ref{fig:afvlakking} is te zien hoe het signaal veranderd onder afvlakking.
 
 \begin{figure}[h]
 \centering
@@ -163,7 +163,7 @@ Omdat we telkens opnieuw de preprocessing-fase uitvoeren op de bufferdata, moete
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{images/afvlakking}
-\caption{Dit is hetzelfde gefilterde signaal uit figuur~\ref{fig:afvlakking_original} waarbij wel een afvlakking op is uitgevoerd. De afvlakking wordt TODO}
+\caption{Dit is hetzelfde gefilterde signaal uit figuur~\ref{fig:afvlakking_original} waarbij wel een afvlakking op is uitgevoerd. De waarden in deze grafiek zijn nu minder extreem en liggen dichter bij 0.}
 \label{fig:afvlakking}
 \end{figure}
 
@@ -178,7 +178,7 @@ In de calibratie-fase beschikken we over verschillende datasets die gelinkt zijn
 \label{fig:beginend}
 \end{figure}
 
-Voordat we de echte sequenties met elkaar gaan vergelijken, doen we dit eerste met hun genormaliseerde SAX-woorden. Zo kunnen we, zonder al te veel berekeningen, achterhalen welke sequenties in aanmerking komen voor een match. Hiervoor gebruiken we 10 maskers die we op voorhand hebben gedefinieerd. Bij het kiezen van de maskers, hebben we geprobeerd elke letter even belangrijk te maken, door elke letter even vaak zichtbaar te houden. Een voorbeeld voor een masker is [1,1,0,0], het laat enkel de eerste twee letters zichtbaar.  Zo een masker dekt telkens enkele letters van twee te vergelijken SAX-woorden af, zie voorbeelden in \ref{seq:maskering}. 
+Voordat we de echte sequenties met elkaar gaan vergelijken, doen we dit eerst met hun genormaliseerde SAX-woorden. Zo kunnen we, zonder al te veel berekeningen, achterhalen welke sequenties in aanmerking komen voor een match. Hiervoor gebruiken we 10 maskers die we op voorhand hebben gedefinieerd. Bij het handmatig opstellen van de maskers, hebben we geprobeerd elke letter even belangrijk te maken, door elke letter even vaak zichtbaar te houden. Een voorbeeld voor een masker is [1,1,0,0], het laat enkel de eerste twee letters zichtbaar.  Zo een masker dekt telkens enkele letters van twee te vergelijken SAX-woorden af, zie voorbeelden in \ref{seq:maskering}. 
 
 \begin{equation}
 \label{seq:maskering}
@@ -189,11 +189,11 @@ abcd \times [1,0,0,1] = ad \\
 \end{aligned} 
 \end{equation}
 
-Voor elk masker houden we ook een collision matrix bij. Die gebruiken we op de volgende manier. Indien alle zichtbare letters van twee gemaskeerde SAX-woorden overeen komen, dan wordt de overeenkomstige cel in de collision matrix geincrementeerd. Als we voor alle maskers de collision matrix hebben gemaakt, tellen we al deze matrices met elkaar op, zie als voorbeeld tabel~\ref{tab:collision_matrix}. Elk paar van SAX-woorden waarvan de waarde in de overeenkomstige cel van de resulterende matrix groter of gelijk is aan de collision threshold, komt nu in aanmerking voor een match. Deze collision threshold hebben we de waarde 7 gegeven. De oorspronkelijke sequenties van de in aanmerking gekomen SAX-woorden worden nu pas vergeleken. Dit doen we door de euclidische afstand tussen deze genormaliseerde sequenties te berekenen. Pas als deze afstand kleiner is dan de vooraf gedefinieerde range, spreken we van een match.[TODO wordt de collision matrix niet aangevuld ipv aan het einde opgeteld?]
+Voor elk masker houden we ook een collision matrix bij. Die gebruiken we op de volgende manier. Indien alle zichtbare letters van twee gemaskeerde SAX-woorden overeen komen, dan wordt de overeenkomstige cel in de collision matrix geincrementeerd. Als we voor alle maskers de collision matrix hebben gemaakt, tellen we al deze matrices met elkaar op, zie als voorbeeld tabel~\ref{tab:collision_matrix}. Elk paar van SAX-woorden waarvan de waarde in de overeenkomstige cel van de resulterende matrix groter of gelijk is aan de collision threshold, komt nu in aanmerking voor een match. Deze collision threshold hebben we de waarde 7 gegeven. De oorspronkelijke sequenties van de in aanmerking gekomen SAX-woorden worden nu pas vergeleken. Dit doen we door de euclidische afstand tussen deze genormaliseerde sequenties te berekenen. Pas als deze afstand kleiner is dan een vooraf gedefinieerde variabele $range$, spreken we van een match. Wij hebben $range$ de waarde 5 gegeven.[TODO wordt de collision matrix niet aangevuld ipv aan het einde opgeteld?]
 
 
 \begin{table}
-\caption{Dit is een voorbeeld van een complete collision matrix. De vier SAX-woorden van verschillende sequenties staan bij een kolom en rij. De matrix is maar half ingevuld omdat hij symmetrisch is.  De diagonaal is leeg, omdat sequenties niet met zichzelf worden vergeleken. De gebruikte maskers staan onder de tabel. [TODO teveel uitleg?]}
+\caption{Dit is een voorbeeld van een complete collision matrix. De vier SAX-woorden van verschillende sequenties staan bij een kolom en rij. De matrix is maar half ingevuld omdat hij symmetrisch is.  De diagonaal is leeg, omdat sequenties niet met zichzelf worden vergeleken. De gebruikte maskers staan onder de tabel.}
 \label{tab:collision_matrix}
 \centering
 \begin{tabular}{ l || c | c | c | c }
@@ -206,25 +206,27 @@ acda & / & / & / & / \\
 \hline
 \end{tabular}\par
 
-$[1,1,0,0], [0,01,1], [1,0,0,1], [0,1,1,0]$
+$[1,1,0,0], [0,0,1,1], [1,0,0,1], [0,1,1,0]$
 \end{table}
 
 Tijdens de calibratie, vergroten we de collision matrix dynamisch. Dit doen we zodat na de calibratie-fase, niet alle data in één keer verwerkt moet worden, maar wel al tussen door kan gebeuren. Bij de eerste twee sequenties die worden toegevoegd, wordt nog gewoon een collision matrix opgesteld. Bij de derde en volgende sequenties, wordt er een nieuwe rij en kolom toegevoegd die overeenkomt met de nieuwe sequentie. Hiervoor worden de benodigde cellen berekend en ingevuld.
 
 Nu we per sequentie het aantal matches hebben, kunnen we een rangschikking maken. We sorteren alle sequenties op het aantal matches dat ze hebben, met de sequentie met het de meeste matches vooraan. In het geval dat twee sequenties evenveel matches zouden hebben, krijgt de sequentie met de kleinste totale minimale euclidische afstand tot zijn matches voorrang.
 
-In de herkennings-fase worden, na elke nieuwe toevoeging van tien datapunten, de laatste honderd datapunten opgevraagd. Deze worden gezien als een sequentie. Net zoals bij de motieven gebeurde, wordt ook voor deze sequenties gecontroleerd of ze wel een groot genoeg hoogteverschil hebben. De sequentie wordt genormaliseerd en gediscretiseerd naar een SAX-woord. Met behulp van de eerder gebruikte maskers wordt nu ook weer nagegaan of de sequentie goed genoeg lijkt op een motief. Indien de som van alle collisions per masker groter is dan de collision threshold, worden de sequenties zelf weer vergeleken. Indien ze voldoen aan de eerder vermeldde range, wordt het label van het overeenkomstige motief gegeven aan deze sequentie.
+In de herkennings-fase worden, na elke nieuwe toevoeging van tien datapunten, de laatste honderd datapunten opgevraagd. Deze worden gezien als een sequentie. Net zoals bij de motieven gebeurde, wordt ook voor deze sequenties gecontroleerd of ze wel een groot genoeg hoogteverschil hebben. De sequentie wordt genormaliseerd en gediscretiseerd naar een SAX-woord. Met behulp van de eerder gebruikte maskers wordt nu ook weer nagegaan of de sequentie goed genoeg lijkt op een motief. Indien de som van alle collisions per masker groter is dan de collision threshold, worden de sequenties zelf weer vergeleken. Indien ze voldoen aan de eerder vermeldde $range$, wordt het label van het overeenkomstige motief gegeven aan deze sequentie.
 
 Pas wanneer achtereenvolgens het beginmotief en het eindmotief herkend worden, gaan we uit van een kijkrichting. Indien het beginmotief herkend wordt en de herkenning van het eindmotief op zich laat wachten, zal een timer ervoor zorgen dat er niet oneindig lang gewacht wordt op de herkenning van het eindmotief.
 
 
-\section{Resultaten}
+\section{Experimenten}
 
 Bij het uitvoeren van experimenten hebben we ons vooral geconcentreerd op the thresholds-methode. Omdat de methode gebruik makend van patronen zoveel afhangt van verschillende parameters, hebben we dit nog niet kunnen optimaliseren.
 
-De opstelling van de experimenten zag er als volgt uit. De sensoren zijn bevestigd op de het gezicht van de gebruiker door middel van stevige plakkers. Deze moeten blijven plakken zonder tussenkomst van de handen. De sensoren die verantwoordelijk zijn voor het meten van de kijkrichtingen links en rechts zijn bevestigd op de slapen, tegen de ooghoeken. [TODO ook zeggen boven en onder?]. De gebruiker zit op een stoel en kijkt voor zich uit. Hierbij is het ook belangrijk dat de gebruiker niet afgeleid kan worden door bewegende voorwerpen. Het gebruiken van andere gezichtsspieren dan de oogspieren moet zo veel mogelijk vermeden worden. De sensoren vangen de signalen van deze spieren namelijk ook op. [TODO miss vb geven van wat mag en niet mag?]
+De opstelling van de experimenten zag er als volgt uit. De sensoren zijn bevestigd op de het gezicht van de gebruiker door middel van stevige plakkers. Deze moeten blijven plakken zonder tussenkomst van de handen. De sensoren die verantwoordelijk zijn voor het meten van de kijkrichtingen links en rechts zijn bevestigd op de slapen, tegen de ooghoeken. De sensoren verantwoordelijk voor de kijkrichtingen boven en onder hebben we niet gebruikt in deze experimenten. De gebruiker zit op een stoel en kijkt voor zich uit. Hierbij is het ook belangrijk dat de gebruiker niet afgeleid kan worden door bewegende voorwerpen. Het gebruiken van andere gezichtsspieren dan de oogspieren moet zo veel mogelijk vermeden worden. De sensoren vangen de signalen van deze spieren namelijk ook op. Lachen kan bijvoorbeeld niet, rustig praten kan zolang het niet zichtbaar is in het gemeten signaal.
 
-We duiden reeksen van kijkrichtingen aan volgens de definitie van reeks~\ref{seq:definitie}. We bepalen drie verschillende kijkrichtigen elk met een tijd. Deze tijd $t_i$ staat voor het aantal seconden dat ongeveer in de bijhorende kijkrichting gekeken wordt. $h$ geeft aan hoeveel keer de reeks binnen de accolades herhaald wordt. [TODO beter ding vinden dan "\\equation"]
+De sensoren zijn aangesloten met een EOG Bord, gemaakt aan het Innovation Lab van de KU Leuven. Dit apparaat voert al een naïve biopotentiaalfiltering uit op het signaal. Het vlakt het signaal altijd af naar de neutrale waarde (de waarde verkregen bij het rechtdoor kijken). Hierdoor wordt de intensiteit van het kijken naar links en rechts geleidelijk aan afgezwakt.
+
+We duiden reeksen van kijkrichtingen aan volgens de definitie van reeks~\ref{seq:definitie}. We bepalen drie verschillende kijkrichtigen elk met een tijd. Deze tijd $t_i$ staat voor het aantal seconden dat ongeveer in de bijhorende kijkrichting gekeken wordt. $h$ geeft aan hoeveel keer de reeks binnen de accolades herhaald wordt.
 
 \begin{equation}
 \label{seq:definitie}
@@ -239,19 +241,19 @@ In de calibratie-fase werd er telkens volgens reeks~\ref{seq:calibratie} gekeken
 \begin{equation}
 \label{seq:calibratie}
 \begin{aligned}
-&\{rechtdoor(TODO), links(TODO), &\\
-&rechtdoor(TODO), rechts(TODO)\} \times 2, &\\
-& rechtdoor(TODO)&
+&\{rechtdoor(1), links(1), &\\
+&rechtdoor(1), rechts(1)\} \times 2, &\\
+& rechtdoor(1)&
 \end{aligned}
 \end{equation}
 
-Resultaten verwerken we door middel van een confusion matrix. Elke rij en kolom stelt een kijkrichting voor. Op de diagonaal staan alle succesvolle voorspellingen [TODO meer uitleg?]. Aan de hand van deze matrix berekenen we de $accuracy$ (\ref{eq:accuracy}), $recall_k$ (\ref{eq:recall}) en $precision_k$ (\ref{eq:precision}). Hierbij staat $k$ voor de relevante kijkrichting.[TODO uitleg accuracy]. $recall_k$ staat voor het percentage van gekeken kijkrichtingen van kijkrichting $k$ die voorspeld zijn. $precision_k$ staat voor het percentage van voorspellingen van de kijkrichting $k$ die juist zijn. De kijkrichting $rechtdoor$ geven we een zeer klein gewicht van $1/10$ mee, omdat deze kijkrichting veel gebruikt wordt in de experimenten en een vertekend beeld kan scheppen.
+Resultaten verwerken we door middel van een confusion matrix. Elke rij en kolom stelt een kijkrichting voor. Aan de hand van deze matrix berekenen we de $accuracy$ (\ref{eq:accuracy}), $recall_k$ (\ref{eq:recall}) en $precision_k$ (\ref{eq:precision}). Hierbij staat $k$ voor de relevante kijkrichting. $accuracy$ staat voor de verhouding tussen de correct herkende kijkrichtingen en alle te herkennen kijkrichtingen. $recall_k$ staat voor de verhouding tussen de correct herkende kijkrichtingen $k$ en alle werkelijk gekeken kijkrichtingen $k$. $precision_k$ staat voor de verhouding tussen correct herkende kijkrichtingen $k$ en alle herkende kijkrichtingen $k$. De kijkrichting $rechtdoor$ geven we een zeer klein gewicht van $1/10$ mee, omdat deze kijkrichting veel gebruikt wordt in de experimenten en een vertekend beeld kan scheppen.
 
 \begin{table}[h]
-\caption{Deze tabel stelt de confusion matrix voor.}
+\caption{Deze tabel stelt de confusion matrix voor. Als de gebruiker bijvoorbeeld naar $links$ kijkt, maar we detecteren de kijkrichting $rechts$, zal de cel d met 1 verhoogd worden. Op de diagonaal (de cellen a, e en i) staan alle succesvolle voorspellingen.}
 \centering
 \begin{tabular}{ l || c | c | c }
-\backslashbox{Voorspelling~}{Echt~~}
+\backslashbox{Herkend~}{Echt~~}
 & $links$ & $rechts$ & $rechtdoor$ \\ \hline
 \hline
 $links$ & a & b & c \\ \hline
@@ -262,8 +264,6 @@ $rechtdoor$ & g & h & i \\
 \end{table}
 
 [TODO] gewicht van rechtdoor erin verwerken
-
-[TODO] waarom geen precision voor rechtdoor?
 
 \begin{equation}
 \label{eq:accuracy}
@@ -286,13 +286,11 @@ precision_{rechts} = \frac{e}{d + e + f}
 \end{aligned}
 \end{equation}
 
-Deze testen zijn uitgevoerd op twee verschillende personen. We noemen ze \textit{gebruiker1} en \textit{gebruiker 2}. We laten de gebruikers de reeksen vijf keer uitvoeren, om zo een betrouwbaar beeld te krijgen van de resultaten.
-
-[TODO uitleg over het apparaat dat we gebruiken]
+Deze testen zijn uitgevoerd op twee verschillende personen. We noemen ze \textit{gebruiker 1} en \textit{gebruiker 2}. We laten de gebruikers de reeksen vijf keer uitvoeren, om zo een betrouwbaar beeld te krijgen van de resultaten.
 
 \subsection{Experiment 1}
 
-In dit experiment laten we een gebruiker reeks~\ref{seq:exp1} volgen. Figuur~\ref{fig:exp1} toont een voorbeeld van hoe het singaal er uitziet voor deze reeks. 
+In dit experiment laten we een gebruiker reeks~\ref{seq:exp1} volgen. Figuur~\ref{fig:exp1} toont een voorbeeld van hoe het signaal er uitziet voor deze reeks. 
 
 \begin{equation}
 \begin{aligned}
@@ -309,16 +307,16 @@ De gebruiker moet volgens reeks~\ref{seq:exp1} afwisselend links en rechts kijke
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{images/experiment1}
-\caption{Een voorbeeld signaal bij uitvoering van experiment 1. [TODO meer uitleg?]}
+\caption{Een voorbeeld signaal bij uitvoering van experiment 1. Er is duidelijk te zien dat er telkens van kijkrichting gewisseld wordt.}
 \label{fig:exp1}
 \end{figure}
 
 \begin{table}[h]
-\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp1} door \textit{gebruiker1} en de berekende maatstaven.}
+\caption{Confusion matrix na uitvoering van experiment 1 door \textit{gebruiker 1} en de berekende maatstaven.}
 \label{tab:exp1}
 \centering
 \begin{tabular}{ l || c | c | c }
-\backslashbox{Voorspelling~}{Echt~~}
+\backslashbox{Herkend~}{Echt~~}
 & $links$ & $rechts$ & $rechtdoor$ \\ \hline
 \hline
 $links$ & 18 & 0 & 0 \\ \hline
@@ -341,11 +339,11 @@ $rechtdoor$ & 7 & 0 & 55 \\
 Aan de hand van deze confusion matrix, tabel~\ref{tab:exp1}, berekenen we vervolgens de onderzoeks maatstaven. 
 
 \begin{table}[h]
-\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp1} door \textit{gebruiker2} en de berekende maatstaven.}
+\caption{Confusion matrix na uitvoering van experiment 1 door \textit{gebruiker 2} en de berekende maatstaven.}
 \label{tab:exp1_2}
 \centering
 \begin{tabular}{ l || c | c | c }
-\backslashbox{Voorspelling~}{Echt~~}
+\backslashbox{Herkend~}{Echt~~}
 & $links$ & $rechts$ & $rechtdoor$ \\ \hline
 \hline
 $links$ & 24 & 0 & 0 \\ \hline
@@ -383,16 +381,16 @@ Nu we weten hoe goed thresholds werken in de ideale omstandigheden, gaan we in h
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{images/experiment2}
-\caption{Een voorbeeld signaal bij uitvoering van experiment 2. [TODO meer uitleg?]}
+\caption{Een voorbeeld signaal bij uitvoering van experiment 2. Er is duidelijk te zien dat er eerst naar links werd gekeken en daarna naar rechts. Door de naïve biopotentiaalfiltering heeft er een verschuiving van waarden plaats gevonden in het signaal. Dit zorgt ervoor dat de bovengrens moeilijker te overschrijden is naarmate men een bepaalde kijkrichting herhaalt.}
 \label{fig:exp2}
 \end{figure}
 
 \begin{table}[h]
-\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp2} door \textit{gebruiker1} en de berekende maatstaven.}
+\caption{Confusion matrix na uitvoering van experiment 2 door \textit{gebruiker 1} en de berekende maatstaven. [TODO nieuwe berekenng]}
 \label{tab:exp2}
 \centering
 \begin{tabular}{ l || c | c | c }
-\backslashbox{Voorspelling~}{Echt~~}
+\backslashbox{Herkend~}{Echt~~}
 & $links$ & $rechts$ & $rechtdoor$ \\ \hline
 \hline
 $links$ & a & b & c \\ \hline
@@ -414,11 +412,11 @@ $rechtdoor$ & g & h & i \\
 
 
 \begin{table}[h]
-\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp2} door \textit{gebruiker2} en de berekende maatstaven.}
+\caption{Confusion matrix na uitvoering van experiment 2 door \textit{gebruiker 2} en de berekende maatstaven.}
 \label{tab:exp2}
 \centering
 \begin{tabular}{ l || c | c | c }
-\backslashbox{Voorspelling~}{Echt~~}
+\backslashbox{Herkend~}{Echt~~}
 & $links$ & $rechts$ & $rechtdoor$ \\ \hline
 \hline
 $links$ & 17 & 0 & 1 \\ \hline
@@ -444,9 +442,9 @@ Het apparaat dat we gebruiken probeert de biopotentiaalschommelingen te filteren
 \begin{equation}
 \begin{aligned}
 \label{seq:exp3}
-& \{rechtdoor(TODO), links(TODO) & \\
-& rechtdoor(TODO), rechts(TODO)\} \times 5,& \\
-& rechtdoor(TODO) &
+& \{rechtdoor(10), links(3) & \\
+& rechtdoor(10), rechts(3)\} \times 5,& \\
+& rechtdoor(10) &
 \end{aligned}
 \end{equation}
 
