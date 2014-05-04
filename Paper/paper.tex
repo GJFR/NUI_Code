@@ -40,7 +40,7 @@ Gertjan Franken \\ Katholieke Universiteit Leuven\\ Departement Computerwetensch
 \maketitle
 
 \begin{abstract}
-In de zoektocht naar natuurlijke user interfaces gebeurt er onderzoek naar besturing door middel van de ogen. In deze paper wordt gebruik gemaakt van EMG (Elektromyografie) signalen om eenvoudige oogbewegingen te detecteren. Hiervoor onderzoeken we twee verschillende methodes: thresholds en patronen. Beide methodes worden dan ook grondig besproken en vergeleken doorheen de tekst.
+In de zoektocht naar natuurlijke user interfaces gebeurt er onderzoek naar besturing door middel van de ogen. In deze paper wordt gebruik gemaakt van EMG (Elektromyografie) signalen om eenvoudige oogbewegingen te detecteren. Hiervoor onderzoeken we twee verschillende methodes: thresholds en patronen. In deze tekst bespreken en vergelijken we beide methodes uitvoerig. [TODO conclusie zin?]
 \end{abstract}
 
 \section{Introductie}
@@ -72,7 +72,14 @@ Daarna focussen we ons op de biopotentiaalschommelingen. Deze schommelingen kunn
 s'' = s' - lowpass(s', cf_2)
 \end{equation}
 
-Bij veelvuldige herhaling van dezelfde kijkrichting, wordt een probleem in verband met deze methode zichtbaar. Als er veel en opeenvolgend naar éénzelfde richting gekeken wordt, zullen de waarden in de data algemeen lager of hoger zijn. De gefilterde data zal hierdoor ook algemeen lager of hoger liggen. Dit is een probleem aangezien het de benadering van de biopotentiaal moet voorstellen. Doordat de gevonden benadering foutief is, zullen ook alle volgende bewerkingen een incorrecte uitkomst hebben. Wanneer we dus deze benadering aftrekken van de oorspronkelijke data, zal de data ongewenst verschuiven volgens de y-as. Hierdoor zal het werken met absolute waarden slechte resultaten opleveren. Omdat de gebruiker zelf kiest welke reeks van kijkrichtingen hij uitvoert, moeten we hier een oplossing voor vinden voor de gevallen waarbij we deze absolute waarden nodig hebben.
+Bij veelvuldige herhaling van dezelfde kijkrichting, wordt een probleem in verband met deze methode zichtbaar. Als er veel en opeenvolgend naar éénzelfde richting gekeken wordt, zullen de waarden in de data algemeen lager of hoger zijn. De gefilterde data zal hierdoor ook algemeen lager of hoger liggen. Dit is een probleem aangezien het de benadering van de biopotentiaal moet voorstellen. Doordat de gevonden benadering foutief is, zullen ook alle volgende bewerkingen een incorrecte uitkomst hebben. Wanneer we dus deze benadering aftrekken van de oorspronkelijke data, zal de data ongewenst verschuiven volgens de y-as. Deze verschuiving illustreren we in figuur~\ref{fig:bio_fout}.   Hierdoor zal het werken met absolute waarden slechte resultaten opleveren. Omdat de gebruiker zelf kiest welke reeks van kijkrichtingen hij uitvoert, kunnen we deze situatie niet vermijden. We willen dan ook een oplossing vinden voor wanneer we de absolute waarden nodig hebben.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{images/bio_fout}
+\caption{Na aftrek van de foutieve benadering van de biopotentiaal zien we dat de waardes ongewenst naar onder zijn gegaan. Hierdoor is rechtdoor kijken niet meer rond de $y = 0$ lijn (groen), maar wel veel lager rond de $y = -10000$ lijn (rood). [TODO betere tekening? deze is gwn van de powerpoint][TODO duidelijke tekening?]}
+\label{fig:bio_fout}
+\end{figure}
 
 \begin{figure}[h]
 \centering
@@ -80,6 +87,8 @@ Bij veelvuldige herhaling van dezelfde kijkrichting, wordt een probleem in verba
 \caption{Het resultaat van de twee filteringen op de originele data. De ruis is sterk verminderd en de sterkte van de knipperingen is afgenomen. De biopotentiaalschommeling is niet helemaal weg, maar wel voldoende verminderd.}
 \label{fig:filtereddata}
 \end{figure}
+
+
 
 Na toepassing van de vorige filteringen, discretiseren we de data. Deze stap is eerder optioneel en wordt enkel in de methode met patronen gebruikt. Het grote voordeel van deze stap is dat we minder berekeningen zullen moeten doen, wat de uitvoeringstijd van het programma ten goede komt. Hiervoor gebruiken we de SAX-discretisatie (Symbolic Aggregate approXimation) \cite{sax}. Eerst wordt de data genormaliseerd. We definiëren op voorhand hoeveel waarden een letter voor moet stellen. Dit is de constante $w$. De data die we willen discretiseren, verdelen we op in partities van lengte $w$. Elke partitie zal een bepaalde letter krijgen, afhankelijk van zijn gemiddelde. Het aantal verschillende letters dat we gebruiken, hangt af van de alfabetgrootte $a$. Volgens de normale verdeling wordt nu elke partitie aan een letter gekoppeld. Zie figuur~\ref{fig:discretization} voor de visuele werking. Eigenlijk stelt elke letter nu een reeks van waarden voor. Om SAX-woorden voor te kunnen stellen in grafieken, geven we elke letter ook een waarde. Dit is het gemiddelde van de intervalgrenzen die de letter op zicht neemt.
 
@@ -154,7 +163,7 @@ Omdat we telkens opnieuw de preprocessing-fase uitvoeren op de bufferdata, moete
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{images/afvlakking}
-\caption{Dit is hetzelfde gefilterde signaal uit figuur~\ref{fig:afvlakking_original} waarbij wel een afvlakking op is uitgevoerd. De afvlakking wordt }
+\caption{Dit is hetzelfde gefilterde signaal uit figuur~\ref{fig:afvlakking_original} waarbij wel een afvlakking op is uitgevoerd. De afvlakking wordt TODO}
 \label{fig:afvlakking}
 \end{figure}
 
@@ -169,20 +178,35 @@ In de calibratie-fase beschikken we over verschillende datasets die gelinkt zijn
 \label{fig:beginend}
 \end{figure}
 
-Voordat we de echte sequenties met elkaar gaan vergelijken, doen we dit eerste met hun genormaliseerde SAX-woorden. Zo kunnen we, zonder al te veel berekeningen, achterhalen welke sequenties in aanmerking komen voor een match. Hiervoor gebruiken we 10 maskers die we op voorhand hebben gedefinieerd. Zo een masker dekt telkens enkele letters van twee te vergelijken SAX-woorden af. Voor elk masker houden we ook een collision matrix bij. Die gebruiken we op de volgende manier. Indien alle overgebleven letters van de SAX-woorden overeen komen, dan wordt de overeenkomstige cel in de collision matrix geincrementeerd. Als we voor alle maskers de collision matrix hebben gemaakt, tellen we al deze matrices met elkaar op. Elk paar van SAX-woorden waarvan de waarde in de overeenkomstige cel van de resulterende matrix groter of gelijk is aan de collision threshold, komt nu in aanmerking voor een match. Deze collision threshold hebben we de waarde 7 gegeven. De oorspronkelijke sequenties van de in aanmerking gekomen SAX-woorden worden nu pas vergeleken. Dit doen we door de euclidische afstand tussen deze genormaliseerde sequenties te berekenen. Pas als deze afstand kleiner is dan de vooraf gedefinieerde range, spreken we van een match.
+Voordat we de echte sequenties met elkaar gaan vergelijken, doen we dit eerste met hun genormaliseerde SAX-woorden. Zo kunnen we, zonder al te veel berekeningen, achterhalen welke sequenties in aanmerking komen voor een match. Hiervoor gebruiken we 10 maskers die we op voorhand hebben gedefinieerd. Bij het kiezen van de maskers, hebben we geprobeerd elke letter even belangrijk te maken, door elke letter even vaak zichtbaar te houden. Een voorbeeld voor een masker is [1,1,0,0], het laat enkel de eerste twee letters zichtbaar.  Zo een masker dekt telkens enkele letters van twee te vergelijken SAX-woorden af, zie voorbeelden in \ref{seq:maskering}. 
+
+\begin{equation}
+\label{seq:maskering}
+\begin{aligned}
+abcd \times [1,1,0,0] = ab \\
+abcd \times [0,1,1,0] = bc \\
+abcd \times [1,0,0,1] = ad \\
+\end{aligned} 
+\end{equation}
+
+Voor elk masker houden we ook een collision matrix bij. Die gebruiken we op de volgende manier. Indien alle zichtbare letters van twee gemaskeerde SAX-woorden overeen komen, dan wordt de overeenkomstige cel in de collision matrix geincrementeerd. Als we voor alle maskers de collision matrix hebben gemaakt, tellen we al deze matrices met elkaar op, zie als voorbeeld tabel~\ref{tab:collision_matrix}. Elk paar van SAX-woorden waarvan de waarde in de overeenkomstige cel van de resulterende matrix groter of gelijk is aan de collision threshold, komt nu in aanmerking voor een match. Deze collision threshold hebben we de waarde 7 gegeven. De oorspronkelijke sequenties van de in aanmerking gekomen SAX-woorden worden nu pas vergeleken. Dit doen we door de euclidische afstand tussen deze genormaliseerde sequenties te berekenen. Pas als deze afstand kleiner is dan de vooraf gedefinieerde range, spreken we van een match.[TODO wordt de collision matrix niet aangevuld ipv aan het einde opgeteld?]
+
 
 \begin{table}
-\caption{Dit is een voorbeeld van een collision matrix. De letters A tot en met D stellen de verschillende SAX-woorden voor. In dit geval hebben SAX-woorden C en D de meeste collisions, namelijk 10.}
+\caption{Dit is een voorbeeld van een complete collision matrix. De vier SAX-woorden van verschillende sequenties staan bij een kolom en rij. De matrix is maar half ingevuld omdat hij symmetrisch is.  De diagonaal is leeg, omdat sequenties niet met zichzelf worden vergeleken. De gebruikte maskers staan onder de tabel. [TODO teveel uitleg?]}
+\label{tab:collision_matrix}
 \centering
 \begin{tabular}{ l || c | c | c | c }
-& A & B & C & D \\ \hline
+& accd & dcda & acda & acda \\ \hline
 \hline
-A & / & 4 & 2 & 2 \\ \hline
-B & / & / & 6 & 3 \\ \hline
-C & / & / & / & 10\\ \hline
-D & / & / & / & / \\
+accd & / & 0 & 1 & 1 \\ \hline
+dcda & / & / & 2 & 2 \\ \hline
+acda & / & / & / & 4 \\ \hline
+acda & / & / & / & / \\
 \hline
 \end{tabular}\par
+
+$[1,1,0,0], [0,01,1], [1,0,0,1], [0,1,1,0]$
 \end{table}
 
 Tijdens de calibratie, vergroten we de collision matrix dynamisch. Dit doen we zodat na de calibratie-fase, niet alle data in één keer verwerkt moet worden, maar wel al tussen door kan gebeuren. Bij de eerste twee sequenties die worden toegevoegd, wordt nog gewoon een collision matrix opgesteld. Bij de derde en volgende sequenties, wordt er een nieuwe rij en kolom toegevoegd die overeenkomt met de nieuwe sequentie. Hiervoor worden de benodigde cellen berekend en ingevuld.
@@ -195,15 +219,19 @@ Pas wanneer achtereenvolgens het beginmotief en het eindmotief herkend worden, g
 
 
 \section{Resultaten}
+
 Bij het uitvoeren van experimenten hebben we ons vooral geconcentreerd op the thresholds-methode. Omdat de methode gebruik makend van patronen zoveel afhangt van verschillende parameters, hebben we dit nog niet kunnen optimaliseren.
 
-De opstelling van de experimenten zag er als volgt uit. De sensoren zijn bevestigd op de het gezicht van de gebruiker door middel van stevige plakkers. Deze moeten blijven plakken zonder tussenkomst van de handen. De sensoren die verantwoordelijk zijn voor het meten van de kijkrichtingen links en rechts zijn bevestigd op de slapen, tegen de ooghoeken. [TODO ook zeggen boven en onder?]. De gebruiker zit op een stoel en kijkt voor zich uit. Hierbij is het ook belangrijk dat de gebruiker niet afgeleid kan worden door bewegende voorwerpen. Het gebruiken van andere gezichtsspieren dan de oogspieren moet zo veel mogelijk vermeden worden. De sensoren vangen de signalen van deze spieren namelijk ook op.
+De opstelling van de experimenten zag er als volgt uit. De sensoren zijn bevestigd op de het gezicht van de gebruiker door middel van stevige plakkers. Deze moeten blijven plakken zonder tussenkomst van de handen. De sensoren die verantwoordelijk zijn voor het meten van de kijkrichtingen links en rechts zijn bevestigd op de slapen, tegen de ooghoeken. [TODO ook zeggen boven en onder?]. De gebruiker zit op een stoel en kijkt voor zich uit. Hierbij is het ook belangrijk dat de gebruiker niet afgeleid kan worden door bewegende voorwerpen. Het gebruiken van andere gezichtsspieren dan de oogspieren moet zo veel mogelijk vermeden worden. De sensoren vangen de signalen van deze spieren namelijk ook op. [TODO miss vb geven van wat mag en niet mag?]
 
-We duiden reeksen van kijkrichtingen aan volgens de definitie van reeks~\ref{seq:definitie}. Tijd $t_i$ staat voor het aantal seconden dat ongeveer in de bijhorende kijkrichting gekeken wordt. $h$ geeft aan hoeveel keer de reeks binnen de accolades herhaalt wordt. [TODO beter ding vinden dan \"equation"] [TODO rechtdoor goed?]
+We duiden reeksen van kijkrichtingen aan volgens de definitie van reeks~\ref{seq:definitie}. We bepalen drie verschillende kijkrichtigen elk met een tijd. Deze tijd $t_i$ staat voor het aantal seconden dat ongeveer in de bijhorende kijkrichting gekeken wordt. $h$ geeft aan hoeveel keer de reeks binnen de accolades herhaalt wordt. [TODO beter ding vinden dan "\\equation"] [TODO rechtdoor goed?ja.] [TODO duidelijker zo?]
 
 \begin{equation}
 \label{seq:definitie}
-rechtdoor(t_1), \{ links (t_1), rechts (t_2) \} \times h
+\begin{aligned}
+& rechtdoor(t_1),  links (t_1), rechts (t_2) \\
+& \{ A, B\} \times h = A_1, B_1, A_2, B_2, ... , A_h, B_h
+\end{aligned}
 \end{equation}
 
 In de calibratie-fase werd er telkens volgens reeks~\ref{seq:calibratie} gekeken.
@@ -234,6 +262,8 @@ $rechtdoor$ & g & h & i \\
 \end{table}
 
 [TODO] gewicht van rechtdoor erin verwerken
+
+[TODO] waarom geen precision voor rechtdoor?
 \begin{equation}
 \label{eq:accuracy}
 accuracy = \frac{a + e + i}{a + b + c + d + e + f + g + h + i}
@@ -257,6 +287,8 @@ precision_{rechts} = \frac{e}{b + e + h}
 
 \subsection{Experiment 1}
 
+In dit experiment laten we een gebruiker reeks~\ref{seq:exp1} volgen. Figuur~\ref{fig:exp1} toont een voorbeeld van hoe het singaal er uitziet voor deze reeks. 
+
 \begin{equation}
 \begin{aligned}
 \label{seq:exp1}
@@ -266,17 +298,21 @@ precision_{rechts} = \frac{e}{b + e + h}
 \end{aligned}
 \end{equation}
 
-In dit experiment laten we een gebruiker reeks~\ref{seq:exp1} volgen. Figuur~\ref{fig:experiment1} toont een voorbeeld van hoe het singaal er uitzag.  
+De gebruiker moet volgens reeks~\ref{seq:exp1} afwisselend links en rechts kijken. We gebruiken eerst deze volgorde, omdat deze zoals eerder vermeld geen problemen oplevert tijdens de preprocessing-stap. We willen eerst weten hoe goed het werkt in ideale omstandigheden, voordat we de minder ideale situaties bekijken. We laten de gebruiker deze reeks vijf keer uitvoeren, om zo een betrouwbaar beeld te krijgen over de resultaten. Deze resultaten hebben we in een confusion matrix, tabel~\ref{tab:exp1}, weergegeven.
+
+
+
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{images/experiment1}
 \caption{Een voorbeeld signaal bij uitvoering van experiment 1. [TODO meer uitleg?]}
-\label{fig:experiment1}
+\label{fig:exp1}
 \end{figure}
 
 \begin{table}[h]
-\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp1}.}
+\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp1} en de enkele berekende maatstaven.}
+\label{tab:exp1}
 \centering
 \begin{tabular}{ l || c | c | c }
 \backslashbox{Voorspelling~}{Echt~~}
@@ -287,10 +323,118 @@ $rechts$ & 0 & e & 0 \\ \hline
 $rechtdoor$ & g & h & 55 \\
 \hline
 \end{tabular}\par
+
+\begin{equation*}
+\begin{aligned}
+&accuracy = ?? &\\
+& precision_{links} = ?? & recall_{links} = ?? & \\
+& precision_{rechts} = ?? & recall_{rechts} = ?? &
+\end{aligned}
+\end{equation*}
+
+\end{table}
+
+
+Aan de hand van deze confusion matrix, tabel~\ref{tab:exp1}, berekenen we vervolgens de onderzoeks maatstaven. 
+
+\begin{table}[h]
+\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp1} van een tweede gebruiker.}
+\label{tab:exp1_2}
+\centering
+\begin{tabular}{ l || c | c | c }
+\backslashbox{Voorspelling~}{Echt~~}
+& $links$ & $rechts$ & $rechtdoor$ \\ \hline
+\hline
+$links$ & a & 0 & 0 \\ \hline
+$rechts$ & 0 & e & 0 \\ \hline
+$rechtdoor$ & g & h & 55 \\
+\hline
+\end{tabular}\par
+
+\begin{equation*}
+\begin{aligned}
+&accuracy = ?? &\\
+& precision_{links} = ?? & recall_{links} = ?? & \\
+& precision_{rechts} = ?? & recall_{rechts} = ?? &
+\end{aligned}
+\end{equation*}
+
+\end{table}
+
+\subsection{Experiment 2}
+
+Nu we weten hoe goed thresholds werken in de ideale omstandigheden, gaan we in het tweede experiment een mindere ideale situatie bekijken. We laten de gebruiker meerdere opeenvolgende keren naar dezelfde richting kijken, volgens reeks~\ref{seq:exp2}. Figuur~\ref{fig:exp2} geeft een voorbeeld van hoe het signaal eruit ziet. Zoals we in bij preprocessing hebben vermeld, zal deze volgorde voor problemen kunnen zorgen in de preprocessing-stap. Dit experiment hebben we dan ook gekozen om onze oplossing, afvlakking, uit te testen.
+
+\begin{equation}
+\begin{aligned}
+\label{seq:exp2}
+& \{rechtdoor(TODO), links(TODO) & \\
+& rechtdoor(TODO), rechts(TODO)\} \times 5,& \\
+& rechtdoor(TODO) &
+\end{aligned}
+\end{equation}
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{images/experiment2}
+\caption{Een voorbeeld signaal bij uitvoering van experiment 2. [TODO meer uitleg?]}
+\label{fig:exp2}
+\end{figure}
+
+\begin{table}[h]
+\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp2}.}
+\label{tab:exp2}
+\centering
+\begin{tabular}{ l || c | c | c }
+\backslashbox{Voorspelling~}{Echt~~}
+& $links$ & $rechts$ & $rechtdoor$ \\ \hline
+\hline
+$links$ & a & b & c \\ \hline
+$rechts$ & d & e & f \\ \hline
+$rechtdoor$ & g & h & i \\
+\hline
+\end{tabular}\par
+
+\begin{equation*}
+\begin{aligned}
+&accuracy = ?? &\\
+& precision_{links} = ?? & recall_{links} = ?? & \\
+& precision_{rechts} = ?? & recall_{rechts} = ?? &
+\end{aligned}
+\end{equation*}
+
+\end{table}
+
+
+
+\begin{table}[h]
+\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp2} van een tweede gebruiker.}
+\label{tab:exp2}
+\centering
+\begin{tabular}{ l || c | c | c }
+\backslashbox{Voorspelling~}{Echt~~}
+& $links$ & $rechts$ & $rechtdoor$ \\ \hline
+\hline
+$links$ & a & b & c \\ \hline
+$rechts$ & d & e & f \\ \hline
+$rechtdoor$ & g & h & i \\
+\hline
+\end{tabular}\par
+
+\begin{equation*}
+\begin{aligned}
+&accuracy = ?? &\\
+& precision_{links} = ?? & recall_{links} = ?? & \\
+& precision_{rechts} = ?? & recall_{rechts} = ?? &
+\end{aligned}
+\end{equation*}
+
 \end{table}
 
 \section{Conclusie}
 TODO
+
 
 \section*{Acknowledgements}
 Onder begeleiding van Wannes Meert en prof. Luc De Raedt.
