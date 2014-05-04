@@ -224,7 +224,7 @@ Bij het uitvoeren van experimenten hebben we ons vooral geconcentreerd op the th
 
 De opstelling van de experimenten zag er als volgt uit. De sensoren zijn bevestigd op de het gezicht van de gebruiker door middel van stevige plakkers. Deze moeten blijven plakken zonder tussenkomst van de handen. De sensoren die verantwoordelijk zijn voor het meten van de kijkrichtingen links en rechts zijn bevestigd op de slapen, tegen de ooghoeken. [TODO ook zeggen boven en onder?]. De gebruiker zit op een stoel en kijkt voor zich uit. Hierbij is het ook belangrijk dat de gebruiker niet afgeleid kan worden door bewegende voorwerpen. Het gebruiken van andere gezichtsspieren dan de oogspieren moet zo veel mogelijk vermeden worden. De sensoren vangen de signalen van deze spieren namelijk ook op. [TODO miss vb geven van wat mag en niet mag?]
 
-We duiden reeksen van kijkrichtingen aan volgens de definitie van reeks~\ref{seq:definitie}. We bepalen drie verschillende kijkrichtigen elk met een tijd. Deze tijd $t_i$ staat voor het aantal seconden dat ongeveer in de bijhorende kijkrichting gekeken wordt. $h$ geeft aan hoeveel keer de reeks binnen de accolades herhaalt wordt. [TODO beter ding vinden dan "\\equation"] [TODO rechtdoor goed?ja.] [TODO duidelijker zo?]
+We duiden reeksen van kijkrichtingen aan volgens de definitie van reeks~\ref{seq:definitie}. We bepalen drie verschillende kijkrichtigen elk met een tijd. Deze tijd $t_i$ staat voor het aantal seconden dat ongeveer in de bijhorende kijkrichting gekeken wordt. $h$ geeft aan hoeveel keer de reeks binnen de accolades herhaald wordt. [TODO beter ding vinden dan "\\equation"]
 
 \begin{equation}
 \label{seq:definitie}
@@ -245,7 +245,7 @@ In de calibratie-fase werd er telkens volgens reeks~\ref{seq:calibratie} gekeken
 \end{aligned}
 \end{equation}
 
-Resultaten verwerken we door middel van een confusion matrix. Elke rij en kolom stelt een kijkrichting voor. Op de diagonaal staan alle succesvolle voorspellingen [TODO meer uitleg?]. Aan de hand van deze matrix berekenen we de $accuracy$ (\ref{eq:accuracy}), $recall_k$ (\ref{eq:recall}) en $precision_k$ (\ref{eq:precision}). Hierbij staat $k$ voor de relevante kijkrichting. De kijkrichting $rechtdoor$ geven we een zeer klein gewicht van $1/10$ mee, omdat deze kijkrichting veel gebruikt wordt in de experimenten en een vertekend beeld kan scheppen.
+Resultaten verwerken we door middel van een confusion matrix. Elke rij en kolom stelt een kijkrichting voor. Op de diagonaal staan alle succesvolle voorspellingen [TODO meer uitleg?]. Aan de hand van deze matrix berekenen we de $accuracy$ (\ref{eq:accuracy}), $recall_k$ (\ref{eq:recall}) en $precision_k$ (\ref{eq:precision}). Hierbij staat $k$ voor de relevante kijkrichting.[TODO uitleg accuracy]. $recall_k$ staat voor het percentage van gekeken kijkrichtingen van kijkrichting $k$ die voorspeld zijn. $precision_k$ staat voor het percentage van voorspellingen van de kijkrichting $k$ die juist zijn. De kijkrichting $rechtdoor$ geven we een zeer klein gewicht van $1/10$ mee, omdat deze kijkrichting veel gebruikt wordt in de experimenten en een vertekend beeld kan scheppen.
 
 \begin{table}[h]
 \caption{Deze tabel stelt de confusion matrix voor.}
@@ -264,26 +264,31 @@ $rechtdoor$ & g & h & i \\
 [TODO] gewicht van rechtdoor erin verwerken
 
 [TODO] waarom geen precision voor rechtdoor?
+
 \begin{equation}
 \label{eq:accuracy}
-accuracy = \frac{a + e + i}{a + b + c + d + e + f + g + h + i}
+accuracy = \frac{a + e + \frac{i}{10}}{a + b + c + d + e + f + g + h + \frac{i}{10}}
 \end{equation}
 
 \begin{equation}
 \begin{aligned}
 \label{eq:recall}
-recall_{links} = \frac{a}{a + b + c} \\
-recall_{rechts} = \frac{e}{d + e + f}
+recall_{links} = \frac{a}{a + d + g} \\
+recall_{rechts} = \frac{e}{b + e + h}
 \end{aligned}
 \end{equation}
 
 \begin{equation}
 \begin{aligned}
 \label{eq:precision}
-precision_{links} = \frac{a}{a + d + g} \\
-precision_{rechts} = \frac{e}{b + e + h}
+precision_{links} = \frac{a}{a + b + c} \\
+precision_{rechts} = \frac{e}{d + e + f}
 \end{aligned}
 \end{equation}
+
+Deze testen zijn uitgevoerd op twee verschillende personen. We noemen ze \textit{gebruiker1} en \textit{gebruiker 2}. We laten de gebruikers de reeksen vijf keer uitvoeren, om zo een betrouwbaar beeld te krijgen van de resultaten.
+
+[TODO uitleg over het apparaat dat we gebruiken]
 
 \subsection{Experiment 1}
 
@@ -292,15 +297,13 @@ In dit experiment laten we een gebruiker reeks~\ref{seq:exp1} volgen. Figuur~\re
 \begin{equation}
 \begin{aligned}
 \label{seq:exp1}
-& \{rechtdoor(TODO), links(TODO)\} \times 5,& \\
-& \{rechtdoor(TODO), rechts(TODO)\} \times 5,& \\
-& rechtdoor(TODO) &
+& \{rechtdoor(5), links(2)\} \times 5,& \\
+& \{rechtdoor(5), rechts(2)\} \times 5,& \\
+& rechtdoor(5) &
 \end{aligned}
 \end{equation}
 
-De gebruiker moet volgens reeks~\ref{seq:exp1} afwisselend links en rechts kijken. We gebruiken eerst deze volgorde, omdat deze zoals eerder vermeld geen problemen oplevert tijdens de preprocessing-stap. We willen eerst weten hoe goed het werkt in ideale omstandigheden, voordat we de minder ideale situaties bekijken. We laten de gebruiker deze reeks vijf keer uitvoeren, om zo een betrouwbaar beeld te krijgen over de resultaten. Deze resultaten hebben we in een confusion matrix, tabel~\ref{tab:exp1}, weergegeven.
-
-
+De gebruiker moet volgens reeks~\ref{seq:exp1} afwisselend links en rechts kijken. We gebruiken eerst deze volgorde, omdat deze zoals eerder vermeld geen problemen oplevert tijdens de preprocessing-stap. We willen eerst weten hoe goed het systeem werkt in ideale omstandigheden, voordat we de minder ideale situaties bekijken. Deze resultaten hebben we in een confusion matrix, tabel~\ref{tab:exp1}, weergegeven.
 
 
 \begin{figure}[h]
@@ -311,24 +314,24 @@ De gebruiker moet volgens reeks~\ref{seq:exp1} afwisselend links en rechts kijke
 \end{figure}
 
 \begin{table}[h]
-\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp1} en de enkele berekende maatstaven.}
+\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp1} door \textit{gebruiker1} en de berekende maatstaven.}
 \label{tab:exp1}
 \centering
 \begin{tabular}{ l || c | c | c }
 \backslashbox{Voorspelling~}{Echt~~}
 & $links$ & $rechts$ & $rechtdoor$ \\ \hline
 \hline
-$links$ & a & 0 & 0 \\ \hline
-$rechts$ & 0 & e & 0 \\ \hline
-$rechtdoor$ & g & h & 55 \\
+$links$ & 18 & 0 & 0 \\ \hline
+$rechts$ & 0 & 25 & 0 \\ \hline
+$rechtdoor$ & 7 & 0 & 55 \\
 \hline
 \end{tabular}\par
 
 \begin{equation*}
 \begin{aligned}
-&accuracy = ?? &\\
-& precision_{links} = ?? & recall_{links} = ?? & \\
-& precision_{rechts} = ?? & recall_{rechts} = ?? &
+&accuracy = 0,93 &\\
+& precision_{links} = 1 & recall_{links} = 0,72 & \\
+& precision_{rechts} = 1 & recall_{rechts} = 1 &
 \end{aligned}
 \end{equation*}
 
@@ -338,28 +341,30 @@ $rechtdoor$ & g & h & 55 \\
 Aan de hand van deze confusion matrix, tabel~\ref{tab:exp1}, berekenen we vervolgens de onderzoeks maatstaven. 
 
 \begin{table}[h]
-\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp1} van een tweede gebruiker.}
+\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp1} door \textit{gebruiker2} en de berekende maatstaven.}
 \label{tab:exp1_2}
 \centering
 \begin{tabular}{ l || c | c | c }
 \backslashbox{Voorspelling~}{Echt~~}
 & $links$ & $rechts$ & $rechtdoor$ \\ \hline
 \hline
-$links$ & a & 0 & 0 \\ \hline
-$rechts$ & 0 & e & 0 \\ \hline
-$rechtdoor$ & g & h & 55 \\
+$links$ & 24 & 0 & 0 \\ \hline
+$rechts$ & 0 & 19 & 0 \\ \hline
+$rechtdoor$ & 1 & 6 & 55 \\
 \hline
 \end{tabular}\par
 
 \begin{equation*}
 \begin{aligned}
-&accuracy = ?? &\\
-& precision_{links} = ?? & recall_{links} = ?? & \\
-& precision_{rechts} = ?? & recall_{rechts} = ?? &
+&accuracy = 0,93 &\\
+& precision_{links} = 1 & recall_{links} = 0,96 & \\
+& precision_{rechts} = 1 & recall_{rechts} = 0,76 &
 \end{aligned}
 \end{equation*}
 
 \end{table}
+
+[TODO bespreking van de resultaten]
 
 \subsection{Experiment 2}
 
@@ -368,9 +373,9 @@ Nu we weten hoe goed thresholds werken in de ideale omstandigheden, gaan we in h
 \begin{equation}
 \begin{aligned}
 \label{seq:exp2}
-& \{rechtdoor(TODO), links(TODO) & \\
-& rechtdoor(TODO), rechts(TODO)\} \times 5,& \\
-& rechtdoor(TODO) &
+& \{rechtdoor(5), links(2) & \\
+& rechtdoor(5), rechts(2)\} \times 5,& \\
+& rechtdoor(5) &
 \end{aligned}
 \end{equation}
 
@@ -383,7 +388,7 @@ Nu we weten hoe goed thresholds werken in de ideale omstandigheden, gaan we in h
 \end{figure}
 
 \begin{table}[h]
-\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp2}.}
+\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp2} door \textit{gebruiker1} en de berekende maatstaven.}
 \label{tab:exp2}
 \centering
 \begin{tabular}{ l || c | c | c }
@@ -409,28 +414,41 @@ $rechtdoor$ & g & h & i \\
 
 
 \begin{table}[h]
-\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp2} van een tweede gebruiker.}
+\caption{Confusion matrix na uitvoering van 5 keer reeks~\ref{seq:exp2} door \textit{gebruiker2} en de berekende maatstaven.}
 \label{tab:exp2}
 \centering
 \begin{tabular}{ l || c | c | c }
 \backslashbox{Voorspelling~}{Echt~~}
 & $links$ & $rechts$ & $rechtdoor$ \\ \hline
 \hline
-$links$ & a & b & c \\ \hline
-$rechts$ & d & e & f \\ \hline
-$rechtdoor$ & g & h & i \\
+$links$ & 17 & 0 & 1 \\ \hline
+$rechts$ & 0 & 8 & 0 \\ \hline
+$rechtdoor$ & 8 & 17 & 54 \\
 \hline
 \end{tabular}\par
 
 \begin{equation*}
 \begin{aligned}
-&accuracy = ?? &\\
-& precision_{links} = ?? & recall_{links} = ?? & \\
-& precision_{rechts} = ?? & recall_{rechts} = ?? &
+&accuracy = 0,75 &\\
+& precision_{links} = 0,94 & recall_{links} = 0,68 & \\
+& precision_{rechts} = 1 & recall_{rechts} = 0,47 &
 \end{aligned}
 \end{equation*}
 
 \end{table}
+
+\subsection{Experiment 3}
+
+Het apparaat dat we gebruiken probeert de biopotentiaalschommelingen te filteren door telkens het signaal langzaam af te vlakken naar de neutrale staat (de staat wanneer er rechtdoor gekeken wordt). Wanneer er bijvoorbeeld lang naar links gekeken wordt, verschuift het signaal volgens de y-as. Als er nu terug rechtdoor gekeken wordt, lijkt het alsof er naar rechts gekeken wordt[TODO voorbeeld figuur]. We verwachtten dat als tussen het links en rechts kijken voor een langere periode rechtdoor gekeken wordt, dit effect teniet wordt gedaan. Dit hebben we getest in dit experiment.
+
+\begin{equation}
+\begin{aligned}
+\label{seq:exp3}
+& \{rechtdoor(TODO), links(TODO) & \\
+& rechtdoor(TODO), rechts(TODO)\} \times 5,& \\
+& rechtdoor(TODO) &
+\end{aligned}
+\end{equation}
 
 \section{Conclusie}
 TODO
