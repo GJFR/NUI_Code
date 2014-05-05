@@ -40,7 +40,7 @@ Gertjan Franken \\ Katholieke Universiteit Leuven\\ Departement Computerwetensch
 \maketitle
 
 \begin{abstract}
-In de zoektocht naar natuurlijke user interfaces gebeurt er onderzoek naar besturing door middel van de ogen. In deze paper wordt gebruik gemaakt van EMG (Elektromyografie) signalen om eenvoudige oogbewegingen te detecteren. Hiervoor onderzoeken we twee verschillende methodes: thresholds en patronen. In deze tekst bespreken en vergelijken we beide methodes uitvoerig. [TODO conclusie zin?]
+In de zoektocht naar natuurlijke user interfaces gebeurt er onderzoek naar besturing door middel van de ogen. In deze paper wordt gebruik gemaakt van EMG (Elektromyografie) signalen om eenvoudige oogbewegingen te detecteren. Hiervoor onderzoeken we twee verschillende methodes: thresholds en patronen. In deze tekst bespreken we beide methodes uitvoerig. We hebben in dit onderzoek ondervonden dat de thresholds-methode zeer geschikt kan zijn, indien bepaalde problemen opgelost kunnen worden. Daarnaast kan de patronen-methode ook geschikt zijn, indien er verder gezocht wordt naar de optimale parameters.
 \end{abstract}
 
 \section{Introductie}
@@ -215,8 +215,6 @@ acda & / & / & / & / \\
 
 $[1,1,0,0], [0,0,1,1], [1,0,0,1], [0,1,1,0]$
 \end{table}
-
-Tijdens de calibratie, vergroten we de collision matrix dynamisch. Dit doen we zodat na de calibratie-fase, niet alle data in één keer verwerkt moet worden, maar wel al tussen door kan gebeuren. Bij de eerste twee sequenties die worden toegevoegd, wordt nog gewoon een collision matrix opgesteld. Bij de derde en volgende sequenties, wordt er een nieuwe rij en kolom toegevoegd die overeenkomt met de nieuwe sequentie. Hiervoor worden de benodigde cellen berekend en ingevuld. [TODO]
 
 Nu we alle matches hebben gevonden, kunnen we elke sequentie aan een lijst met al zijn matches koppelen. Met behulp van deze lijsten, kunnen we de sequenties rangschikken. We sorteren alle sequenties op het aantal matches dat ze hebben, met de sequentie met de meeste matches vooraan. In het geval dat twee sequenties evenveel matches zouden hebben, krijgt de sequentie met de kleinste totale euclidische afstand tot zijn matches voorrang.
 
@@ -512,8 +510,12 @@ $rechtdoor$ & 0 & 10 & 50 \\
 
 De resultaten zijn fel verbeterd ten opzichte van experiment 2. Hier vinden we de verbetering van de $recall$ voor beide kijkrichtingen het interessantste. Dit wilt namelijk zeggen dat er een kleinere verschuiving plaats vindt, waardoor er minder kijkrichtingen gemist worden door het programma. De $recall_{rechts}$ waarde van \textit{gebruiker 2} is bijna niet verbeterd, maar we vermoeden dat dit aan andere factoren ligt, zoals de plaats van de sensoren op het gezicht. De potentiaalverschillen gemeten bij deze gebruiker waren namelijk veel kleiner dan bij \textit{gebruiker 1}. Uit dit experiment hebben we afgeleid dat langere pauzes nemen tussen bij het herhalen van kijkrichtingen, voordelige effecten heeft op het resultaat.
 
-\section{Conclusie}
-TODO
+\section{Conclusies}
+We hebben de mogelijkheid onderzocht om kijkrichtingen te detecteren door middel van EMG signalen. Dit kan gebruikt worden in toepassingen omtrent natural user interfaces. We onderzochten twee verschillende methodes.
+
+De thresholds-methode hebben we uitvoerig besproken en getest. Hierbij bleek het grote probleem de filtering van de biopotentiaalfluctuaties te zijn. Deze filtering kon de absolute waarden ongewild wijzigen. Hiervoor hebben we een oplossing bedacht, namelijk afvlakking. De testen voor deze oplossing gaven een licht vertekend beeld omwille van de hardware die al deels op een naïve manier een filtering uitvoerde. We zijn van mening dat indien deze problemen omtrent de biopotentiaalfluctuaties onder controle gehouden kunnen worden, deze methode zeer accuraat zal zijn.
+
+De patronen-methode hebben we uitvoerig besproken, maar niet getest. Door de vele parameters waarvan deze methode afhankelijk is, is het moeilijk een optimale configuratie samen te stellen. We hebben gemerkt dat deze methode meer intensief is dan de thresholds-methode. 
 
 
 \section*{Acknowledgements}
