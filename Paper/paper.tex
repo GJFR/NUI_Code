@@ -209,7 +209,7 @@ acda & / & / & / & / \\
 $[1,1,0,0], [0,0,1,1], [1,0,0,1], [0,1,1,0]$
 \end{table}
 
-Tijdens de calibratie, vergroten we de collision matrix dynamisch. Dit doen we zodat na de calibratie-fase, niet alle data in één keer verwerkt moet worden, maar wel al tussen door kan gebeuren. Bij de eerste twee sequenties die worden toegevoegd, wordt nog gewoon een collision matrix opgesteld. Bij de derde en volgende sequenties, wordt er een nieuwe rij en kolom toegevoegd die overeenkomt met de nieuwe sequentie. Hiervoor worden de benodigde cellen berekend en ingevuld.
+Tijdens de calibratie, vergroten we de collision matrix dynamisch. Dit doen we zodat na de calibratie-fase, niet alle data in één keer verwerkt moet worden, maar wel al tussen door kan gebeuren. Bij de eerste twee sequenties die worden toegevoegd, wordt nog gewoon een collision matrix opgesteld. Bij de derde en volgende sequenties, wordt er een nieuwe rij en kolom toegevoegd die overeenkomt met de nieuwe sequentie. Hiervoor worden de benodigde cellen berekend en ingevuld. [TODO]
 
 Nu we per sequentie het aantal matches hebben, kunnen we een rangschikking maken. We sorteren alle sequenties op het aantal matches dat ze hebben, met de sequentie met het de meeste matches vooraan. In het geval dat twee sequenties evenveel matches zouden hebben, krijgt de sequentie met de kleinste totale minimale euclidische afstand tot zijn matches voorrang.
 
@@ -327,7 +327,7 @@ $rechtdoor$ & 7 & 0 & 55 \\
 
 \begin{equation*}
 \begin{aligned}
-&accuracy = 0,93 &\\
+&accuracy = 0,87 &\\
 & precision_{links} = 1 & recall_{links} = 0,72 & \\
 & precision_{rechts} = 1 & recall_{rechts} = 1 &
 \end{aligned}
@@ -354,7 +354,7 @@ $rechtdoor$ & 1 & 6 & 55 \\
 
 \begin{equation*}
 \begin{aligned}
-&accuracy = 0,93 &\\
+&accuracy = 0,87 &\\
 & precision_{links} = 1 & recall_{links} = 0,96 & \\
 & precision_{rechts} = 1 & recall_{rechts} = 0,76 &
 \end{aligned}
@@ -393,17 +393,17 @@ Nu we weten hoe goed thresholds werken in de ideale omstandigheden, gaan we in h
 \backslashbox{Herkend~}{Echt~~}
 & $links$ & $rechts$ & $rechtdoor$ \\ \hline
 \hline
-$links$ & a & b & c \\ \hline
-$rechts$ & d & e & f \\ \hline
-$rechtdoor$ & g & h & i \\
+$links$ & 16 & 0 & 5 \\ \hline
+$rechts$ & 0 & 14 & 0 \\ \hline
+$rechtdoor$ & 9 & 11 & 50 \\
 \hline
 \end{tabular}\par
 
 \begin{equation*}
 \begin{aligned}
-&accuracy = ?? &\\
-& precision_{links} = ?? & recall_{links} = ?? & \\
-& precision_{rechts} = ?? & recall_{rechts} = ?? &
+&accuracy = 0,58 &\\
+& precision_{links} = 0,76 & recall_{links} = 0,64 & \\
+& precision_{rechts} = 1 & recall_{rechts} = 0,56 &
 \end{aligned}
 \end{equation*}
 
@@ -427,7 +427,7 @@ $rechtdoor$ & 8 & 17 & 54 \\
 
 \begin{equation*}
 \begin{aligned}
-&accuracy = 0,75 &\\
+&accuracy = 0,54 &\\
 & precision_{links} = 0,94 & recall_{links} = 0,68 & \\
 & precision_{rechts} = 1 & recall_{rechts} = 0,47 &
 \end{aligned}
@@ -455,15 +455,64 @@ Het apparaat dat we gebruiken probeert de biopotentiaalschommelingen te filteren
 \end{aligned}
 \end{equation}
 
+<<<<<<< HEAD
 
+=======
+\begin{table}[h]
+\caption{Confusion matrix na uitvoering van experiment 3 door \textit{gebruiker 1} en de berekende maatstaven.}
+\label{tab:exp1}
+\centering
+\begin{tabular}{ l || c | c | c }
+\backslashbox{Herkend~}{Echt~~}
+& $links$ & $rechts$ & $rechtdoor$ \\ \hline
+\hline
+$links$ & 24 & 0 & 1 \\ \hline
+$rechts$ & 0 & 20 & 0 \\ \hline
+$rechtdoor$ & 1 & 5 & 54 \\
+\hline
+\end{tabular}\par
+
+\begin{equation*}
+\begin{aligned}
+&accuracy = 0,88 &\\
+& precision_{links} = 0,96 & recall_{links} = 0,96 & \\
+& precision_{rechts} = 1 & recall_{rechts} = 0,8 &
+\end{aligned}
+\end{equation*}
+
+\end{table}
+
+\begin{table}[h]
+\caption{Confusion matrix na uitvoering van experiment 3 door \textit{gebruiker 2} en de berekende maatstaven.}
+\label{tab:exp1}
+\centering
+\begin{tabular}{ l || c | c | c }
+\backslashbox{Herkend~}{Echt~~}
+& $links$ & $rechts$ & $rechtdoor$ \\ \hline
+\hline
+$links$ & 25 & 0 & 4 \\ \hline
+$rechts$ & 0 & 15 & 1 \\ \hline
+$rechtdoor$ & 0 & 10 & 50 \\
+\hline
+\end{tabular}\par
+
+\begin{equation*}
+\begin{aligned}
+&accuracy = 0,75 &\\
+& precision_{links} = 0,86 & recall_{links} = 1 & \\
+& precision_{rechts} = 0,94 & recall_{rechts} = 0,6 &
+\end{aligned}
+\end{equation*}
+
+\end{table}
+>>>>>>> 9d9ed776aa41926dcbf1e26dd6df7779d1426863
 
 \section{Conclusie}
 TODO
 
 
 \section*{Acknowledgements}
-Onder begeleiding van Wannes Meert en prof. Luc De Raedt.
-TODO
+We zouden graag Dr. Wannes Meert en Prof. Dr. Luc de Raedt willen bedanken voor hun begeleiding. Daarnaast danken we ook InnovationLab van KU Leuven voor het ter beschikking stellen van de gebruikte sensoren en hun toebehoren.
 
 \appendix
 
@@ -472,4 +521,3 @@ TODO
 \bibliography{paper}
 
 \end{document}
-
