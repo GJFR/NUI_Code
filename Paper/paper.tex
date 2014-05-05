@@ -224,7 +224,7 @@ Bij het uitvoeren van experimenten hebben we ons vooral geconcentreerd op the th
 
 De opstelling van de experimenten zag er als volgt uit. De sensoren zijn bevestigd op de het gezicht van de gebruiker door middel van stevige plakkers. Deze moeten blijven plakken zonder tussenkomst van de handen. De sensoren die verantwoordelijk zijn voor het meten van de kijkrichtingen links en rechts zijn bevestigd op de slapen, tegen de ooghoeken. De sensoren verantwoordelijk voor de kijkrichtingen boven en onder hebben we niet gebruikt in deze experimenten. De gebruiker zit op een stoel en kijkt voor zich uit. Hierbij is het ook belangrijk dat de gebruiker niet afgeleid kan worden door bewegende voorwerpen. Het gebruiken van andere gezichtsspieren dan de oogspieren moet zo veel mogelijk vermeden worden. De sensoren vangen de signalen van deze spieren namelijk ook op. Lachen kan bijvoorbeeld niet, rustig praten kan zolang het niet zichtbaar is in het gemeten signaal.
 
-De sensoren zijn aangesloten met een EOG Bord, gemaakt aan het Innovation Lab van de KU Leuven. Dit apparaat voert al een naïve biopotentiaalfiltering uit op het signaal. Het vlakt het signaal altijd af naar de neutrale waarde (de waarde verkregen bij het rechtdoor kijken). Hierdoor wordt de intensiteit van het kijken naar links en rechts geleidelijk aan afgezwakt.
+De sensoren zijn aangesloten op een EOG Bord, gemaakt door InnovationLab van de KU Leuven. Dit apparaat voert al een redelijk naïve biopotentiaalfiltering uit op het signaal. Het vlakt het signaal altijd af naar de neutrale waarde (de waarde verkregen bij het rechtdoor kijken). Hierdoor wordt de intensiteit van het kijken naar links en rechts geleidelijk aan afgezwakt.
 
 We duiden reeksen van kijkrichtingen aan volgens de definitie van reeks~\ref{seq:definitie}. We bepalen drie verschillende kijkrichtigen elk met een tijd. Deze tijd $t_i$ staat voor het aantal seconden dat ongeveer in de bijhorende kijkrichting gekeken wordt. $h$ geeft aan hoeveel keer de reeks binnen de accolades herhaald wordt.
 
@@ -263,8 +263,6 @@ $rechtdoor$ & g & h & i \\
 \end{tabular}\par
 \end{table}
 
-[TODO] gewicht van rechtdoor erin verwerken
-
 \begin{equation}
 \label{eq:accuracy}
 accuracy = \frac{a + e + \frac{i}{10}}{a + b + c + d + e + f + g + h + \frac{i}{10}}
@@ -286,7 +284,7 @@ precision_{rechts} = \frac{e}{d + e + f}
 \end{aligned}
 \end{equation}
 
-Deze testen zijn uitgevoerd op twee verschillende personen. We noemen ze \textit{gebruiker 1} en \textit{gebruiker 2}. We laten de gebruikers de reeksen vijf keer uitvoeren, om zo een betrouwbaar beeld te krijgen van de resultaten.
+Deze testen zijn uitgevoerd op twee verschillende personen. We noemen ze \textit{gebruiker 1} en \textit{gebruiker 2}. We laten de gebruikers elke reeks vijf keer uitvoeren, om zo een betrouwbaar beeld te krijgen van de prestaties van het programma.
 
 \subsection{Experiment 1}
 
@@ -366,7 +364,7 @@ $rechtdoor$ & 1 & 6 & 55 \\
 
 \subsection{Experiment 2}
 
-Nu we weten hoe goed thresholds werken in de ideale omstandigheden, gaan we in het tweede experiment een mindere ideale situatie bekijken. We laten de gebruiker meerdere opeenvolgende keren naar dezelfde richting kijken, volgens reeks~\ref{seq:exp2}. Figuur~\ref{fig:exp2} geeft een voorbeeld van hoe het signaal eruit ziet. Zoals we in bij preprocessing hebben vermeld, zal deze volgorde voor problemen kunnen zorgen in de preprocessing-stap. Dit experiment hebben we dan ook gekozen om onze oplossing, afvlakking, uit te testen.
+Nu we weten hoe goed thresholds werken in de ideale omstandigheden, gaan we in het tweede experiment een minder ideale situatie bekijken. We laten de gebruiker meerdere opeenvolgende keren naar dezelfde richting kijken, volgens reeks~\ref{seq:exp2}. Figuur~\ref{fig:exp2} geeft een voorbeeld van hoe het signaal er uit ziet. Zoals we in bij preprocessing hebben vermeld, zal deze volgorde voor problemen kunnen zorgen in de preprocessing-stap. Dit experiment hebben we dan ook gekozen om onze oplossing, afvlakking, uit te testen.
 
 \begin{equation}
 \begin{aligned}
@@ -381,12 +379,12 @@ Nu we weten hoe goed thresholds werken in de ideale omstandigheden, gaan we in h
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{images/experiment2}
-\caption{Een voorbeeld signaal bij uitvoering van experiment 2. Er is duidelijk te zien dat er eerst naar links werd gekeken en daarna naar rechts. Door de naïve biopotentiaalfiltering heeft er een verschuiving van waarden plaats gevonden in het signaal. Dit zorgt ervoor dat de bovengrens moeilijker te overschrijden is naarmate men een bepaalde kijkrichting herhaalt.}
+\caption{Een voorbeeld signaal bij uitvoering van experiment 2. Er is duidelijk te zien dat er eerst naar links werd gekeken en daarna naar rechts. Door de naïve biopotentiaalfiltering van de hardware heeft er een verschuiving van waarden plaats gevonden in het signaal. Dit zorgt ervoor dat de bovengrens moeilijker te overschrijden is naarmate men een bepaalde kijkrichting herhaalt.}
 \label{fig:exp2}
 \end{figure}
 
 \begin{table}[h]
-\caption{Confusion matrix na uitvoering van experiment 2 door \textit{gebruiker 1} en de berekende maatstaven. [TODO nieuwe berekenng]}
+\caption{Confusion matrix na uitvoering van experiment 2 door \textit{gebruiker 1} en de berekende maatstaven.}
 \label{tab:exp2}
 \centering
 \begin{tabular}{ l || c | c | c }
@@ -434,6 +432,8 @@ $rechtdoor$ & 8 & 17 & 54 \\
 \end{equation*}
 
 \end{table}
+
+Dit experiment heeft veel minder goede resulaten dan het eerste experiment. De $accuracy$ en $recall$ zijn allebei duidelijk slechter. Dit kunnen we verklaren aan de hand van figuur~\ref{fig:exp2}. Er is duidelijk een verschuiving volgens de y-as te zien, maar dit is een gevolg van de biopotentiaalfiltering van de sensoren zelf. Door het geleidelijk afzwakken van het signaal terwijl er naar links of rechts gekeken wordt, zal bij het terug rechtdoor kijken, het signaal niet rond de neutrale lijn liggen. Het zal eerder uitwijken naar de tegenovergestelde kijkrichting, waardoor het moeilijker wordt om herhaalde kijkrichtingen te herkennen. Dit verklaart de lage $recall$ voor beide kijkrichtingen. Hieruit leiden we af dat deze naïve biopotentiaalfiltering niet de beste oplossing is voor alle situaties.
 
 \subsection{Experiment 3}
 
@@ -502,6 +502,8 @@ $rechtdoor$ & 0 & 10 & 50 \\
 \end{equation*}
 
 \end{table}
+
+De resultaten zijn fel verbeterd ten opzichte van experiment 2. TODO
 
 \section{Conclusie}
 TODO
