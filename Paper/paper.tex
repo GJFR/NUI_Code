@@ -58,7 +58,12 @@ Het signaal dat we krijgen doorgestuurd, afkomstig van de sensoren, is zeer ruw.
 \label{fig:originaldata}
 \end{figure}
 
-Als eerste gaan we de ruis en knipperingen zo goed mogelijk proberen te verminderen. Dit gebeurt door middel van een low-pass filter. Deze filter verzacht het signaal door de hoogfrequentie te verminderen. Dit gebeurt in vergelijking~\ref{eq:ruisfiltering}, waarbij $s$ het originele signaal is. Hierbij geven we ook een andere variabele, de cutoff frequentie $cf_1$, mee zodat alle frequenties hoger dan deze variabele worden afgezwakt. Wij geven $cf_1$ de waarde [TODO].
+Als eerste gaan we de ruis en knipperingen zo goed mogelijk proberen te verminderen. Dit gebeurt door middel van een low-pass filter. Deze filter verzacht het signaal door de hoogfrequentie te verminderen. Hiervoor gebruiken we de butterworth filter van SciPy voor Python. Door met de parameters van deze filter te experimenteren, probeerden we een optimale filtering te vinden voor het originele signaal. Uit de uiteindelijk gekozen parameters, berekenen we dan de cutoff frequenty $cf$ zoals in vergelijking~\ref{eq:cutoff} staat beschreven. Alle frequenties hoger dan deze $cf$ zullen worden afgezwakt. In deze vergelijking staat $sf$ voor de sampling frequentie, dit geeft aan hoe snel datapunten doorgestuurd worden door de sensoren. $Wn$ staat voor de genormaliseerde cutoff frequentie. Aan de hand van de gevonden cutoff frequentie $cf_1$, filteren we de ruis en knipperingen. Dit gebeurt in vergelijking~\ref{eq:ruisfiltering}, waarbij $s$ het originele signaal is. Omdat $sf_1$ bij ons gelijk is aan 2 Hz en $Wn_1$ gelijk is aan 0,05, komen we uit op een waarde van 0,625 Hz voor $cf_1$.
+
+\begin{equation}
+\label{eq:cutoff}
+cf = \frac{fs \cdot Wn}{2}
+\end{equation}
 
 \begin{equation}
 \label{eq:ruisfiltering}
@@ -226,7 +231,7 @@ De opstelling van de experimenten zag er als volgt uit. De sensoren zijn bevesti
 
 De sensoren zijn aangesloten op een EOG Bord, gemaakt door InnovationLab van de KU Leuven. Dit apparaat voert al een redelijk naïve biopotentiaalfiltering uit op het signaal. Het vlakt het signaal altijd af naar de neutrale waarde (de waarde verkregen bij het rechtdoor kijken). Hierdoor wordt de intensiteit van het kijken naar links en rechts geleidelijk aan afgezwakt.
 
-We duiden reeksen van kijkrichtingen aan volgens de definitie van reeks~\ref{seq:definitie}. We bepalen drie verschillende kijkrichtigen elk met een tijd. Deze tijd $t_i$ staat voor het aantal seconden dat ongeveer in de bijhorende kijkrichting gekeken wordt. $h$ geeft aan hoeveel keer de reeks binnen de accolades herhaald wordt.
+We concentreren ons in deze experimenten op de events die gebeuren. Het kijken naar links is bijvoorbeeld een event. Dit doen we omdat we meer geïnteresseerd zijn in detecteren van deze events, dan TODO.We duiden reeksen van kijkrichtingen aan volgens de definitie van reeks~\ref{seq:definitie}. We bepalen drie verschillende kijkrichtigen elk met een tijd. Deze tijd $t_i$ staat voor het aantal seconden dat ongeveer in de bijhorende kijkrichting gekeken wordt. $h$ geeft aan hoeveel keer de reeks binnen de accolades herhaald wordt.
 
 \begin{equation}
 \label{seq:definitie}
@@ -437,7 +442,7 @@ Dit experiment heeft veel minder goede resulaten dan het eerste experiment. De $
 
 \subsection{Experiment 3}
 
-Het apparaat dat we gebruiken probeert de biopotentiaalschommelingen te filteren door telkens het signaal langzaam af te vlakken naar de neutrale staat (de staat wanneer er rechtdoor gekeken wordt). Wanneer er bijvoorbeeld lang naar links gekeken wordt, verschuift het signaal volgens de y-as. Als er nu terug rechtdoor gekeken wordt, lijkt het alsof er naar rechts gekeken wordt[TODO voorbeeld figuur]. We verwachtten dat als tussen het links en rechts kijken voor een langere periode rechtdoor gekeken wordt, dit effect teniet wordt gedaan. Dit hebben we getest in dit experiment.
+Het apparaat dat we gebruiken probeert de biopotentiaalschommelingen te filteren door telkens het signaal langzaam af te vlakken naar de neutrale staat (de staat wanneer er rechtdoor gekeken wordt). Wanneer er bijvoorbeeld lang naar links gekeken wordt, verschuift het signaal volgens de y-as. Als er nu terug rechtdoor gekeken wordt, lijkt het alsof er naar rechts gekeken wordt. We verwachtten dat als tussen het links en rechts kijken voor een langere periode rechtdoor gekeken wordt, dit effect teniet wordt gedaan. Dit hebben we getest in dit experiment.
 
 \begin{figure}[h]
 \centering
@@ -503,7 +508,7 @@ $rechtdoor$ & 0 & 10 & 50 \\
 
 \end{table}
 
-De resultaten zijn fel verbeterd ten opzichte van experiment 2. TODO
+De resultaten zijn fel verbeterd ten opzichte van experiment 2. Hier vinden we de verbetering van de $recall$ voor beide kijkrichtingen het interessantste. Dit wilt namelijk zeggen dat er een kleinere verschuiving plaats vindt, waardoor er minder kijkrichtingen gemist worden door het programma. De $recall_{rechts}$ waarde van \textit{gebruiker 2} is bijna niet verbeterd, maar we vermoeden dat dit aan andere factoren ligt, zoals de plaats van de sensoren op het gezicht. De potentiaalverschillen gemeten bij deze gebruiker waren namelijk veel kleiner dan bij \textit{gebruiker 1}. Uit dit experiment hebben we afgeleid dat langere pauzes nemen tussen bij het herhalen van kijkrichtingen, voordelige effecten heeft op het resultaat.
 
 \section{Conclusie}
 TODO
