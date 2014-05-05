@@ -58,19 +58,21 @@ Het signaal dat we krijgen doorgestuurd, afkomstig van de sensoren, is zeer ruw.
 \label{fig:originaldata}
 \end{figure}
 
-Als eerste gaan we de ruis en knipperingen zo goed mogelijk proberen te verminderen. Dit gebeurt door middel van een low-pass filter. Deze filter verzacht het signaal door de hoogfrequentie te verminderen. Hiervoor gebruiken we de butterworth filter van SciPy voor Python. Door met de parameters van deze filter te experimenteren, probeerden we een optimale filtering te vinden voor het originele signaal. Uit de uiteindelijk gekozen parameters, berekenen we dan de cutoff frequenty $cf$ zoals in vergelijking~\ref{eq:cutoff} staat beschreven. Alle frequenties hoger dan deze $cf$ zullen worden afgezwakt. In deze vergelijking staat $sf$ voor de sampling frequentie, dit geeft aan hoe snel datapunten doorgestuurd worden door de sensoren. $Wn$ staat voor de genormaliseerde cutoff frequentie. Aan de hand van de gevonden cutoff frequentie $cf_1$, filteren we de ruis en knipperingen. Dit gebeurt in vergelijking~\ref{eq:ruisfiltering}, waarbij $s$ het originele signaal is. Omdat $sf_1$ bij ons gelijk is aan 2 Hz en $Wn_1$ gelijk is aan 0,05, komen we uit op een waarde van 0,625 Hz voor $cf_1$.
+Als eerste gaan we de ruis en knipperingen zo goed mogelijk proberen weg te werken, waarna we dit ook proberen voor de biopotentiaalschommelingen. Dit gebeurt telkens door middel van een low-pass filter. Deze filter verzacht het signaal door de hoogfrequentie te verminderen. Hiervoor gebruiken we de butterworth filter van SciPy voor Python. Door met de parameter $Wn$ van deze filter te experimenteren, probeerden we een optimale filtering te vinden voor het originele signaal. $Wn$ staat voor de genormaliseerde cutoff frequentie. Aan de hand van deze gekozen variabele, berekenen we dan de cutoff frequenty $cf$ zoals in vergelijking~\ref{eq:cutoff} staat beschreven. Alle frequenties hoger dan deze $cf$ zullen worden afgezwakt. In deze vergelijking staat $sf$ voor de sampling frequentie, dit geeft aan hoe snel datapunten doorgestuurd worden door de sensoren. Bij ons is dit gelijk aan 25 Hz.
 
 \begin{equation}
 \label{eq:cutoff}
-cf = \frac{fs \cdot Wn}{2}
+cf = \frac{sf \cdot Wn}{2}
 \end{equation}
+
+Voor het filteren van ruis en knipperingen, hebben we een cutoff frequentie $cf_1$ gevonden. Dit wordt gebruikt in de filtering in vergelijking vergelijking~\ref{eq:ruisfiltering}, waarbij $s$ het originele signaal is en $s'$ het gefilterde signaal. Voor deze filtering gaven we $Wn$ de waarde 0,05, zodat we uitkomen op een waarde van 0,625 Hz voor $cf_1$.
 
 \begin{equation}
 \label{eq:ruisfiltering}
 s' = lowpass(s, cf_1)
 \end{equation}
 
-Daarna focussen we ons op de biopotentiaalschommelingen. Deze schommelingen kunnen we niet op voorhand voorspellen en verschillen van persoon tot persoon. Als we deze schommelingen kunnen verminderen, kunnen we meer steunen op absolute waarden van het signaal. In dit tweede deel van de preprocessing-stap gebruiken we opnieuw een low-pass filter. Deze keer gebruiken we een lage cutoff frequentie $cf_2$ met de waarde [TODO]. Na deze filtering van de data, blijven enkel de signalen met een lage frequentie over. Het resultaat is de benadering van de biopotentiaal van de gebruiker die doorheen de tijd fluctueert. We kunnen nu de biopotentiaalschommelingen uit onze originele data verminderen door de gevonden benadering hiervan af te trekken, zoals in vergelijking~\ref{eq:aftrekkingbiopotentiaal}. De schommelingen verdwijnen niet volledig, maar worden wel sterk verminderd. Figuur~\ref{fig:filtereddata} stelt het resultaat van de besproken filtereringen voor.
+Daarna focussen we ons op de biopotentiaalschommelingen. Deze schommelingen kunnen we niet op voorhand voorspellen en verschillen van persoon tot persoon. Als we deze schommelingen kunnen verminderen, kunnen we meer steunen op absolute waarden van het signaal. Deze keer gebruiken we een lagere cutoff frequentie $cf_2$ voor de low-pass filter. Aan deze $Wn_2$ hebben we de waarde 0,0003 toegekend, en verkrijgen we uiteindelijk volgens vergelijking~\ref{eq:cutoff} een waarde van 0,004 Hz voor $cf_2$. Na deze filtering van de data, blijven enkel de signalen met een lage frequentie over. Het resultaat is de benadering van de biopotentiaal van de gebruiker die doorheen de tijd fluctueert. We kunnen nu de biopotentiaalschommelingen uit onze originele data verminderen door de gevonden benadering hiervan af te trekken, zoals in vergelijking~\ref{eq:aftrekkingbiopotentiaal}. De schommelingen verdwijnen niet volledig, maar worden wel sterk verminderd. Figuur~\ref{fig:filtereddata} stelt het resultaat van de besproken filtereringen voor.
 
 \begin{equation}
 \label{eq:aftrekkingbiopotentiaal}
