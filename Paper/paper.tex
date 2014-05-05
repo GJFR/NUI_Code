@@ -301,7 +301,7 @@ In dit experiment laten we een gebruiker reeks~\ref{seq:exp1} volgen. Figuur~\re
 \end{aligned}
 \end{equation}
 
-De gebruiker moet volgens reeks~\ref{seq:exp1} afwisselend links en rechts kijken. We gebruiken eerst deze volgorde, omdat deze zoals eerder vermeld geen problemen oplevert tijdens de preprocessing-stap. We willen eerst weten hoe goed het systeem werkt in ideale omstandigheden, voordat we de minder ideale situaties bekijken. Deze resultaten hebben we in een confusion matrix, tabel~\ref{tab:exp1}, weergegeven.
+De gebruiker moet volgens reeks~\ref{seq:exp1} afwisselend links en rechts kijken. We gebruiken eerst deze volgorde, omdat deze zoals eerder vermeld geen problemen oplevert tijdens de preprocessing-stap. We willen eerst weten hoe goed het systeem werkt in ideale omstandigheden, voordat we de minder ideale situaties bekijken. Deze resultaten hebben we in een confusion matrix, tabel~\ref{tab:exp1} en~\ref{tab:exp1_2}, weergegeven.
 
 
 \begin{figure}[h]
@@ -336,7 +336,7 @@ $rechtdoor$ & 7 & 0 & 55 \\
 \end{table}
 
 
-Aan de hand van deze confusion matrix, tabel~\ref{tab:exp1}, berekenen we vervolgens de onderzoeks maatstaven. 
+We kunnen uit deze resultaten enkele conclusies trekken. De precision van beide kijkrichtingen, links en rechts, zijn 1. Dit geldt bij beide gebruikers. Hierdoor weten we dat het systeem nooit incorrect links of rechts herkend heeft. Bij de recall merken we wel dat er voor \textit{gebruiker 1} problemen waren bij het herkennen van van links. Voor \textit{gebruiker 2} waren er echter vooral problemen bij het herkennen van links. Hieruit kunnen we afleiden dat een kleine verandering in omstandigheden een verschil maakt voor de recall, maar niet voor de precision. Adnerzijds merken we op dat er geen fouten zijn gebeurt telkens er rechtdoor werd gekeken. De recall voor rechtdoor is bjgevolg 1. Ook zien we dat beide gebruikers toevallig exact dezelfde accuracy hebben. Deze accuracy van 0.87 is al vrij goed, maar betekent wel dat er nog veel verbetering mogelijk is. 
 
 \begin{table}[h]
 \caption{Confusion matrix na uitvoering van experiment 1 door \textit{gebruiker 2} en de berekende maatstaven.}
@@ -362,7 +362,7 @@ $rechtdoor$ & 1 & 6 & 55 \\
 
 \end{table}
 
-[TODO bespreking van de resultaten]
+
 
 \subsection{Experiment 2}
 
@@ -413,7 +413,7 @@ $rechtdoor$ & 9 & 11 & 50 \\
 
 \begin{table}[h]
 \caption{Confusion matrix na uitvoering van experiment 2 door \textit{gebruiker 2} en de berekende maatstaven.}
-\label{tab:exp2}
+\label{tab:exp2_2}
 \centering
 \begin{tabular}{ l || c | c | c }
 \backslashbox{Herkend~}{Echt~~}
@@ -443,7 +443,7 @@ Het apparaat dat we gebruiken probeert de biopotentiaalschommelingen te filteren
 \centering
 \includegraphics[width=\linewidth]{images/experiment3}
 \caption{Een voorbeeld signaal bij uitvoering van experiment 3. We merken op dat door langer rechtdoor te kijken tussen andere kijkrichtingen in, het besproken effect niet meer voorkomt. }
-\label{fig:exp2}
+\label{fig:exp3}
 \end{figure}
 
 \begin{equation}
@@ -457,7 +457,7 @@ Het apparaat dat we gebruiken probeert de biopotentiaalschommelingen te filteren
 
 \begin{table}[h]
 \caption{Confusion matrix na uitvoering van experiment 3 door \textit{gebruiker 1} en de berekende maatstaven.}
-\label{tab:exp1}
+\label{tab:exp3}
 \centering
 \begin{tabular}{ l || c | c | c }
 \backslashbox{Herkend~}{Echt~~}
@@ -481,7 +481,7 @@ $rechtdoor$ & 1 & 5 & 54 \\
 
 \begin{table}[h]
 \caption{Confusion matrix na uitvoering van experiment 3 door \textit{gebruiker 2} en de berekende maatstaven.}
-\label{tab:exp1}
+\label{tab:exp3_2}
 \centering
 \begin{tabular}{ l || c | c | c }
 \backslashbox{Herkend~}{Echt~~}
